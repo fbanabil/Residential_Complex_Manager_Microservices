@@ -1,0 +1,8 @@
+﻿using MediatR;
+
+namespace CQRSPattern.CQRS
+{
+    public interface IQuery<out TResponse> : IRequest<TResponse> where TResponse:notnull
+    {
+    }
+}

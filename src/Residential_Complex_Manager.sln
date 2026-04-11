@@ -9,6 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResidentialAreas", "Residen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResidentialAreas.API", "Services\ResidentialAreas\ResidentialAreas.API\ResidentialAreas.API.csproj", "{49922E0A-C337-4F73-AB91-798722A2513C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{A5F2DCFE-BD04-4060-88F2-CC7B100555DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks", "BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj", "{071E0A3E-6C1A-4C4C-A5F9-149D53E7EA98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,10 @@ Global
 		{49922E0A-C337-4F73-AB91-798722A2513C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49922E0A-C337-4F73-AB91-798722A2513C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49922E0A-C337-4F73-AB91-798722A2513C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071E0A3E-6C1A-4C4C-A5F9-149D53E7EA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071E0A3E-6C1A-4C4C-A5F9-149D53E7EA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071E0A3E-6C1A-4C4C-A5F9-149D53E7EA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071E0A3E-6C1A-4C4C-A5F9-149D53E7EA98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -26,6 +34,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{01BC1E58-F18E-4F32-A06B-A91385ABAFFD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{49922E0A-C337-4F73-AB91-798722A2513C} = {01BC1E58-F18E-4F32-A06B-A91385ABAFFD}
+		{071E0A3E-6C1A-4C4C-A5F9-149D53E7EA98} = {A5F2DCFE-BD04-4060-88F2-CC7B100555DB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3377740C-B9FE-4F2D-8F5D-861B87D3770A}

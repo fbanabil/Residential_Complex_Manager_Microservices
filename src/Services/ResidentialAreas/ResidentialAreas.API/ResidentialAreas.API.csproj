@@ -13,4 +13,17 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\CQRS\CQRSPattern\CQRSPattern.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Buildings\" />
+    <Folder Include="Facilities\" />
+    <Folder Include="ParkingSlots\" />
+    <Folder Include="Units\" />
+    <Folder Include="ResidentialAreas\" />
+  </ItemGroup>
+
 </Project>
