@@ -1,11 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37012.4 d17.14
+VisualStudioVersion = 17.14.37012.4
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResidentialAreas", "ResidentialAreas", "{01BC1E58-F18E-4F32-A06B-A91385ABAFFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResidentialAreas.API", "Services\ResidentialAreas\ResidentialAreas.API\ResidentialAreas.API.csproj", "{49922E0A-C337-4F73-AB91-798722A2513C}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49922E0A-C337-4F73-AB91-798722A2513C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49922E0A-C337-4F73-AB91-798722A2513C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49922E0A-C337-4F73-AB91-798722A2513C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49922E0A-C337-4F73-AB91-798722A2513C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{01BC1E58-F18E-4F32-A06B-A91385ABAFFD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{49922E0A-C337-4F73-AB91-798722A2513C} = {01BC1E58-F18E-4F32-A06B-A91385ABAFFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3377740C-B9FE-4F2D-8F5D-861B87D3770A}
