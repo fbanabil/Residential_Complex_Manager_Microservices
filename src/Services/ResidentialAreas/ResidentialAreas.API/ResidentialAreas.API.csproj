@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,23 +7,37 @@
     <UserSecretsId>996fc482-f909-43c0-8c15-50d40c24547c</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="Carter" Version="8.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.25" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.7.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj" />
-    <ProjectReference Include="..\..\..\CQRS\CQRSPattern\CQRSPattern.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Buildings\" />
-    <Folder Include="Facilities\" />
-    <Folder Include="ParkingSlots\" />
-    <Folder Include="Units\" />
-    <Folder Include="ResidentialAreas\" />
+    <Folder Include="Data\IRepositories\" />
+    <Folder Include="Data\" />
+    <Folder Include="Data\Repositories\" />
+    <Folder Include="ResidentiaAreas\Buildings\" />
+    <Folder Include="ResidentiaAreas\Facilities\" />
+    <Folder Include="ResidentiaAreas\" />
+    <Folder Include="ResidentiaAreas\ParkingSlots\" />
+    <Folder Include="ResidentiaAreas\Units\" />
+    <Folder Include="ResidentiaAreas\Areas\" />
   </ItemGroup>
 
 </Project>

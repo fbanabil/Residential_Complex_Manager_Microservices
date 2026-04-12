@@ -1,0 +1,13 @@
+services:
+  residentialareas.api:
+    image: ${DOCKER_REGISTRY-}residentialareasapi
+    build:
+      context: .
+      dockerfile: Services/ResidentialAreas/ResidentialAreas.API/Dockerfile
+
+  residentialareadb:      
+    image: postgres:16 
+
+
+volumes:
+  residentialareadbdata:

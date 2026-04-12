@@ -13,7 +13,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/ResidentialAreas/ResidentialAreas.API/ResidentialAreas.API.csproj", "Services/ResidentialAreas/ResidentialAreas.API/"]
-COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
 RUN dotnet restore "./Services/ResidentialAreas/ResidentialAreas.API/ResidentialAreas.API.csproj"
 COPY . .
 WORKDIR "/src/Services/ResidentialAreas/ResidentialAreas.API"
