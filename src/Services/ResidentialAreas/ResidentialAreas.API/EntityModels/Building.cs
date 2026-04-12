@@ -7,12 +7,11 @@
     {
         [Key]
         [Required(ErrorMessage = "The Building ID is required.")]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
 
         [Required(ErrorMessage = "The parent Area ID is required.")]
-        public Guid AreaId { get; set; }
-
+        public Guid? AreaId { get; set; }
 
         [ForeignKey(nameof(AreaId))]
         public Area? Area { get; set; }
@@ -20,39 +19,38 @@
         
         [Required(ErrorMessage = "The building code is required.")]
         [StringLength(30, ErrorMessage = "The building code cannot exceed 30 characters.")]
-        public string Code { get; set; } = string.Empty;
+        public string? Code { get; set; } = string.Empty;
 
 
         [Required(ErrorMessage = "The building name is required.")]
         [StringLength(100, ErrorMessage = "The building name cannot exceed 100 characters.")]
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; } = string.Empty;
 
         
         [Required(ErrorMessage = "The block number is required.")]
         [StringLength(30, ErrorMessage = "The block number cannot exceed 30 characters.")]
-        public string BlockNo { get; set; } = string.Empty;
+        public string? BlockNo { get; set; } = string.Empty;
 
         public string? Address { get; set; }
 
 
         [Required(ErrorMessage = "The total floor count is required.")]
-        public int TotalFloors { get; set; }
+        public int? TotalFloors { get; set; }
 
-        
+
         [Required(ErrorMessage = "The status is required.")]
         [Column(TypeName = "varchar(20)")]
         public Status Status { get; set; } = Status.Active;
 
         
         [Required(ErrorMessage = "The creation date is required.")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         
         [Required(ErrorMessage = "The last updated date is required.")]
-        public DateTime UpdatedAt { get; set; }
-
-        public virtual ICollection<Unit> Units { get; set; } = new List<Unit>();
-        public virtual ICollection<Facilitie> Facilities { get; set; } = new List<Facilitie>();
-        public virtual ICollection<ParkingSlot> ParkingSlots { get; set; } = new List<ParkingSlot>();   
+        public DateTime? UpdatedAt { get; set; }
+        public virtual ICollection<Unit>? Units { get; set; } = new List<Unit>();
+        public virtual ICollection<Facilitie>? Facilities { get; set; } = new List<Facilitie>();
+        public virtual ICollection<ParkingSlot>? ParkingSlots { get; set; } = new List<ParkingSlot>();   
     }
 }

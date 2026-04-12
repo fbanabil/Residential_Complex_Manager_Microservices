@@ -1,0 +1,47 @@
+Corrected seed notes
+====================
+
+What was corrected
+------------------
+1. Image.Code is now synchronized to an existing entity Code.
+   - If ImageType = Area, Code = Area.Code
+   - If ImageType = Building, Code = Building.Code
+   - If ImageType = Unit, Code = Unit.Code
+
+2. Real enum names were used where definitions were available:
+   - Status: Active, Inactive, Maintenance, Deleted
+   - UnitType: Apartment, Shop, Office, Parking, Storage
+   - OccupancyStatus: Vacant, Occupied, Reserved, Maintenance
+   - OwnershipType: Owned, Rented, Association
+
+3. Because the uploaded files for ImageType and parking-slot enum were not actually defined as enums,
+   I used the safest placeholders:
+   - ImageType: Area / Building / Unit
+   - SlotType: Compact
+
+Insert order
+------------
+1. Area
+2. Building
+3. Unit
+4. Facilitie
+5. ParkingSlot
+6. Image
+
+Relation map
+------------
+- Building.AreaId -> Area.Id
+- Unit.BuildingId -> Building.Id
+- Facilitie.AreaId or Facilitie.BuildingId -> optional single parent
+- ParkingSlot.BuildingId -> Building.Id
+- ParkingSlot.UnitId -> Unit.Id
+- Image.Code -> Area.Code or Building.Code or Unit.Code
+
+Counts
+------
+20 Area
+20 Building
+20 Unit
+20 Facilitie
+20 ParkingSlot
+20 Image

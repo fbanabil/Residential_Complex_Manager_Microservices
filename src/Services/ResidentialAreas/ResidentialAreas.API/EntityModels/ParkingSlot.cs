@@ -11,7 +11,7 @@ namespace ResidentialAreas.API.EntityModels
     {
         [Key]
         [Required(ErrorMessage = "The Parking Slot ID is required.")]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         
         public Guid? BuildingId { get; set; }
@@ -30,14 +30,15 @@ namespace ResidentialAreas.API.EntityModels
         
         [Required(ErrorMessage = "The slot code is required.")]
         [StringLength(20, ErrorMessage = "The slot code cannot exceed 20 characters.")]
-        public string SlotCode { get; set; } = string.Empty;
+        public string? SlotCode { get; set; } = string.Empty;
 
         
         [Required(ErrorMessage = "The slot type is required.")]
-        [StringLength(20, ErrorMessage = "The slot type cannot exceed 20 characters.")]
-        public string SlotType { get; set; } = string.Empty; 
+        [Column(TypeName = "varchar(20)")]
+        public SlotType SlotType { get; set; } = SlotType.Compact;
 
-        
+
+
         public Guid? AssignedResidentId { get; set; }
 
         
@@ -47,10 +48,10 @@ namespace ResidentialAreas.API.EntityModels
 
         
         [Required(ErrorMessage = "The creation date is required.")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         
         [Required(ErrorMessage = "The last updated date is required.")]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

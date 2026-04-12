@@ -1,0 +1,229 @@
+{
+  "Area": [
+    {
+      "Id": "11111111-1111-1111-1111-111111111111",
+      "Code": "AREA-DHK-001",
+      "Name": "Lake View Residency",
+      "City": "Dhaka",
+      "State": "Dhaka",
+      "Country": "Bangladesh",
+      "PostalCode": "1212",
+      "Address": "Road 12, Gulshan, Dhaka",
+      "GeoBoundary": "{\"type\": \"Polygon\", \"coordinates\": [[[90.4125, 23.7925], [90.4135, 23.7925], [90.4135, 23.7935], [90.4125, 23.7935], [90.4125, 23.7925]]]}",
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:00:00Z",
+      "UpdatedAt": "2026-04-12T09:00:00Z"
+    },
+    {
+      "Id": "11111111-1111-1111-1111-111111111112",
+      "Code": "AREA-DHK-002",
+      "Name": "Green Park Enclave",
+      "City": "Dhaka",
+      "State": "Dhaka",
+      "Country": "Bangladesh",
+      "PostalCode": "1207",
+      "Address": "Avenue 5, Banani, Dhaka",
+      "GeoBoundary": "{\"type\": \"Polygon\", \"coordinates\": [[[90.405, 23.794], [90.406, 23.794], [90.406, 23.795], [90.405, 23.795], [90.405, 23.794]]]}",
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:05:00Z",
+      "UpdatedAt": "2026-04-12T09:05:00Z"
+    }
+  ],
+  "Building": [
+    {
+      "Id": "22222222-2222-2222-2222-222222222221",
+      "AreaId": "11111111-1111-1111-1111-111111111111",
+      "Code": "BLD-LVR-A",
+      "Name": "Lake Tower A",
+      "BlockNo": "A",
+      "Address": "Tower A, Road 12, Gulshan, Dhaka",
+      "TotalFloors": 12,
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:10:00Z",
+      "UpdatedAt": "2026-04-12T09:10:00Z"
+    },
+    {
+      "Id": "22222222-2222-2222-2222-222222222222",
+      "AreaId": "11111111-1111-1111-1111-111111111111",
+      "Code": "BLD-LVR-B",
+      "Name": "Lake Tower B",
+      "BlockNo": "B",
+      "Address": "Tower B, Road 12, Gulshan, Dhaka",
+      "TotalFloors": 10,
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:15:00Z",
+      "UpdatedAt": "2026-04-12T09:15:00Z"
+    },
+    {
+      "Id": "22222222-2222-2222-2222-222222222223",
+      "AreaId": "11111111-1111-1111-1111-111111111112",
+      "Code": "BLD-GPE-A",
+      "Name": "Green Heights A",
+      "BlockNo": "A",
+      "Address": "Block A, Avenue 5, Banani, Dhaka",
+      "TotalFloors": 8,
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:20:00Z",
+      "UpdatedAt": "2026-04-12T09:20:00Z"
+    }
+  ],
+  "Unit": [
+    {
+      "Id": "33333333-3333-3333-3333-333333333331",
+      "BuildingId": "22222222-2222-2222-2222-222222222221",
+      "UnitNo": "A-101",
+      "Code": "UNIT-A101",
+      "FloorNo": 1,
+      "UnitType": 0,
+      "Bedrooms": 3,
+      "Bathrooms": 2,
+      "AreaSqft": 1450.0,
+      "OccupancyStatus": 0,
+      "OwnershipType": 0,
+      "CurrentLeaseId": null,
+      "CreatedAt": "2026-04-12T09:25:00Z",
+      "UpdatedAt": "2026-04-12T09:25:00Z"
+    },
+    {
+      "Id": "33333333-3333-3333-3333-333333333332",
+      "BuildingId": "22222222-2222-2222-2222-222222222221",
+      "UnitNo": "A-202",
+      "Code": "UNIT-A202",
+      "FloorNo": 2,
+      "UnitType": 1,
+      "Bedrooms": 2,
+      "Bathrooms": 2,
+      "AreaSqft": 1180.5,
+      "OccupancyStatus": 0,
+      "OwnershipType": 0,
+      "CurrentLeaseId": null,
+      "CreatedAt": "2026-04-12T09:26:00Z",
+      "UpdatedAt": "2026-04-12T09:26:00Z"
+    },
+    {
+      "Id": "33333333-3333-3333-3333-333333333333",
+      "BuildingId": "22222222-2222-2222-2222-222222222222",
+      "UnitNo": "B-301",
+      "Code": "UNIT-B301",
+      "FloorNo": 3,
+      "UnitType": 0,
+      "Bedrooms": 4,
+      "Bathrooms": 3,
+      "AreaSqft": 1675.75,
+      "OccupancyStatus": 0,
+      "OwnershipType": 1,
+      "CurrentLeaseId": null,
+      "CreatedAt": "2026-04-12T09:27:00Z",
+      "UpdatedAt": "2026-04-12T09:27:00Z"
+    },
+    {
+      "Id": "33333333-3333-3333-3333-333333333334",
+      "BuildingId": "22222222-2222-2222-2222-222222222223",
+      "UnitNo": "A-102",
+      "Code": "UNIT-GA102",
+      "FloorNo": 1,
+      "UnitType": 2,
+      "Bedrooms": 1,
+      "Bathrooms": 1,
+      "AreaSqft": 850.0,
+      "OccupancyStatus": 0,
+      "OwnershipType": 0,
+      "CurrentLeaseId": null,
+      "CreatedAt": "2026-04-12T09:28:00Z",
+      "UpdatedAt": "2026-04-12T09:28:00Z"
+    }
+  ],
+  "Facilitie": [
+    {
+      "Id": "44444444-4444-4444-4444-444444444441",
+      "AreaId": "11111111-1111-1111-1111-111111111111",
+      "BuildingId": null,
+      "Name": "Central Playground",
+      "FacilityType": "Playground",
+      "Capacity": 80,
+      "BookingRequired": false,
+      "HourlyRate": null,
+      "Rules": "{\"open\": \"06:00\", \"close\": \"22:00\", \"notes\": [\"No littering\", \"Children under 10 must be supervised\"]}",
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:30:00Z",
+      "UpdatedAt": "2026-04-12T09:30:00Z"
+    },
+    {
+      "Id": "44444444-4444-4444-4444-444444444442",
+      "AreaId": null,
+      "BuildingId": "22222222-2222-2222-2222-222222222221",
+      "Name": "Rooftop Gym",
+      "FacilityType": "Gym",
+      "Capacity": 25,
+      "BookingRequired": true,
+      "HourlyRate": 300.0,
+      "Rules": "{\"open\": \"07:00\", \"close\": \"23:00\", \"notes\": [\"Sports shoes required\", \"30 minute slot per booking\"]}",
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:31:00Z",
+      "UpdatedAt": "2026-04-12T09:31:00Z"
+    },
+    {
+      "Id": "44444444-4444-4444-4444-444444444443",
+      "AreaId": null,
+      "BuildingId": "22222222-2222-2222-2222-222222222223",
+      "Name": "Community Hall",
+      "FacilityType": "Hall",
+      "Capacity": 120,
+      "BookingRequired": true,
+      "HourlyRate": 1000.0,
+      "Rules": "{\"open\": \"08:00\", \"close\": \"22:00\", \"notes\": [\"Advance booking required\", \"No amplified music after 21:00\"]}",
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:32:00Z",
+      "UpdatedAt": "2026-04-12T09:32:00Z"
+    }
+  ],
+  "Image": [
+    {
+      "Id": "55555555-5555-5555-5555-555555555551",
+      "ImageType": 0,
+      "Code": "IMG-AREA-001",
+      "Url": "https://example.com/images/areas/lake-view-residency.jpg"
+    },
+    {
+      "Id": "55555555-5555-5555-5555-555555555552",
+      "ImageType": 1,
+      "Code": "IMG-BUILDING-001",
+      "Url": "https://example.com/images/buildings/lake-tower-a.jpg"
+    }
+  ],
+  "ParkingSlot": [
+    {
+      "Id": "66666666-6666-6666-6666-666666666661",
+      "BuildingId": "22222222-2222-2222-2222-222222222221",
+      "UnitId": "33333333-3333-3333-3333-333333333331",
+      "SlotCode": "A-P1-001",
+      "SlotType": 0,
+      "AssignedResidentId": null,
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:35:00Z",
+      "UpdatedAt": "2026-04-12T09:35:00Z"
+    },
+    {
+      "Id": "66666666-6666-6666-6666-666666666662",
+      "BuildingId": "22222222-2222-2222-2222-222222222221",
+      "UnitId": "33333333-3333-3333-3333-333333333332",
+      "SlotCode": "A-P1-002",
+      "SlotType": 1,
+      "AssignedResidentId": null,
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:36:00Z",
+      "UpdatedAt": "2026-04-12T09:36:00Z"
+    },
+    {
+      "Id": "66666666-6666-6666-6666-666666666663",
+      "BuildingId": "22222222-2222-2222-2222-222222222223",
+      "UnitId": "33333333-3333-3333-3333-333333333334",
+      "SlotCode": "GA-P1-001",
+      "SlotType": 0,
+      "AssignedResidentId": null,
+      "Status": 0,
+      "CreatedAt": "2026-04-12T09:37:00Z",
+      "UpdatedAt": "2026-04-12T09:37:00Z"
+    }
+  ]
+}

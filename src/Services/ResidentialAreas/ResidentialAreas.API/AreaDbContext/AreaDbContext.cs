@@ -10,6 +10,7 @@
         public virtual DbSet<Unit> Units { get; set; } 
         public virtual DbSet<Facilitie> Facilities { get; set; }
         public virtual DbSet<ParkingSlot> ParkingSlots { get; set; }
+        public virtual DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,8 +20,8 @@
                 .Property(a=>a.Status)
                 .HasConversion<string>();
             
-            modelBuilder.Entity<Building>()
-                .Property(b=>b.Status)
+            modelBuilder.Entity<Image>()
+                .Property(i=>i.ImageType)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Unit>()
@@ -30,17 +31,31 @@
             modelBuilder.Entity<Unit>()
                 .Property(u=>u.OccupancyStatus)
                 .HasConversion<string>();
+
             modelBuilder.Entity<Unit>()
                 .Property(u=>u.OwnershipType)
                 .HasConversion<string>();
+            
             modelBuilder.Entity<Facilitie>()
                 .Property(f=>f.Status)
                 .HasConversion<string>();
+            
             modelBuilder.Entity<ParkingSlot>()
                 .Property(p=>p.Status)
                 .HasConversion<string>();
 
-            
+            modelBuilder.Entity<Building>()
+                .Property(b=>b.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<ParkingSlot>()
+                .Property(p=>p.SlotType)
+                .HasConversion<string>();
+
+
+
+
+            modelBuilder.Seed();
 
         }
 
