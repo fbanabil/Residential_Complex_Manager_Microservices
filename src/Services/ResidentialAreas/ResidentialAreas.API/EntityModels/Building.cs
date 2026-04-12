@@ -50,7 +50,7 @@
         [Required(ErrorMessage = "The last updated date is required.")]
         public DateTime? UpdatedAt { get; set; }
         public virtual ICollection<Unit>? Units { get; set; } = new List<Unit>();
-        public virtual ICollection<Facilitie>? Facilities { get; set; } = new List<Facilitie>();
+        public virtual ICollection<Facility>? Facilities { get; set; } = new List<Facility>();
         public virtual ICollection<ParkingSlot>? ParkingSlots { get; set; } = new List<ParkingSlot>();   
     }
 }

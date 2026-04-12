@@ -1,6 +1,3 @@
-using Carter;
-using ResidentialAreas.API.AreaDbContext;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,7 +12,15 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddDbContext<AreaDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "My API", Version = "v1" });
+});
+
 var app = builder.Build();
+
+//Configure the HTTP request pipeline.
 
 using (var scope = app.Services.CreateScope())
 {
@@ -31,6 +36,18 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while migrating the database.");
     }
 }
+
+if(app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
+
+}
+
+
 
 // Configure the HTTP request pipeline.
 app.MapCarter();

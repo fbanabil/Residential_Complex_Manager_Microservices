@@ -3,7 +3,7 @@
     [Table("Facilities")]
     [Index(nameof(AreaId))]
     [Index(nameof(BuildingId))]
-    public class Facilitie
+    public class Facility
     {
         [Key]
         [Required(ErrorMessage = "The Facility ID is required.")]

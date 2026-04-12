@@ -1,4 +1,4 @@
-﻿namespace ResidentialAreas.API.AreaDbContext
+﻿namespace ResidentialAreas.API.AppDbContext
 {
     public class AreaDbContext : DbContext
     {
@@ -8,7 +8,7 @@
         public virtual DbSet<Area> Areas { get; set; }
         public virtual DbSet<Building> Buildings { get; set; }
         public virtual DbSet<Unit> Units { get; set; } 
-        public virtual DbSet<Facilitie> Facilities { get; set; }
+        public virtual DbSet<Facility> Facilities { get; set; }
         public virtual DbSet<ParkingSlot> ParkingSlots { get; set; }
         public virtual DbSet<Image> Images { get; set; }
 
@@ -36,7 +36,7 @@
                 .Property(u=>u.OwnershipType)
                 .HasConversion<string>();
             
-            modelBuilder.Entity<Facilitie>()
+            modelBuilder.Entity<Facility>()
                 .Property(f=>f.Status)
                 .HasConversion<string>();
             
