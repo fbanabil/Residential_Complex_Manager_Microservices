@@ -1,4 +1,6 @@
-﻿namespace ResidentialAreas.API.ConfigurationExtension
+﻿using ResidentialAreas.API.Helpers.LocationValidator;
+
+namespace ResidentialAreas.API.ConfigurationExtension
 {
     public static class AddConfigurationServices
     {
@@ -20,6 +22,17 @@
             {
                 c.SwaggerDoc("v1", new() { Title = "My API", Version = "v1" });
             });
+
+
+            builder.Services.AddScoped<IAreaRepository, AreaRepository>();
+            builder.Services.AddSingleton<ILocationValidator, LocationValidator>();
+
+
+            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+            builder.Services.AddHttpClient();
+
+
         }
     }
 }

@@ -8,6 +8,9 @@ services:
   residentialareadb:      
     image: postgres:16 
 
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+
 
 volumes:
   residentialareadbdata:

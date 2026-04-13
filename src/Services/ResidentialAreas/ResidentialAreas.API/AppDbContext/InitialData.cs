@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using ResidentialAreas.API;
 
 namespace ResidentialAreas.API.AppDbContext
 {
@@ -29,10 +30,10 @@ namespace ResidentialAreas.API.AppDbContext
             }
 
             var units = File.ReadAllText(Path.Combine(basePath, "Unit.sample.json"));
-            var unitList = JsonSerializer.Deserialize<List<Unit>>(units, options);
+            var unitList = JsonSerializer.Deserialize<List<EntityModels.Unit>>(units, options);
             if (unitList != null)
             {
-                modelbuilder.Entity<Unit>().HasData(unitList);
+                modelbuilder.Entity<EntityModels.Unit>().HasData(unitList);
             }
 
             var parkingSpaces = File.ReadAllText(Path.Combine(basePath, "ParkingSlot.sample.json"));

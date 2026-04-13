@@ -4,7 +4,6 @@
     {
         Active,
         Inactive,
-        Maintenance,
-        Deleted
+        Maintenance
     }
 }

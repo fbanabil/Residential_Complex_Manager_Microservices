@@ -1,7 +1,7 @@
 ﻿namespace ResidentialAreas.API.EntityModels
 {
     [Table("Images")]
-    [Index(nameof(Code), IsUnique = true)]
+    [Index(nameof(Code))]
     public class Image
     {
         [Key]

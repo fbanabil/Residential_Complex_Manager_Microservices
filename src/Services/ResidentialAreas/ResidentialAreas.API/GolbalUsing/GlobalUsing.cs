@@ -6,3 +6,9 @@ global using ResidentialAreas.API.Enum;
 global using ResidentialAreas.API.EntityModels;
 global using Carter;
 global using ResidentialAreas.API.AppDbContext;
+global using ResidentialAreas.API.Data;
+global using MediatR;
+global using FluentValidation;
+global using Mapster;
+global using ResidentialAreas.API.Helpers.LocationValidator;
+
