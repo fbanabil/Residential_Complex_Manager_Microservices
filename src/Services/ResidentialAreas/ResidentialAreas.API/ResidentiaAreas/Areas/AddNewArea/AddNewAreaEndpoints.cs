@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using ResidentialAreas.API.Helpers.Image;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 {
-    public record AddNewAreaRequest(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, String Status);
+    public record AddNewAreaRequest(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, String Status, string ImageBase64);
 
     public record AddNewAreaResponse(Guid Id, string Name,long Code);
 
-
-    public  class AddNewAreaRequestValidator : AbstractValidator<AddNewAreaRequest>
+    public class AddNewAreaRequestValidator : AbstractValidator<AddNewAreaRequest>
     {
-
         private readonly ILocationValidator _locationValidator;
         public AddNewAreaRequestValidator(ILocationValidator locationValidator)
         {
@@ -29,9 +30,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
             {
                 return await _locationValidator.IsValidLocationAsync(location.Country, location.State, location.City, location.PostalCode);
             }).WithMessage("The provided city, state, country, and postal code combination is not valid.");
+            RuleFor(x => x.ImageBase64).NotEmpty().WithMessage("The image is required.")
+                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringImage(imageBase64)))
+                .WithMessage("The image must be a valid Base64 string.");
         }
-    }
 
+     
+    }
 
     public class AddNewAreaEndpoints : ICarterModule
     {
@@ -44,7 +49,6 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
-
 
                 var command = request.Adapt<AddNewAreaCommand>();
                 var result = await sender.Send(command);

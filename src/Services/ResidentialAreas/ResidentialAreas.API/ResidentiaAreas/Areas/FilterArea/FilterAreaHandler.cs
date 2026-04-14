@@ -13,6 +13,12 @@
         }
         public async Task<FilterAreaResult> Handle(FilterAreaQuery request, CancellationToken cancellationToken)
         {
+            Status? statusValue = null;
+            if (!string.IsNullOrWhiteSpace(request.Status))
+            {
+                statusValue = System.Enum.Parse<Status>(request.Status, true);
+            }
+
             IQueryable<Area> query = _areaDbContext.Areas
                 .Where(a => (string.IsNullOrEmpty(request.Name) || a.Name.Contains(request.Name)) &&
                             (string.IsNullOrEmpty(request.City) || a.City.Contains(request.City)) &&
@@ -20,7 +26,7 @@
                             (string.IsNullOrEmpty(request.Country) || a.Country.Contains(request.Country)) &&
                             (string.IsNullOrEmpty(request.PostalCode) || a.PostalCode.Contains(request.PostalCode)) &&
                             (string.IsNullOrEmpty(request.Address) || a.Address.Contains(request.Address)) &&
-                            (string.IsNullOrEmpty(request.Status) || a.Status.ToString().Equals(request.Status, StringComparison.OrdinalIgnoreCase)));
+                            (!statusValue.HasValue || a.Status == statusValue.Value));
 
             var areas = await query.ToListAsync(cancellationToken);
 

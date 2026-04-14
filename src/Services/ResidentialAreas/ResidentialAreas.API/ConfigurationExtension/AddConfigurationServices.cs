@@ -1,4 +1,5 @@
-﻿using ResidentialAreas.API.Helpers.LocationValidator;
+﻿using ResidentialAreas.API.Helpers.ImageSaver;
+using ResidentialAreas.API.Helpers.LocationValidator;
 
 namespace ResidentialAreas.API.ConfigurationExtension
 {
@@ -25,6 +26,7 @@ namespace ResidentialAreas.API.ConfigurationExtension
 
 
             builder.Services.AddScoped<IAreaRepository, AreaRepository>();
+            builder.Services.AddScoped<IImageSaver,ImageSaver>();
             builder.Services.AddSingleton<ILocationValidator, LocationValidator>();
 
 

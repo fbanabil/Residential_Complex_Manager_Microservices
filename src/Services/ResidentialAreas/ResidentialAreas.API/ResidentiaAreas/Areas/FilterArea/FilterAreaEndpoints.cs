@@ -32,6 +32,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
 
                 var query = request.Adapt<FilterAreaQuery>();
                 var result = await sender.Send(query);
+
+                if(result.Areas == null || !result.Areas.Any())
+                {
+                    return Results.Ok(new FilterAreaResponse(new List<FilterAreaResponseInstance>()));
+                }
+
                 var response = new FilterAreaResponse(result.Areas.Select(area => area.Adapt<FilterAreaResponseInstance>()).ToList());
                 return Results.Ok(response);
             })

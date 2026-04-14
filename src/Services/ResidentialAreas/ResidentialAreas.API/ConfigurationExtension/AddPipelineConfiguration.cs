@@ -6,6 +6,9 @@
         {
             using (var scope = app.Services.CreateScope())
             {
+
+                app.UseStaticFiles();
+
                 var services = scope.ServiceProvider;
                 try
                 {
