@@ -43,7 +43,6 @@
     <Folder Include="Data\Unit\" />
     <Folder Include="Data\ParkingSlot\" />
     <Folder Include="Migrations\" />
-    <Folder Include="ResidentiaAreas\Areas\UpdateAreaDetails\" />
     <Folder Include="ResidentiaAreas\Buildings\" />
     <Folder Include="ResidentiaAreas\Facilities\" />
     <Folder Include="ResidentiaAreas\ParkingSlots\" />

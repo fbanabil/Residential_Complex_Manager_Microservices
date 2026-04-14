@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
+using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
-namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
+namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
 {
-    public record AddNewAreaRequest(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, String Status);
+    public record UpdateAreaByCodeRequest(long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status);
 
-    public record AddNewAreaResponse(Guid Id, string Name,long Code);
+    public record UpdateAreaByCodeResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status);
 
-
-    public  class AddNewAreaRequestValidator : AbstractValidator<AddNewAreaRequest>
+    public class UpdateAreaByCodeValidator : AbstractValidator<UpdateAreaByCodeRequest>
     {
-
         private readonly ILocationValidator _locationValidator;
-        public AddNewAreaRequestValidator(ILocationValidator locationValidator)
+
+        public UpdateAreaByCodeValidator(ILocationValidator locationValidator)
         {
             _locationValidator = locationValidator;
             RuleFor(x => x.Name).NotEmpty().WithMessage("The area name is required.")
                 .MaximumLength(150).WithMessage("The area name cannot exceed 150 characters.");
+            RuleFor(x => x.Code).GreaterThan(999999999).WithMessage("Wrong Format of Code");
             RuleFor(x => x.City).NotEmpty().WithMessage("The city is required.");
             RuleFor(x => x.State).NotEmpty().WithMessage("The state is required.");
             RuleFor(x => x.Country).NotEmpty().WithMessage("The country is required.");
@@ -32,43 +34,31 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
         }
     }
 
-
-    public class AddNewAreaEndpoints : ICarterModule
+    public class UpdateAreaByCodeEndpoints : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas", async (AddNewAreaRequest request, ISender sender,[FromServices] IValidator<AddNewAreaRequest> validator) =>
+            app.MapPost("/areas/update-by-code", async (UpdateAreaByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByCodeRequest> validator) =>
             {
-               var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
-
-
-                var command = request.Adapt<AddNewAreaCommand>();
+                var command = request.Adapt<UpdateAreaByCodeCommand>();
                 var result = await sender.Send(command);
-                var response = result.Adapt<AddNewAreaResponse>();
-
-                if(response == null)
+                if (result == null)
                 {
-                    return Results.Problem("An error occurred while creating the area.", statusCode: StatusCodes.Status500InternalServerError);
+                    return Results.NotFound($"Area with code {request.Code} not found.");
                 }
-                
-                if(response.Id == Guid.Empty)
-                {
-                    return Results.Problem("Failed to create the area. Please check the provided data and try again.", statusCode: StatusCodes.Status400BadRequest);
-                }
-
-                return Results.Created($"/areas/{response!.Id}", response);
-
+                var response = result.Adapt<UpdateAreaByCodeResponse>();
+                return Results.Ok(response);
             })
-                .WithName("AddNewArea")
+                .WithName("UpdateAreaByCode")
                 .WithTags("Areas")
-                .Produces<AddNewAreaResponse>(StatusCodes.Status201Created)
+                .Produces<UpdateAreaByCodeResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Adds a new residential area to the system.")
-                .WithDescription("This endpoint allows clients to add a new residential area by providing the necessary details such as name, location, and status.");
+                .WithSummary("Updates a residential area by its code.");
         }
     }
 }

@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
+using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
-namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
+namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
 {
-    public record AddNewAreaRequest(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, String Status);
+    public record UpdateAreaByIdRequest(Guid Id, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status);
+    public record UpdateAreaByIdResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status);
 
-    public record AddNewAreaResponse(Guid Id, string Name,long Code);
 
-
-    public  class AddNewAreaRequestValidator : AbstractValidator<AddNewAreaRequest>
+    public class UpdateAreaByIdValidator : AbstractValidator<UpdateAreaByIdRequest>
     {
-
         private readonly ILocationValidator _locationValidator;
-        public AddNewAreaRequestValidator(ILocationValidator locationValidator)
+        public UpdateAreaByIdValidator(ILocationValidator locationValidator)
         {
             _locationValidator = locationValidator;
             RuleFor(x => x.Name).NotEmpty().WithMessage("The area name is required.")
@@ -33,42 +33,37 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
     }
 
 
-    public class AddNewAreaEndpoints : ICarterModule
+
+    public class UpdateAreaByIdEndpoints : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas", async (AddNewAreaRequest request, ISender sender,[FromServices] IValidator<AddNewAreaRequest> validator) =>
+            app.MapPost("/areas/update-by-id", async (UpdateAreaByIdRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByIdRequest> validator) =>
             {
-               var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request);
+
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
-
-                var command = request.Adapt<AddNewAreaCommand>();
+                var command = request.Adapt<UpdateAreaByIdCommand>();
                 var result = await sender.Send(command);
-                var response = result.Adapt<AddNewAreaResponse>();
+
+                var response = result.Adapt<UpdateAreaByIdResponse>();
 
                 if(response == null)
                 {
-                    return Results.Problem("An error occurred while creating the area.", statusCode: StatusCodes.Status500InternalServerError);
-                }
-                
-                if(response.Id == Guid.Empty)
-                {
-                    return Results.Problem("Failed to create the area. Please check the provided data and try again.", statusCode: StatusCodes.Status400BadRequest);
+                    return Results.NotFound("The area with the specified ID was not found.");
                 }
 
-                return Results.Created($"/areas/{response!.Id}", response);
-
+                return Results.Ok(response);
             })
-                .WithName("AddNewArea")
+                .WithName("UpdateAreaById")
                 .WithTags("Areas")
-                .Produces<AddNewAreaResponse>(StatusCodes.Status201Created)
+                .Produces<UpdateAreaByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Adds a new residential area to the system.")
-                .WithDescription("This endpoint allows clients to add a new residential area by providing the necessary details such as name, location, and status.");
+                .WithSummary("Updates a residential area by its ID.");
         }
     }
 }
