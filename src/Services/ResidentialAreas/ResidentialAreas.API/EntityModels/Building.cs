@@ -16,10 +16,9 @@
         [ForeignKey(nameof(AreaId))]
         public Area? Area { get; set; }
 
-        
-        [Required(ErrorMessage = "The building code is required.")]
-        [StringLength(30, ErrorMessage = "The building code cannot exceed 30 characters.")]
-        public string? Code { get; set; } = string.Empty;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Code { get; set; }
 
 
         [Required(ErrorMessage = "The building name is required.")]

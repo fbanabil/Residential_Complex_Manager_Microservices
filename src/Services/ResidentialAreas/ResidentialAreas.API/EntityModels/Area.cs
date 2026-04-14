@@ -8,12 +8,11 @@
     {
         [Key]
         [Required(ErrorMessage = "The Area ID is required.")]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
 
-        [Required(ErrorMessage = "The area code is required.")]
-        [StringLength(30, ErrorMessage = "The area code cannot exceed 30 characters.")]
-        public string? Code { get; set; } = string.Empty;
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Code { get; set; }
 
         
         [Required(ErrorMessage = "The area name is required.")]

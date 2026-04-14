@@ -4,7 +4,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 {
     public record AddNewAreaRequest(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, String Status);
 
-    public record AddNewAreaResponse(Guid Id, string Name,string Code);
+    public record AddNewAreaResponse(Guid Id, string Name,long Code);
 
 
     public  class AddNewAreaRequestValidator : AbstractValidator<AddNewAreaRequest>

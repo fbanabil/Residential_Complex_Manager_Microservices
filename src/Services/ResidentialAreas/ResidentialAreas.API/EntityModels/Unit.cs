@@ -22,9 +22,8 @@
         public string UnitNo { get; set; } = string.Empty;
 
 
-        [Required(ErrorMessage = "The unit code is required.")]
-        [StringLength(20, ErrorMessage = "The unit code cannot exceed 20 characters.")]
-        public string? Code { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Code { get; set; }
 
 
         [Required(ErrorMessage = "The floor number is required.")]

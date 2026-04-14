@@ -11,4 +11,4 @@ global using MediatR;
 global using FluentValidation;
 global using Mapster;
 global using ResidentialAreas.API.Helpers.LocationValidator;
-
+global using CQRSPattern.CQRS;

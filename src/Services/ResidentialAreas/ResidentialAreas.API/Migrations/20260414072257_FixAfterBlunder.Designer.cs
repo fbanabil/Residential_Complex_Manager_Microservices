@@ -12,8 +12,8 @@ using ResidentialAreas.API.AppDbContext;
 namespace ResidentialAreas.API.Migrations
 {
     [DbContext(typeof(AreaDbContext))]
-    [Migration("20260413094308_ImageIndexUniqueFix")]
-    partial class ImageIndexUniqueFix
+    [Migration("20260414072257_FixAfterBlunder")]
+    partial class FixAfterBlunder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,7 +27,7 @@ namespace ResidentialAreas.API.Migrations
 
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.Area", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -39,10 +39,12 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<long>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Code"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Code"), 1000000000L, null, null, null, null, null);
 
                     b.Property<string>("Country")
                         .IsRequired()
@@ -95,7 +97,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0001-0001-0001-000000000001"),
                             Address = "Road 1, Sector 2, Dhaka",
                             City = "Dhaka",
-                            Code = "AREA-DHA-001",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 1, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.355, 23.705], [90.357, 23.705], [90.357, 23.707], [90.355, 23.707], [90.355, 23.705]]]}",
@@ -110,7 +112,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0002-0002-0002-000000000002"),
                             Address = "Road 2, Sector 3, Chattogram",
                             City = "Chattogram",
-                            Code = "AREA-CHA-002",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 2, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.36, 23.71], [90.362, 23.71], [90.362, 23.712], [90.36, 23.712], [90.36, 23.71]]]}",
@@ -125,7 +127,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0003-0003-0003-000000000003"),
                             Address = "Road 3, Sector 4, Khulna",
                             City = "Khulna",
-                            Code = "AREA-KHU-003",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 3, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.365, 23.715], [90.367, 23.715], [90.367, 23.717], [90.365, 23.717], [90.365, 23.715]]]}",
@@ -140,7 +142,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0004-0004-0004-000000000004"),
                             Address = "Road 4, Sector 5, Rajshahi",
                             City = "Rajshahi",
-                            Code = "AREA-RAJ-004",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 4, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.37, 23.72], [90.372, 23.72], [90.372, 23.722], [90.37, 23.722], [90.37, 23.72]]]}",
@@ -155,7 +157,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0005-0005-0005-000000000005"),
                             Address = "Road 5, Sector 6, Sylhet",
                             City = "Sylhet",
-                            Code = "AREA-SYL-005",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 5, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.375, 23.725], [90.377, 23.725], [90.377, 23.727], [90.375, 23.727], [90.375, 23.725]]]}",
@@ -170,7 +172,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0006-0006-0006-000000000006"),
                             Address = "Road 6, Sector 7, Dhaka",
                             City = "Dhaka",
-                            Code = "AREA-DHA-006",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 6, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.38, 23.73], [90.382, 23.73], [90.382, 23.732], [90.38, 23.732], [90.38, 23.73]]]}",
@@ -185,7 +187,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0007-0007-0007-000000000007"),
                             Address = "Road 7, Sector 8, Chattogram",
                             City = "Chattogram",
-                            Code = "AREA-CHA-007",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 7, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.385, 23.735], [90.387, 23.735], [90.387, 23.737], [90.385, 23.737], [90.385, 23.735]]]}",
@@ -200,7 +202,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0008-0008-0008-000000000008"),
                             Address = "Road 8, Sector 1, Khulna",
                             City = "Khulna",
-                            Code = "AREA-KHU-008",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 8, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.39, 23.74], [90.392, 23.74], [90.392, 23.742], [90.39, 23.742], [90.39, 23.74]]]}",
@@ -215,7 +217,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0009-0009-0009-000000000009"),
                             Address = "Road 9, Sector 2, Rajshahi",
                             City = "Rajshahi",
-                            Code = "AREA-RAJ-009",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 9, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.395, 23.745], [90.397, 23.745], [90.397, 23.747], [90.395, 23.747], [90.395, 23.745]]]}",
@@ -230,7 +232,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0010-0010-0010-000000000010"),
                             Address = "Road 10, Sector 3, Sylhet",
                             City = "Sylhet",
-                            Code = "AREA-SYL-010",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 10, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.4, 23.75], [90.402, 23.75], [90.402, 23.752], [90.4, 23.752], [90.4, 23.75]]]}",
@@ -245,7 +247,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0011-0011-0011-000000000011"),
                             Address = "Road 11, Sector 4, Dhaka",
                             City = "Dhaka",
-                            Code = "AREA-DHA-011",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 11, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.405, 23.755], [90.407, 23.755], [90.407, 23.757], [90.405, 23.757], [90.405, 23.755]]]}",
@@ -260,7 +262,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0012-0012-0012-000000000012"),
                             Address = "Road 12, Sector 5, Chattogram",
                             City = "Chattogram",
-                            Code = "AREA-CHA-012",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 12, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.41, 23.76], [90.412, 23.76], [90.412, 23.762], [90.41, 23.762], [90.41, 23.76]]]}",
@@ -275,7 +277,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0013-0013-0013-000000000013"),
                             Address = "Road 13, Sector 6, Khulna",
                             City = "Khulna",
-                            Code = "AREA-KHU-013",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 13, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.415, 23.765], [90.417, 23.765], [90.417, 23.767], [90.415, 23.767], [90.415, 23.765]]]}",
@@ -290,7 +292,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0014-0014-0014-000000000014"),
                             Address = "Road 14, Sector 7, Rajshahi",
                             City = "Rajshahi",
-                            Code = "AREA-RAJ-014",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 14, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.42, 23.77], [90.422, 23.77], [90.422, 23.772], [90.42, 23.772], [90.42, 23.77]]]}",
@@ -305,7 +307,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0015-0015-0015-000000000015"),
                             Address = "Road 15, Sector 8, Sylhet",
                             City = "Sylhet",
-                            Code = "AREA-SYL-015",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 15, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.425, 23.775], [90.427, 23.775], [90.427, 23.777], [90.425, 23.777], [90.425, 23.775]]]}",
@@ -320,7 +322,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0016-0016-0016-000000000016"),
                             Address = "Road 16, Sector 1, Dhaka",
                             City = "Dhaka",
-                            Code = "AREA-DHA-016",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 16, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.43, 23.78], [90.432, 23.78], [90.432, 23.782], [90.43, 23.782], [90.43, 23.78]]]}",
@@ -335,7 +337,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0017-0017-0017-000000000017"),
                             Address = "Road 17, Sector 2, Chattogram",
                             City = "Chattogram",
-                            Code = "AREA-CHA-017",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 17, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.435, 23.785], [90.437, 23.785], [90.437, 23.787], [90.435, 23.787], [90.435, 23.785]]]}",
@@ -350,7 +352,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0018-0018-0018-000000000018"),
                             Address = "Road 18, Sector 3, Khulna",
                             City = "Khulna",
-                            Code = "AREA-KHU-018",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 18, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.44, 23.79], [90.442, 23.79], [90.442, 23.792], [90.44, 23.792], [90.44, 23.79]]]}",
@@ -365,7 +367,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0019-0019-0019-000000000019"),
                             Address = "Road 19, Sector 4, Rajshahi",
                             City = "Rajshahi",
-                            Code = "AREA-RAJ-019",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 19, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.445, 23.795], [90.447, 23.795], [90.447, 23.797], [90.445, 23.797], [90.445, 23.795]]]}",
@@ -380,7 +382,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("11111111-0020-0020-0020-000000000020"),
                             Address = "Road 20, Sector 5, Sylhet",
                             City = "Sylhet",
-                            Code = "AREA-SYL-020",
+                            Code = 0L,
                             Country = "Bangladesh",
                             CreatedAt = new DateTime(2026, 4, 12, 9, 20, 0, 0, DateTimeKind.Utc),
                             GeoBoundary = "{\"type\": \"Polygon\", \"coordinates\": [[[90.45, 23.8], [90.452, 23.8], [90.452, 23.802], [90.45, 23.802], [90.45, 23.8]]]}",
@@ -410,10 +412,12 @@ namespace ResidentialAreas.API.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                    b.Property<long>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Code"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Code"), 2000000000L, null, null, null, null, null);
 
                     b.Property<DateTime?>("CreatedAt")
                         .IsRequired()
@@ -452,7 +456,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 1, Dhaka Residential Area 1",
                             AreaId = new Guid("11111111-0001-0001-0001-000000000001"),
                             BlockNo = "A",
-                            Code = "BLD-DHA-001",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 51, 0, 0, DateTimeKind.Utc),
                             Name = "Dhaka Tower 1",
                             Status = "Active",
@@ -465,7 +469,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 2, Chattogram Residential Area 2",
                             AreaId = new Guid("11111111-0002-0002-0002-000000000002"),
                             BlockNo = "B",
-                            Code = "BLD-CHA-002",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 52, 0, 0, DateTimeKind.Utc),
                             Name = "Chattogram Tower 2",
                             Status = "Active",
@@ -478,7 +482,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 3, Khulna Residential Area 3",
                             AreaId = new Guid("11111111-0003-0003-0003-000000000003"),
                             BlockNo = "C",
-                            Code = "BLD-KHU-003",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 53, 0, 0, DateTimeKind.Utc),
                             Name = "Khulna Tower 3",
                             Status = "Active",
@@ -491,7 +495,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 4, Rajshahi Residential Area 4",
                             AreaId = new Guid("11111111-0004-0004-0004-000000000004"),
                             BlockNo = "D",
-                            Code = "BLD-RAJ-004",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 54, 0, 0, DateTimeKind.Utc),
                             Name = "Rajshahi Tower 4",
                             Status = "Active",
@@ -504,7 +508,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 5, Sylhet Residential Area 5",
                             AreaId = new Guid("11111111-0005-0005-0005-000000000005"),
                             BlockNo = "E",
-                            Code = "BLD-SYL-005",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 55, 0, 0, DateTimeKind.Utc),
                             Name = "Sylhet Tower 5",
                             Status = "Active",
@@ -517,7 +521,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 6, Dhaka Residential Area 6",
                             AreaId = new Guid("11111111-0006-0006-0006-000000000006"),
                             BlockNo = "A",
-                            Code = "BLD-DHA-006",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 56, 0, 0, DateTimeKind.Utc),
                             Name = "Dhaka Tower 6",
                             Status = "Active",
@@ -530,7 +534,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 7, Chattogram Residential Area 7",
                             AreaId = new Guid("11111111-0007-0007-0007-000000000007"),
                             BlockNo = "B",
-                            Code = "BLD-CHA-007",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 57, 0, 0, DateTimeKind.Utc),
                             Name = "Chattogram Tower 7",
                             Status = "Active",
@@ -543,7 +547,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 8, Khulna Residential Area 8",
                             AreaId = new Guid("11111111-0008-0008-0008-000000000008"),
                             BlockNo = "C",
-                            Code = "BLD-KHU-008",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 58, 0, 0, DateTimeKind.Utc),
                             Name = "Khulna Tower 8",
                             Status = "Active",
@@ -556,7 +560,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 9, Rajshahi Residential Area 9",
                             AreaId = new Guid("11111111-0009-0009-0009-000000000009"),
                             BlockNo = "D",
-                            Code = "BLD-RAJ-009",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 9, 59, 0, 0, DateTimeKind.Utc),
                             Name = "Rajshahi Tower 9",
                             Status = "Active",
@@ -569,7 +573,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 10, Sylhet Residential Area 10",
                             AreaId = new Guid("11111111-0010-0010-0010-000000000010"),
                             BlockNo = "E",
-                            Code = "BLD-SYL-010",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Sylhet Tower 10",
                             Status = "Active",
@@ -582,7 +586,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 11, Dhaka Residential Area 11",
                             AreaId = new Guid("11111111-0011-0011-0011-000000000011"),
                             BlockNo = "A",
-                            Code = "BLD-DHA-011",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 1, 0, 0, DateTimeKind.Utc),
                             Name = "Dhaka Tower 11",
                             Status = "Active",
@@ -595,7 +599,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 12, Chattogram Residential Area 12",
                             AreaId = new Guid("11111111-0012-0012-0012-000000000012"),
                             BlockNo = "B",
-                            Code = "BLD-CHA-012",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 2, 0, 0, DateTimeKind.Utc),
                             Name = "Chattogram Tower 12",
                             Status = "Active",
@@ -608,7 +612,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 13, Khulna Residential Area 13",
                             AreaId = new Guid("11111111-0013-0013-0013-000000000013"),
                             BlockNo = "C",
-                            Code = "BLD-KHU-013",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 3, 0, 0, DateTimeKind.Utc),
                             Name = "Khulna Tower 13",
                             Status = "Active",
@@ -621,7 +625,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 14, Rajshahi Residential Area 14",
                             AreaId = new Guid("11111111-0014-0014-0014-000000000014"),
                             BlockNo = "D",
-                            Code = "BLD-RAJ-014",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 4, 0, 0, DateTimeKind.Utc),
                             Name = "Rajshahi Tower 14",
                             Status = "Active",
@@ -634,7 +638,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 15, Sylhet Residential Area 15",
                             AreaId = new Guid("11111111-0015-0015-0015-000000000015"),
                             BlockNo = "E",
-                            Code = "BLD-SYL-015",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 5, 0, 0, DateTimeKind.Utc),
                             Name = "Sylhet Tower 15",
                             Status = "Active",
@@ -647,7 +651,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 16, Dhaka Residential Area 16",
                             AreaId = new Guid("11111111-0016-0016-0016-000000000016"),
                             BlockNo = "A",
-                            Code = "BLD-DHA-016",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 6, 0, 0, DateTimeKind.Utc),
                             Name = "Dhaka Tower 16",
                             Status = "Active",
@@ -660,7 +664,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 17, Chattogram Residential Area 17",
                             AreaId = new Guid("11111111-0017-0017-0017-000000000017"),
                             BlockNo = "B",
-                            Code = "BLD-CHA-017",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 7, 0, 0, DateTimeKind.Utc),
                             Name = "Chattogram Tower 17",
                             Status = "Active",
@@ -673,7 +677,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 18, Khulna Residential Area 18",
                             AreaId = new Guid("11111111-0018-0018-0018-000000000018"),
                             BlockNo = "C",
-                            Code = "BLD-KHU-018",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 8, 0, 0, DateTimeKind.Utc),
                             Name = "Khulna Tower 18",
                             Status = "Active",
@@ -686,7 +690,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 19, Rajshahi Residential Area 19",
                             AreaId = new Guid("11111111-0019-0019-0019-000000000019"),
                             BlockNo = "D",
-                            Code = "BLD-RAJ-019",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 9, 0, 0, DateTimeKind.Utc),
                             Name = "Rajshahi Tower 19",
                             Status = "Active",
@@ -699,7 +703,7 @@ namespace ResidentialAreas.API.Migrations
                             Address = "Building 20, Sylhet Residential Area 20",
                             AreaId = new Guid("11111111-0020-0020-0020-000000000020"),
                             BlockNo = "E",
-                            Code = "BLD-SYL-020",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 10, 0, 0, DateTimeKind.Utc),
                             Name = "Sylhet Tower 20",
                             Status = "Active",
@@ -1048,9 +1052,8 @@ namespace ResidentialAreas.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("Code")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ImageType")
                         .IsRequired()
@@ -1070,140 +1073,140 @@ namespace ResidentialAreas.API.Migrations
                         new
                         {
                             Id = new Guid("55555555-0001-0001-0001-000000000001"),
-                            Code = "AREA-DHA-001",
+                            Code = 1000000000L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-dha-001.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0002-0002-0002-000000000002"),
-                            Code = "BLD-CHA-002",
+                            Code = 2000000001L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-cha-002.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0003-0003-0003-000000000003"),
-                            Code = "UNIT-KHU-003",
+                            Code = 4000000003L,
                             ImageType = "Unit",
                             Url = "https://example.com/images/unit/unit-khu-003.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0004-0004-0004-000000000004"),
-                            Code = "AREA-RAJ-004",
+                            Code = 1000000000L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-raj-004.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0005-0005-0005-000000000005"),
-                            Code = "BLD-SYL-005",
+                            Code = 2000000003L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-syl-005.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0006-0006-0006-000000000006"),
-                            Code = "UNIT-DHA-006",
+                            Code = 4000000002L,
                             ImageType = "Unit",
                             Url = "https://example.com/images/unit/unit-dha-006.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0007-0007-0007-000000000007"),
-                            Code = "AREA-CHA-007",
+                            Code = 1000000003L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-cha-007.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0008-0008-0008-000000000008"),
-                            Code = "BLD-KHU-008",
+                            Code = 2000000008L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-khu-008.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0009-0009-0009-000000000009"),
-                            Code = "UNIT-RAJ-009",
+                            Code = 4000000004L,
                             ImageType = "Unit",
                             Url = "https://example.com/images/unit/unit-raj-009.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0010-0010-0010-000000000010"),
-                            Code = "AREA-SYL-010",
+                            Code = 1000000004L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-syl-010.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0011-0011-0011-000000000011"),
-                            Code = "BLD-DHA-011",
+                            Code = 2000000011L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-dha-011.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0012-0012-0012-000000000012"),
-                            Code = "UNIT-CHA-012",
+                            Code = 4000000005L,
                             ImageType = "Unit",
                             Url = "https://example.com/images/unit/unit-cha-012.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0013-0013-0013-000000000013"),
-                            Code = "AREA-KHU-013",
+                            Code = 1000000001L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-khu-013.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0014-0014-0014-000000000014"),
-                            Code = "BLD-RAJ-014",
+                            Code = 2000000002L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-raj-014.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0015-0015-0015-000000000015"),
-                            Code = "UNIT-SYL-015",
+                            Code = 4000000003L,
                             ImageType = "Unit",
                             Url = "https://example.com/images/unit/unit-syl-015.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0016-0016-0016-000000000016"),
-                            Code = "AREA-DHA-016",
+                            Code = 1000000004L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-dha-016.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0017-0017-0017-000000000017"),
-                            Code = "BLD-CHA-017",
+                            Code = 2000000005L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-cha-017.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0018-0018-0018-000000000018"),
-                            Code = "UNIT-KHU-018",
+                            Code = 4000000007L,
                             ImageType = "Unit",
                             Url = "https://example.com/images/unit/unit-khu-018.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0019-0019-0019-000000000019"),
-                            Code = "AREA-RAJ-019",
+                            Code = 1000000007L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-raj-019.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0020-0020-0020-000000000020"),
-                            Code = "BLD-SYL-020",
+                            Code = 2000000011L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-syl-020.jpg"
                         });
@@ -1225,10 +1228,12 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("SlotCode")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<long>("SlotCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("SlotCode"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("SlotCode"), 3000000000L, null, null, null, null, null);
 
                     b.Property<string>("SlotType")
                         .IsRequired()
@@ -1264,7 +1269,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0001-0001-0001-000000000001"),
                             BuildingId = new Guid("22222222-0001-0001-0001-000000000001"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 21, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-001",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0001-0001-0001-000000000001"),
@@ -1275,7 +1280,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0002-0002-0002-000000000002"),
                             BuildingId = new Guid("22222222-0002-0002-0002-000000000002"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 22, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-002",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0002-0002-0002-000000000002"),
@@ -1286,7 +1291,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0003-0003-0003-000000000003"),
                             BuildingId = new Guid("22222222-0003-0003-0003-000000000003"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 23, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-003",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0003-0003-0003-000000000003"),
@@ -1297,7 +1302,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0004-0004-0004-000000000004"),
                             BuildingId = new Guid("22222222-0004-0004-0004-000000000004"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 24, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-004",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0004-0004-0004-000000000004"),
@@ -1308,7 +1313,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0005-0005-0005-000000000005"),
                             BuildingId = new Guid("22222222-0005-0005-0005-000000000005"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 25, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-005",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0005-0005-0005-000000000005"),
@@ -1319,7 +1324,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0006-0006-0006-000000000006"),
                             BuildingId = new Guid("22222222-0006-0006-0006-000000000006"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 26, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-006",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0006-0006-0006-000000000006"),
@@ -1330,7 +1335,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0007-0007-0007-000000000007"),
                             BuildingId = new Guid("22222222-0007-0007-0007-000000000007"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 27, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-007",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0007-0007-0007-000000000007"),
@@ -1341,7 +1346,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0008-0008-0008-000000000008"),
                             BuildingId = new Guid("22222222-0008-0008-0008-000000000008"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 28, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-008",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0008-0008-0008-000000000008"),
@@ -1352,7 +1357,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0009-0009-0009-000000000009"),
                             BuildingId = new Guid("22222222-0009-0009-0009-000000000009"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 29, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-009",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0009-0009-0009-000000000009"),
@@ -1363,7 +1368,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0010-0010-0010-000000000010"),
                             BuildingId = new Guid("22222222-0010-0010-0010-000000000010"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 30, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-010",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0010-0010-0010-000000000010"),
@@ -1374,7 +1379,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0011-0011-0011-000000000011"),
                             BuildingId = new Guid("22222222-0011-0011-0011-000000000011"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 31, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-011",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0011-0011-0011-000000000011"),
@@ -1385,7 +1390,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0012-0012-0012-000000000012"),
                             BuildingId = new Guid("22222222-0012-0012-0012-000000000012"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 32, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-012",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0012-0012-0012-000000000012"),
@@ -1396,7 +1401,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0013-0013-0013-000000000013"),
                             BuildingId = new Guid("22222222-0013-0013-0013-000000000013"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 33, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-013",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0013-0013-0013-000000000013"),
@@ -1407,7 +1412,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0014-0014-0014-000000000014"),
                             BuildingId = new Guid("22222222-0014-0014-0014-000000000014"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 34, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-014",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0014-0014-0014-000000000014"),
@@ -1418,7 +1423,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0015-0015-0015-000000000015"),
                             BuildingId = new Guid("22222222-0015-0015-0015-000000000015"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 35, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-015",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0015-0015-0015-000000000015"),
@@ -1429,7 +1434,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0016-0016-0016-000000000016"),
                             BuildingId = new Guid("22222222-0016-0016-0016-000000000016"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 36, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-016",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0016-0016-0016-000000000016"),
@@ -1440,7 +1445,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0017-0017-0017-000000000017"),
                             BuildingId = new Guid("22222222-0017-0017-0017-000000000017"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 37, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-017",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0017-0017-0017-000000000017"),
@@ -1451,7 +1456,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0018-0018-0018-000000000018"),
                             BuildingId = new Guid("22222222-0018-0018-0018-000000000018"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 38, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-018",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0018-0018-0018-000000000018"),
@@ -1462,7 +1467,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0019-0019-0019-000000000019"),
                             BuildingId = new Guid("22222222-0019-0019-0019-000000000019"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 39, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-019",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0019-0019-0019-000000000019"),
@@ -1473,7 +1478,7 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("66666666-0020-0020-0020-000000000020"),
                             BuildingId = new Guid("22222222-0020-0020-0020-000000000020"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 40, 0, 0, DateTimeKind.Utc),
-                            SlotCode = "PS-020",
+                            SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
                             UnitId = new Guid("33333333-0020-0020-0020-000000000020"),
@@ -1499,10 +1504,12 @@ namespace ResidentialAreas.API.Migrations
                     b.Property<Guid>("BuildingId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<long>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Code"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Code"), 4000000000L, null, null, null, null, null);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -1548,7 +1555,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 2,
                             BuildingId = new Guid("22222222-0001-0001-0001-000000000001"),
-                            Code = "UNIT-DHA-001",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 41, 0, 0, DateTimeKind.Utc),
                             FloorNo = 2,
                             OccupancyStatus = "Vacant",
@@ -1564,7 +1571,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 3,
                             BuildingId = new Guid("22222222-0002-0002-0002-000000000002"),
-                            Code = "UNIT-CHA-002",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 42, 0, 0, DateTimeKind.Utc),
                             FloorNo = 3,
                             OccupancyStatus = "Occupied",
@@ -1580,7 +1587,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 1,
                             Bedrooms = 4,
                             BuildingId = new Guid("22222222-0003-0003-0003-000000000003"),
-                            Code = "UNIT-KHU-003",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 43, 0, 0, DateTimeKind.Utc),
                             FloorNo = 4,
                             OccupancyStatus = "Reserved",
@@ -1596,7 +1603,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 1,
                             BuildingId = new Guid("22222222-0004-0004-0004-000000000004"),
-                            Code = "UNIT-RAJ-004",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 44, 0, 0, DateTimeKind.Utc),
                             FloorNo = 5,
                             OccupancyStatus = "Maintenance",
@@ -1612,7 +1619,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 2,
                             BuildingId = new Guid("22222222-0005-0005-0005-000000000005"),
-                            Code = "UNIT-SYL-005",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 45, 0, 0, DateTimeKind.Utc),
                             FloorNo = 6,
                             OccupancyStatus = "Vacant",
@@ -1628,7 +1635,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 1,
                             Bedrooms = 3,
                             BuildingId = new Guid("22222222-0006-0006-0006-000000000006"),
-                            Code = "UNIT-DHA-006",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 46, 0, 0, DateTimeKind.Utc),
                             FloorNo = 7,
                             OccupancyStatus = "Occupied",
@@ -1644,7 +1651,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 4,
                             BuildingId = new Guid("22222222-0007-0007-0007-000000000007"),
-                            Code = "UNIT-CHA-007",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 47, 0, 0, DateTimeKind.Utc),
                             FloorNo = 8,
                             OccupancyStatus = "Reserved",
@@ -1660,7 +1667,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 1,
                             BuildingId = new Guid("22222222-0008-0008-0008-000000000008"),
-                            Code = "UNIT-KHU-008",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 48, 0, 0, DateTimeKind.Utc),
                             FloorNo = 9,
                             OccupancyStatus = "Maintenance",
@@ -1676,7 +1683,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 1,
                             Bedrooms = 2,
                             BuildingId = new Guid("22222222-0009-0009-0009-000000000009"),
-                            Code = "UNIT-RAJ-009",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 49, 0, 0, DateTimeKind.Utc),
                             FloorNo = 10,
                             OccupancyStatus = "Vacant",
@@ -1692,7 +1699,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 3,
                             BuildingId = new Guid("22222222-0010-0010-0010-000000000010"),
-                            Code = "UNIT-SYL-010",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 50, 0, 0, DateTimeKind.Utc),
                             FloorNo = 11,
                             OccupancyStatus = "Occupied",
@@ -1708,7 +1715,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 4,
                             BuildingId = new Guid("22222222-0011-0011-0011-000000000011"),
-                            Code = "UNIT-DHA-011",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 51, 0, 0, DateTimeKind.Utc),
                             FloorNo = 12,
                             OccupancyStatus = "Reserved",
@@ -1724,7 +1731,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 1,
                             Bedrooms = 1,
                             BuildingId = new Guid("22222222-0012-0012-0012-000000000012"),
-                            Code = "UNIT-CHA-012",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 52, 0, 0, DateTimeKind.Utc),
                             FloorNo = 1,
                             OccupancyStatus = "Maintenance",
@@ -1740,7 +1747,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 2,
                             BuildingId = new Guid("22222222-0013-0013-0013-000000000013"),
-                            Code = "UNIT-KHU-013",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 53, 0, 0, DateTimeKind.Utc),
                             FloorNo = 2,
                             OccupancyStatus = "Vacant",
@@ -1756,7 +1763,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 3,
                             BuildingId = new Guid("22222222-0014-0014-0014-000000000014"),
-                            Code = "UNIT-RAJ-014",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 54, 0, 0, DateTimeKind.Utc),
                             FloorNo = 3,
                             OccupancyStatus = "Occupied",
@@ -1772,7 +1779,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 1,
                             Bedrooms = 4,
                             BuildingId = new Guid("22222222-0015-0015-0015-000000000015"),
-                            Code = "UNIT-SYL-015",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 55, 0, 0, DateTimeKind.Utc),
                             FloorNo = 4,
                             OccupancyStatus = "Reserved",
@@ -1788,7 +1795,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 1,
                             BuildingId = new Guid("22222222-0016-0016-0016-000000000016"),
-                            Code = "UNIT-DHA-016",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 56, 0, 0, DateTimeKind.Utc),
                             FloorNo = 5,
                             OccupancyStatus = "Maintenance",
@@ -1804,7 +1811,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 2,
                             BuildingId = new Guid("22222222-0017-0017-0017-000000000017"),
-                            Code = "UNIT-CHA-017",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 57, 0, 0, DateTimeKind.Utc),
                             FloorNo = 6,
                             OccupancyStatus = "Vacant",
@@ -1820,7 +1827,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 1,
                             Bedrooms = 3,
                             BuildingId = new Guid("22222222-0018-0018-0018-000000000018"),
-                            Code = "UNIT-KHU-018",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 58, 0, 0, DateTimeKind.Utc),
                             FloorNo = 7,
                             OccupancyStatus = "Occupied",
@@ -1836,7 +1843,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 2,
                             Bedrooms = 4,
                             BuildingId = new Guid("22222222-0019-0019-0019-000000000019"),
-                            Code = "UNIT-RAJ-019",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 10, 59, 0, 0, DateTimeKind.Utc),
                             FloorNo = 8,
                             OccupancyStatus = "Reserved",
@@ -1852,7 +1859,7 @@ namespace ResidentialAreas.API.Migrations
                             Bathrooms = 3,
                             Bedrooms = 1,
                             BuildingId = new Guid("22222222-0020-0020-0020-000000000020"),
-                            Code = "UNIT-SYL-020",
+                            Code = 0L,
                             CreatedAt = new DateTime(2026, 4, 12, 11, 0, 0, 0, DateTimeKind.Utc),
                             FloorNo = 9,
                             OccupancyStatus = "Maintenance",

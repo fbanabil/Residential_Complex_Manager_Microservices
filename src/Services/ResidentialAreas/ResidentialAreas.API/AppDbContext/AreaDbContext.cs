@@ -19,6 +19,31 @@ namespace ResidentialAreas.API.AppDbContext
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Area>()
+                .Property(a => a.Code)
+                .UseIdentityByDefaultColumn()
+                .HasIdentityOptions(startValue: 1000000000);
+
+
+
+            modelBuilder.Entity<Building>()
+                .Property(b => b.Code)
+                .UseIdentityByDefaultColumn()
+                .HasIdentityOptions(startValue: 2000000000);
+
+
+            modelBuilder.Entity<ParkingSlot>()
+                .Property(p => p.SlotCode)
+                .UseIdentityByDefaultColumn()
+                .HasIdentityOptions(startValue: 3000000000);
+
+
+            modelBuilder.Entity<EntityModels.Unit>()
+                .Property(u => u.Code)
+                .UseIdentityByDefaultColumn()
+                .HasIdentityOptions(startValue: 4000000000);
+
+
+            modelBuilder.Entity<Area>()
                 .Property(a=>a.Status)
                 .HasConversion<string>();
             

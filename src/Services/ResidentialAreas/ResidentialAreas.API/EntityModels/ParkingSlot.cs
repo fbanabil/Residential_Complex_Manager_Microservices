@@ -27,10 +27,9 @@ namespace ResidentialAreas.API.EntityModels
         [ForeignKey(nameof(UnitId))]
         public Unit? Unit { get; set; }
 
-        
-        [Required(ErrorMessage = "The slot code is required.")]
-        [StringLength(20, ErrorMessage = "The slot code cannot exceed 20 characters.")]
-        public string? SlotCode { get; set; } = string.Empty;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long SlotCode { get; set; }
 
         
         [Required(ErrorMessage = "The slot type is required.")]

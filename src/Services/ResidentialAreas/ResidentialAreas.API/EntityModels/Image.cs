@@ -15,7 +15,7 @@
 
 
         [Required(ErrorMessage = "The image code is required.")]
-        public string? Code { get; set; }
+        public long Code { get; set; }
 
 
         [Required(ErrorMessage = "The image URL is required.")]
