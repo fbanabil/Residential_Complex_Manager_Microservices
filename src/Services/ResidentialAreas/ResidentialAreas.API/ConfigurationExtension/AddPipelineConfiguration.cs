@@ -4,11 +4,12 @@
     {
         public static async Task AddCustomPipeline(this WebApplication app)
         {
+            app.UseStaticFiles();
+            app.UseHsts();
+            app.UseHttpsRedirection();
+
             using (var scope = app.Services.CreateScope())
             {
-
-                app.UseStaticFiles();
-
                 var services = scope.ServiceProvider;
                 try
                 {
@@ -31,8 +32,6 @@
                 });
 
             }
-
-            // Configure the HTTP request pipeline.
             app.MapCarter();
         }
     }

@@ -39,7 +39,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
 
             if (area == null)
             {
-                _logger.LogWarning("Area with ID {Id} not found.", request.Id);
+                _logger.LogWarning("Area with Code {Code} not found.", request.Code);
                 return null;
             }
 
