@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
 {
-    public record GetAreaByCodeResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt);
+    public record GetAreaByCodeResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt, List<string?>? ImageUrls);
 
 
     public class GetAreaByCodeRequestValidator : AbstractValidator<long>
@@ -19,14 +20,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/code/{code:long}", async (long code, ISender sender, [FromServices] IValidator<long> validator) =>
+            app.MapGet("/areas/code/{code:long}", async (HttpContext httpContext, long code, ISender sender, [FromServices] IValidator<long> validator) =>
             {
                 var validationResult = await validator.ValidateAsync(code);
                 if (!validationResult.IsValid)
                 {
                     return Results.BadRequest(validationResult.ToDictionary());
                 }
-
 
                 var query = new GetAreaByCodeQuery(code);
                 var result = await sender.Send(query);
@@ -37,6 +37,15 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
                 }
 
                 var response = result.Adapt<GetAreaByCodeResponse>();
+
+                string baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
+
+                response = response with
+                {
+                    ImageUrls = response.ImageUrls?.Select(url => $"{baseUrl}/{url}").ToList()
+                };
+
+
                 return Results.Ok(response);
             })
                 .WithName("GetAreaByCode")

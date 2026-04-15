@@ -2,7 +2,7 @@
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 {
-    public record AddNewAreaCommand(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, string ImageBase64) : ICommand<AddNewAreaResult>;
+    public record AddNewAreaCommand(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? ImageBase64) : ICommand<AddNewAreaResult>;
 
     public record AddNewAreaResult(Guid Id, string Name, long Code);
     public class AddNewAreaHandler : ICommandHandler<AddNewAreaCommand, AddNewAreaResult>
@@ -16,16 +16,36 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
         }
         public async Task<AddNewAreaResult> Handle(AddNewAreaCommand request, CancellationToken cancellationToken)
         {
-            string imagePath= string.Empty;
-            try
+            List<string?>? imageBase64List = request.ImageBase64;
+            string imagePath = string.Empty;
+
+            List<string?>? imagePathToAdd = new List<string?>();
+
+            if (imageBase64List != null)
             {
-                imagePath = await _imageSaver.SaveImageAsync(request.ImageBase64, "wwwroot/images/areas");
+                foreach (var imageBase64 in imageBase64List)
+                {
+                    if (string.IsNullOrEmpty(imageBase64))
+                    {
+                        continue; 
+                    }
+
+                    try
+                    {
+                        imagePath = await _imageSaver.SaveImageAsync(imageBase64, "wwwroot/images/areas");
+                    }
+                    catch (Exception ex)
+                    {
+                        imagePath = "images/default.jpg";
+                        Console.WriteLine($"Error saving image: {ex.Message}");
+                    }
+
+                    imagePathToAdd.Add(imagePath);
+
+                }
             }
-            catch (Exception ex)
-            {
-                imagePath = "images/default.jpg";
-                Console.WriteLine($"Error saving image: {ex.Message}");
-            }
+
+            
 
             Area newArea = new Area
             {
@@ -44,15 +64,18 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 
             _areaDbContext.Areas.Add(newArea);
             await _areaDbContext.SaveChangesAsync(cancellationToken);
-            Image areaImage = new Image
+
+
+            List<Image> areaImages = new List<Image>();
+            areaImages = imagePathToAdd.Select(imgPath => new Image
             {
                 Id = Guid.NewGuid(),
                 ImageType = ImageType.Area,
-                Url = imagePath,
+                Url = imgPath,
                 Code = newArea.Code
-            };
+            }).ToList();
 
-            _areaDbContext.Images.Add(areaImage);
+            _areaDbContext.Images.AddRange(areaImages);
             await _areaDbContext.SaveChangesAsync(cancellationToken);
 
             return new AddNewAreaResult(newArea.Id, newArea.Name, newArea.Code);

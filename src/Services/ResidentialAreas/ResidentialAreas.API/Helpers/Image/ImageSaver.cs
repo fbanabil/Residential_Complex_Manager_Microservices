@@ -4,6 +4,28 @@ namespace ResidentialAreas.API.Helpers.ImageSaver
 {
     public class ImageSaver : IImageSaver
     {
+
+        public Task DeleteImages(List<string?>? existingImageUrls)
+        {
+            List<string?>? pathToDelete = existingImageUrls?.Select(url => url?.Split("images/").LastOrDefault()).ToList();
+
+
+            foreach (var imagePath in pathToDelete ?? [])
+            {
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    string fullPath = Path.Combine("images", imagePath);
+                    if (File.Exists(fullPath))
+                    {
+                        File.Delete(fullPath);
+                    }
+                }
+            }
+            return Task.CompletedTask;
+        }
+
+
+
         public async Task<string> SaveImageAsync(string base64ImageString, string saveDirectory)
         {
             if (string.IsNullOrEmpty(base64ImageString))

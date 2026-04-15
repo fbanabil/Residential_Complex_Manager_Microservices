@@ -34,6 +34,8 @@ namespace ResidentialAreas.API.ConfigurationExtension
 
             builder.Services.AddHttpClient();
 
+            builder.Services.AddHttpContextAccessor();
+
 
         }
     }

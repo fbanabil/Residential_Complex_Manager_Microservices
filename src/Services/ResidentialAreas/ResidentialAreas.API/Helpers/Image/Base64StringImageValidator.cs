@@ -2,6 +2,31 @@
 {
     public static class Base64StringImageValidator
     {
+
+        public static bool IsBase64StringLiset(List<string?>? base64List)
+        {
+            if (base64List == null || base64List.Count == 0)
+            {
+                return true;
+            }
+
+            bool result = true;
+
+            foreach (var base64 in base64List)
+            {
+                if (string.IsNullOrEmpty(base64))
+                {
+                    continue; 
+                }
+                if (!IsBase64StringImage(base64))
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+
         public static bool IsBase64StringImage(string base64)
         {
             if (string.IsNullOrWhiteSpace(base64))

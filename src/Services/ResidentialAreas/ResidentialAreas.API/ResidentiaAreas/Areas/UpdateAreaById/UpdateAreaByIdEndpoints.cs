@@ -1,11 +1,13 @@
 ﻿
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ResidentialAreas.API.Helpers.Image;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
 {
-    public record UpdateAreaByIdRequest(Guid Id, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status);
-    public record UpdateAreaByIdResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status);
+    public record UpdateAreaByIdRequest(Guid Id, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? RemovedImagesUrls, List<string?>? AddedBase64StringImages);
+    public record UpdateAreaByIdResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? ImageUrls);
 
 
     public class UpdateAreaByIdValidator : AbstractValidator<UpdateAreaByIdRequest>
@@ -29,6 +31,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
             {
                 return await _locationValidator.IsValidLocationAsync(location.Country, location.State, location.City, location.PostalCode);
             }).WithMessage("The provided city, state, country, and postal code combination is not valid.");
+            RuleFor(x => x.AddedBase64StringImages).NotEmpty().WithMessage("The image is required.")
+                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringLiset(imageBase64)))
+                .WithMessage("The image must be a valid Base64 string.");
         }
     }
 
@@ -38,7 +43,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas/update-by-id", async (UpdateAreaByIdRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByIdRequest> validator) =>
+            app.MapPost("/areas/update-by-id", async (HttpContext httpContext, UpdateAreaByIdRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByIdRequest> validator) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
 
@@ -56,6 +61,11 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
                 {
                     return Results.NotFound("The area with the specified ID was not found.");
                 }
+
+                response = response with
+                {
+                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
+                };
 
                 return Results.Ok(response);
             })

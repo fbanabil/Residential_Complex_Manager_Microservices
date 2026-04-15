@@ -4,7 +4,7 @@ using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
 {
-    public record GetAreaByIdResponse(Guid Id,long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt);
+    public record GetAreaByIdResponse(Guid Id,long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt, List<string?>? ImageUrls);
 
 
     public class GetAreaByIdRequestValidator : AbstractValidator<Guid>
@@ -21,7 +21,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/{id:guid}", async (Guid id, ISender sender, [FromServices] IValidator<Guid> validator) =>
+            app.MapGet("/areas/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator) =>
             {
                 var validationResult = await validator.ValidateAsync(id);
                 if (!validationResult.IsValid)
@@ -36,6 +36,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
                     return Results.NotFound($"Area with ID {id} not found.");
                 }
                 var response = result.Adapt<GetAreaByIdResponse>();
+
+                response = response with
+                {
+                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
+                };
+
                 return Results.Ok(response);
             })
                 .WithName("GetAreaById")
