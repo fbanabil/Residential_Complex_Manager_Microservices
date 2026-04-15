@@ -48,7 +48,6 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
             List<string?>? existingImageUrls = await _areaDbContext.Images.Where(ai => ai.Code == area.Code && ai.ImageType == ImageType.Area).Select(ai => ai.Url).ToListAsync(cancellationToken);
 
 
-
             List<string?>? removedImagePaths = request.RemovedImagesUrls?.Select(url => url != null && url.Contains("images/") ? "images/" + url.Split("images/").LastOrDefault() : url).ToList();
 
             List<string?>? imagesToRemove = existingImageUrls.Where(url => removedImagePaths != null && removedImagePaths.Contains(url)).ToList();

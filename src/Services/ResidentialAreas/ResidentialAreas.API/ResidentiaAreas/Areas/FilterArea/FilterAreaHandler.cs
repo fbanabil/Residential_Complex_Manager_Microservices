@@ -19,7 +19,7 @@
                 statusValue = System.Enum.Parse<Status>(request.Status, true);
             }
 
-            IQueryable<Area> query = _areaDbContext.Areas
+            IQueryable<Area> query = _areaDbContext.Areas.Include(i=>i.Images).AsNoTracking()
                 .Where(a => (string.IsNullOrEmpty(request.Name) || a.Name.Contains(request.Name)) &&
                             (string.IsNullOrEmpty(request.City) || a.City.Contains(request.City)) &&
                             (string.IsNullOrEmpty(request.State) || a.State.Contains(request.State)) &&
@@ -30,7 +30,8 @@
 
             var areas = await query.ToListAsync(cancellationToken);
 
-            return new FilterAreaResult(areas.Select(area => area.Adapt<FilterAreaResponseInstance>()).ToList());
+
+            return new FilterAreaResult(areas.Select(area => area.Adapt<FilterAreaResponseInstance>() with { ImageUrls = area.Images?.Select(i => i.Url).ToList() }).ToList());
         }
     }
 }

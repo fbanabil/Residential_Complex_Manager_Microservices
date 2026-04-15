@@ -20,5 +20,9 @@
 
         [Required(ErrorMessage = "The image URL is required.")]
         public string? Url { get; set; }
+
+        [ForeignKey(nameof(Code))]
+        public Area? Area { get; set; }
+
     }
 }

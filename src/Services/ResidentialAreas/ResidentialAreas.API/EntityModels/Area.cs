@@ -54,6 +54,9 @@
         
         [Required(ErrorMessage = "The last updated date is required.")]
         public DateTime UpdatedAt { get; set; }    
+
+       
+        public virtual ICollection<Image>? Images { get; set; } = new List<Image>();
         public virtual ICollection<Building>? Buildings { get; set; } = new List<Building>();
         public virtual ICollection<Facility>? Facilities { get; set; } = new List<Facility>();
     }

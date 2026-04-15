@@ -44,6 +44,18 @@ namespace ResidentialAreas.API.AppDbContext
 
 
             modelBuilder.Entity<Area>()
+                .HasAlternateKey(a=>a.Code);
+
+            modelBuilder.Entity<Image>()
+                .HasOne(i=>i.Area)
+                .WithMany(a=>a.Images)
+                .HasForeignKey(a=>a.Code)
+                .HasPrincipalKey(a=>a.Code)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+
+            modelBuilder.Entity<Area>()
                 .Property(a=>a.Status)
                 .HasConversion<string>();
             

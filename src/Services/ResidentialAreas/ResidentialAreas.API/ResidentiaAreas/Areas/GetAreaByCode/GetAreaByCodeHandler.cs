@@ -1,4 +1,6 @@
-﻿namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
+﻿using ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById;
+
+namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
 {
     public record GetAreaByCodeQuery(long Code) : IQuery<GetAreaByCodeResult>;
     public record GetAreaByCodeResult(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt, List<string?>? ImageUrls);
@@ -18,36 +20,30 @@
 
         public async Task<GetAreaByCodeResult> Handle(GetAreaByCodeQuery request, CancellationToken cancellationToken)
         {
-            Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Code == request.Code, cancellationToken);
+            var area = await _areaDbContext.Areas.AsNoTracking().Where(a => a.Code == request.Code).Select(a =>
+            new {
+                a.Id,
+                a.Code,
+                a.Name,
+                a.City,
+                a.State,
+                a.Country,
+                a.PostalCode,
+                a.Address,
+                a.GeoBoundary,
+                Status = a.Status.ToString(),
+                a.CreatedAt,
+                a.UpdatedAt,
+                ImageUrls = a.Images.Select(i => i.Url).ToList()
+            }).FirstOrDefaultAsync(cancellationToken);
+
             if (area == null)
             {
-                _logger.LogWarning("Area with code {Code} not found.", request.Code);
+                _logger.LogWarning("Area with ID {Id} not found.", request.Id);
                 return null;
             }
 
-            List<string?>? imageUrls = await _areaDbContext.Images.AsNoTracking()
-                .Where(i => i.ImageType == ImageType.Area && i.Code == area.Code)
-                .Select(i => i.Url)
-                .ToListAsync(cancellationToken);
-
-
-
-            GetAreaByCodeResult result = new GetAreaByCodeResult(
-                Id: area.Id,
-                Code: area.Code,
-                Name: area.Name,
-                City: area.City,
-                State: area.State,
-                Country: area.Country,
-                PostalCode: area.PostalCode,
-                Address: area.Address,
-                GeoBoundary: area.GeoBoundary,
-                Status: area.Status.ToString(),
-                CreatedAt: area.CreatedAt,
-                UpdatedAt: area.UpdatedAt,
-                ImageUrls: imageUrls
-            );
-
+            var result = area.Adapt<GetAreaByCodeResult>();
             return result;
         }
     }

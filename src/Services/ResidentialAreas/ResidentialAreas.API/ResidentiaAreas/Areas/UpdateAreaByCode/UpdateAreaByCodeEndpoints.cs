@@ -32,7 +32,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
             {
                 return await _locationValidator.IsValidLocationAsync(location.Country, location.State, location.City, location.PostalCode);
             }).WithMessage("The provided city, state, country, and postal code combination is not valid.");
-            RuleFor(x => x.AddedBase64StringImages).NotEmpty().WithMessage("The image is required.")
+            RuleFor(x => x.AddedBase64StringImages)
                 .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringLiset(imageBase64)))
                 .WithMessage("The image must be a valid Base64 string.");
         }

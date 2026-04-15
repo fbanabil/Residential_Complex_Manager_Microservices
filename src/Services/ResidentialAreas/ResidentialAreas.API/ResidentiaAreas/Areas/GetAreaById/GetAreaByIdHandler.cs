@@ -17,37 +17,30 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
 
         public async Task<GetAreaByIdResult> Handle(GetAreaByIdQuery request, CancellationToken cancellationToken)
         {
-            Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+            var area = await _areaDbContext.Areas.AsNoTracking().Where(a => a.Id == request.Id).Select(a =>
+            new {
+                a.Id,
+                a.Code,
+                a.Name,
+                a.City,
+                a.State,
+                a.Country,
+                a.PostalCode,
+                a.Address,
+                a.GeoBoundary,
+                Status = a.Status.ToString(),
+                a.CreatedAt,
+                a.UpdatedAt,
+                ImageUrls = a.Images.Select(i => i.Url).ToList()
+            }).FirstOrDefaultAsync(cancellationToken);
 
-            if (area == null)
+            if(area == null)
             {
                 _logger.LogWarning("Area with ID {Id} not found.", request.Id);
                 return null;
             }
 
-
-            List<string?>? imageUrls = await _areaDbContext.Images.AsNoTracking()
-                .Where(i=> i.ImageType==ImageType.Area && i.Code == area.Code)
-                .Select(ai => ai.Url)
-                .ToListAsync(cancellationToken);
-
-
-            var result = new GetAreaByIdResult(
-                area.Id,
-                area.Code,
-                area.Name,
-                area.City,
-                area.State,
-                area.Country,
-                area.PostalCode,
-                area.Address,
-                area.GeoBoundary,
-                area.Status.ToString(),
-                area.CreatedAt,
-                area.UpdatedAt,
-                ImageUrls : imageUrls
-            );
-
+            var result = area.Adapt<GetAreaByIdResult>();
             return result;
         }
     }

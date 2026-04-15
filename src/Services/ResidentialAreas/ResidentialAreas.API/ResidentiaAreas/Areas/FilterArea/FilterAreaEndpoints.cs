@@ -3,7 +3,7 @@
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
 {
     public record FilterAreaRequest(string? Name, string? City, string? State, string? Country, string? PostalCode, string? Address, string? Status);
-    public record FilterAreaResponseInstance(long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string Status);
+    public record FilterAreaResponseInstance(long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string Status, List<string?>? ImageUrls);
     public record FilterAreaResponse(List<FilterAreaResponseInstance>? Areas);
 
 
@@ -22,7 +22,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/filter", async ([AsParameters] FilterAreaRequest request, ISender sender, [FromServices] IValidator<FilterAreaRequest> validator) =>
+            app.MapGet("/areas/filter", async (HttpContext httpContext, [AsParameters] FilterAreaRequest request, ISender sender, [FromServices] IValidator<FilterAreaRequest> validator) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
@@ -38,7 +38,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
                     return Results.Ok(new FilterAreaResponse(new List<FilterAreaResponseInstance>()));
                 }
 
-                var response = new FilterAreaResponse(result.Areas.Select(area => area.Adapt<FilterAreaResponseInstance>()).ToList());
+                var response = new FilterAreaResponse(result.Areas.Select(area => area.Adapt<FilterAreaResponseInstance>() with { ImageUrls = area.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList() }).ToList());
+
                 return Results.Ok(response);
             })
                 .WithName("FilterAreas")
