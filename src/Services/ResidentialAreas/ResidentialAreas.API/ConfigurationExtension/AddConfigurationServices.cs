@@ -25,7 +25,6 @@ namespace ResidentialAreas.API.ConfigurationExtension
             });
 
 
-            builder.Services.AddScoped<IAreaRepository, AreaRepository>();
             builder.Services.AddScoped<IImageSaver,ImageSaver>();
             builder.Services.AddSingleton<ILocationValidator, LocationValidator>();
 

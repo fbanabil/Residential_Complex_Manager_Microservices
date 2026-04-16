@@ -37,12 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Building\" />
-    <Folder Include="Data\Image\" />
-    <Folder Include="Data\Facility\" />
-    <Folder Include="Data\Unit\" />
-    <Folder Include="Data\ParkingSlot\" />
-    <Folder Include="ResidentiaAreas\Buildings\" />
     <Folder Include="ResidentiaAreas\Facilities\" />
     <Folder Include="ResidentiaAreas\ParkingSlots\" />
     <Folder Include="ResidentiaAreas\Units\" />

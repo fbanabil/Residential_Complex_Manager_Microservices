@@ -70,5 +70,30 @@ namespace ResidentialAreas.API.Helpers.ImageSaver
             return filePath;
         }
 
+        public async Task<List<string?>> SaveImageAsync(List<string?>? base64ImageStrings, string saveDirectory)
+        {
+            List<string?>? savedImagePaths = new List<string?>();
+            if (base64ImageStrings != null)
+            {
+                foreach (var base64ImageString in base64ImageStrings)
+                {
+                    if (!string.IsNullOrEmpty(base64ImageString))
+                    {
+                        try
+                        {
+                            string savedPath = await SaveImageAsync(base64ImageString, saveDirectory);
+                            savedImagePaths.Add(savedPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error saving image: {ex.Message}");
+                            savedImagePaths.Add("images/default.jpg");
+                        }
+                    }
+                }
+            }
+            return savedImagePaths;
+        }
+
     }
 }
