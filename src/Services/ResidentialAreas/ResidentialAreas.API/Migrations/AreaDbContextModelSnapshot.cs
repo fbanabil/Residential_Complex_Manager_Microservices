@@ -1047,12 +1047,21 @@ namespace ResidentialAreas.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<long>("Code")
+                    b.Property<long?>("AreaCode")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("BuildingCode")
                         .HasColumnType("bigint");
 
                     b.Property<string>("ImageType")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
+
+                    b.Property<long?>("ParkingSlotCode")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UnitCode")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -1060,7 +1069,13 @@ namespace ResidentialAreas.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code");
+                    b.HasIndex("AreaCode");
+
+                    b.HasIndex("BuildingCode");
+
+                    b.HasIndex("ParkingSlotCode");
+
+                    b.HasIndex("UnitCode");
 
                     b.ToTable("Images");
 
@@ -1068,140 +1083,140 @@ namespace ResidentialAreas.API.Migrations
                         new
                         {
                             Id = new Guid("55555555-0001-0001-0001-000000000001"),
-                            Code = 1000000000L,
+                            AreaCode = 1000000000L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-dha-001.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0002-0002-0002-000000000002"),
-                            Code = 2000000001L,
+                            BuildingCode = 2000000001L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-cha-002.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0003-0003-0003-000000000003"),
-                            Code = 4000000003L,
                             ImageType = "Unit",
+                            UnitCode = 4000000003L,
                             Url = "https://example.com/images/unit/unit-khu-003.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0004-0004-0004-000000000004"),
-                            Code = 1000000000L,
+                            AreaCode = 1000000000L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-raj-004.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0005-0005-0005-000000000005"),
-                            Code = 2000000003L,
+                            BuildingCode = 2000000003L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-syl-005.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0006-0006-0006-000000000006"),
-                            Code = 4000000002L,
                             ImageType = "Unit",
+                            UnitCode = 4000000002L,
                             Url = "https://example.com/images/unit/unit-dha-006.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0007-0007-0007-000000000007"),
-                            Code = 1000000003L,
+                            AreaCode = 1000000003L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-cha-007.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0008-0008-0008-000000000008"),
-                            Code = 2000000008L,
+                            BuildingCode = 2000000008L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-khu-008.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0009-0009-0009-000000000009"),
-                            Code = 4000000004L,
                             ImageType = "Unit",
+                            UnitCode = 4000000004L,
                             Url = "https://example.com/images/unit/unit-raj-009.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0010-0010-0010-000000000010"),
-                            Code = 1000000004L,
+                            AreaCode = 1000000004L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-syl-010.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0011-0011-0011-000000000011"),
-                            Code = 2000000011L,
+                            BuildingCode = 2000000011L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-dha-011.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0012-0012-0012-000000000012"),
-                            Code = 4000000005L,
                             ImageType = "Unit",
+                            UnitCode = 4000000005L,
                             Url = "https://example.com/images/unit/unit-cha-012.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0013-0013-0013-000000000013"),
-                            Code = 1000000001L,
+                            AreaCode = 1000000001L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-khu-013.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0014-0014-0014-000000000014"),
-                            Code = 2000000002L,
+                            BuildingCode = 2000000002L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-raj-014.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0015-0015-0015-000000000015"),
-                            Code = 4000000003L,
                             ImageType = "Unit",
+                            UnitCode = 4000000003L,
                             Url = "https://example.com/images/unit/unit-syl-015.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0016-0016-0016-000000000016"),
-                            Code = 1000000004L,
+                            AreaCode = 1000000004L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-dha-016.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0017-0017-0017-000000000017"),
-                            Code = 2000000005L,
+                            BuildingCode = 2000000005L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-cha-017.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0018-0018-0018-000000000018"),
-                            Code = 4000000007L,
                             ImageType = "Unit",
+                            UnitCode = 4000000007L,
                             Url = "https://example.com/images/unit/unit-khu-018.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0019-0019-0019-000000000019"),
-                            Code = 1000000007L,
+                            AreaCode = 1000000007L,
                             ImageType = "Area",
                             Url = "https://example.com/images/area/area-raj-019.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0020-0020-0020-000000000020"),
-                            Code = 2000000011L,
+                            BuildingCode = 2000000011L,
                             ImageType = "Building",
                             Url = "https://example.com/images/building/bld-syl-020.jpg"
                         });
@@ -1536,6 +1551,9 @@ namespace ResidentialAreas.API.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("BuildingId", "UnitNo")
                         .IsUnique();
@@ -1899,12 +1917,35 @@ namespace ResidentialAreas.API.Migrations
                 {
                     b.HasOne("ResidentialAreas.API.EntityModels.Area", "Area")
                         .WithMany("Images")
-                        .HasForeignKey("Code")
+                        .HasForeignKey("AreaCode")
                         .HasPrincipalKey("Code")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ResidentialAreas.API.EntityModels.Building", "Building")
+                        .WithMany("Images")
+                        .HasForeignKey("BuildingCode")
+                        .HasPrincipalKey("Code")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ResidentialAreas.API.EntityModels.ParkingSlot", "ParkingSlot")
+                        .WithMany("Images")
+                        .HasForeignKey("ParkingSlotCode")
+                        .HasPrincipalKey("SlotCode")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ResidentialAreas.API.EntityModels.Unit", "Unit")
+                        .WithMany("Images")
+                        .HasForeignKey("UnitCode")
+                        .HasPrincipalKey("Code")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Area");
+
+                    b.Navigation("Building");
+
+                    b.Navigation("ParkingSlot");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSlot", b =>
@@ -1946,14 +1987,23 @@ namespace ResidentialAreas.API.Migrations
                 {
                     b.Navigation("Facilities");
 
+                    b.Navigation("Images");
+
                     b.Navigation("ParkingSlots");
 
                     b.Navigation("Units");
                 });
 
+            modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSlot", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.Unit", b =>
                 {
                     b.Navigation("Facilities");
+
+                    b.Navigation("Images");
 
                     b.Navigation("ParkingSlots");
                 });

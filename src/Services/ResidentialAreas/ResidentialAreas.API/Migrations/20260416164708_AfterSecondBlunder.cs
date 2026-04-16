@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ResidentialAreas.API.Migrations
 {
     /// <inheritdoc />
-    public partial class FixAfterBlunder : Migration
+    public partial class AfterSecondBlunder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,20 +36,7 @@ namespace ResidentialAreas.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Areas", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Images",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ImageType = table.Column<string>(type: "varchar(20)", nullable: false),
-                    Code = table.Column<long>(type: "bigint", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.UniqueConstraint("AK_Areas_Code", x => x.Code);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,6 +59,7 @@ namespace ResidentialAreas.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Buildings", x => x.Id);
+                    table.UniqueConstraint("AK_Buildings_Code", x => x.Code);
                     table.ForeignKey(
                         name: "FK_Buildings_Areas_AreaId",
                         column: x => x.AreaId,
@@ -104,6 +92,7 @@ namespace ResidentialAreas.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Units", x => x.Id);
+                    table.UniqueConstraint("AK_Units_Code", x => x.Code);
                     table.ForeignKey(
                         name: "FK_Units_Buildings_BuildingId",
                         column: x => x.BuildingId,
@@ -169,6 +158,7 @@ namespace ResidentialAreas.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ParkingSlots", x => x.Id);
+                    table.UniqueConstraint("AK_ParkingSlots_SlotCode", x => x.SlotCode);
                     table.ForeignKey(
                         name: "FK_ParkingSlots_Buildings_BuildingId",
                         column: x => x.BuildingId,
@@ -179,6 +169,47 @@ namespace ResidentialAreas.API.Migrations
                         column: x => x.UnitId,
                         principalTable: "Units",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ImageType = table.Column<string>(type: "varchar(20)", nullable: false),
+                    AreaCode = table.Column<long>(type: "bigint", nullable: true),
+                    BuildingCode = table.Column<long>(type: "bigint", nullable: true),
+                    ParkingSlotCode = table.Column<long>(type: "bigint", nullable: true),
+                    UnitCode = table.Column<long>(type: "bigint", nullable: true),
+                    Url = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Areas_AreaCode",
+                        column: x => x.AreaCode,
+                        principalTable: "Areas",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_Buildings_BuildingCode",
+                        column: x => x.BuildingCode,
+                        principalTable: "Buildings",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_ParkingSlots_ParkingSlotCode",
+                        column: x => x.ParkingSlotCode,
+                        principalTable: "ParkingSlots",
+                        principalColumn: "SlotCode",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_Units_UnitCode",
+                        column: x => x.UnitCode,
+                        principalTable: "Units",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -208,32 +239,7 @@ namespace ResidentialAreas.API.Migrations
                     { new Guid("11111111-0020-0020-0020-000000000020"), "Road 20, Sector 5, Sylhet", "Sylhet", "Bangladesh", new DateTime(2026, 4, 12, 9, 20, 0, 0, DateTimeKind.Utc), "{\"type\": \"Polygon\", \"coordinates\": [[[90.45, 23.8], [90.452, 23.8], [90.452, 23.802], [90.45, 23.802], [90.45, 23.8]]]}", "Sylhet Residential Area 20", "1220", "Sylhet", "Active", new DateTime(2026, 4, 12, 9, 20, 0, 0, DateTimeKind.Utc) }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Images",
-                columns: new[] { "Id", "Code", "ImageType", "Url" },
-                values: new object[,]
-                {
-                    { new Guid("55555555-0001-0001-0001-000000000001"), 1000000000L, "Area", "https://example.com/images/area/area-dha-001.jpg" },
-                    { new Guid("55555555-0002-0002-0002-000000000002"), 2000000001L, "Building", "https://example.com/images/building/bld-cha-002.jpg" },
-                    { new Guid("55555555-0003-0003-0003-000000000003"), 4000000003L, "Unit", "https://example.com/images/unit/unit-khu-003.jpg" },
-                    { new Guid("55555555-0004-0004-0004-000000000004"), 1000000000L, "Area", "https://example.com/images/area/area-raj-004.jpg" },
-                    { new Guid("55555555-0005-0005-0005-000000000005"), 2000000003L, "Building", "https://example.com/images/building/bld-syl-005.jpg" },
-                    { new Guid("55555555-0006-0006-0006-000000000006"), 4000000002L, "Unit", "https://example.com/images/unit/unit-dha-006.jpg" },
-                    { new Guid("55555555-0007-0007-0007-000000000007"), 1000000003L, "Area", "https://example.com/images/area/area-cha-007.jpg" },
-                    { new Guid("55555555-0008-0008-0008-000000000008"), 2000000008L, "Building", "https://example.com/images/building/bld-khu-008.jpg" },
-                    { new Guid("55555555-0009-0009-0009-000000000009"), 4000000004L, "Unit", "https://example.com/images/unit/unit-raj-009.jpg" },
-                    { new Guid("55555555-0010-0010-0010-000000000010"), 1000000004L, "Area", "https://example.com/images/area/area-syl-010.jpg" },
-                    { new Guid("55555555-0011-0011-0011-000000000011"), 2000000011L, "Building", "https://example.com/images/building/bld-dha-011.jpg" },
-                    { new Guid("55555555-0012-0012-0012-000000000012"), 4000000005L, "Unit", "https://example.com/images/unit/unit-cha-012.jpg" },
-                    { new Guid("55555555-0013-0013-0013-000000000013"), 1000000001L, "Area", "https://example.com/images/area/area-khu-013.jpg" },
-                    { new Guid("55555555-0014-0014-0014-000000000014"), 2000000002L, "Building", "https://example.com/images/building/bld-raj-014.jpg" },
-                    { new Guid("55555555-0015-0015-0015-000000000015"), 4000000003L, "Unit", "https://example.com/images/unit/unit-syl-015.jpg" },
-                    { new Guid("55555555-0016-0016-0016-000000000016"), 1000000004L, "Area", "https://example.com/images/area/area-dha-016.jpg" },
-                    { new Guid("55555555-0017-0017-0017-000000000017"), 2000000005L, "Building", "https://example.com/images/building/bld-cha-017.jpg" },
-                    { new Guid("55555555-0018-0018-0018-000000000018"), 4000000007L, "Unit", "https://example.com/images/unit/unit-khu-018.jpg" },
-                    { new Guid("55555555-0019-0019-0019-000000000019"), 1000000007L, "Area", "https://example.com/images/area/area-raj-019.jpg" },
-                    { new Guid("55555555-0020-0020-0020-000000000020"), 2000000011L, "Building", "https://example.com/images/building/bld-syl-020.jpg" }
-                });
+            
 
             migrationBuilder.InsertData(
                 table: "Buildings",
@@ -341,6 +347,36 @@ namespace ResidentialAreas.API.Migrations
                     { new Guid("66666666-0018-0018-0018-000000000018"), null, new Guid("22222222-0018-0018-0018-000000000018"), new DateTime(2026, 4, 12, 12, 38, 0, 0, DateTimeKind.Utc), "Compact", "Active", new Guid("33333333-0018-0018-0018-000000000018"), new DateTime(2026, 4, 12, 12, 38, 0, 0, DateTimeKind.Utc) },
                     { new Guid("66666666-0019-0019-0019-000000000019"), null, new Guid("22222222-0019-0019-0019-000000000019"), new DateTime(2026, 4, 12, 12, 39, 0, 0, DateTimeKind.Utc), "Compact", "Active", new Guid("33333333-0019-0019-0019-000000000019"), new DateTime(2026, 4, 12, 12, 39, 0, 0, DateTimeKind.Utc) },
                     { new Guid("66666666-0020-0020-0020-000000000020"), null, new Guid("22222222-0020-0020-0020-000000000020"), new DateTime(2026, 4, 12, 12, 40, 0, 0, DateTimeKind.Utc), "Compact", "Active", new Guid("33333333-0020-0020-0020-000000000020"), new DateTime(2026, 4, 12, 12, 40, 0, 0, DateTimeKind.Utc) }
+
+
+
+                });
+
+            migrationBuilder.InsertData(
+                table: "Images",
+                columns: new[] { "Id", "AreaCode", "BuildingCode", "ImageType", "ParkingSlotCode", "UnitCode", "Url" },
+                values: new object[,]
+                {
+                    { new Guid("55555555-0001-0001-0001-000000000001"), 1000000000L, null, "Area", null, null, "https://example.com/images/area/area-dha-001.jpg" },
+                    { new Guid("55555555-0002-0002-0002-000000000002"), null, 2000000001L, "Building", null, null, "https://example.com/images/building/bld-cha-002.jpg" },
+                    { new Guid("55555555-0003-0003-0003-000000000003"), null, null, "Unit", null, 4000000003L, "https://example.com/images/unit/unit-khu-003.jpg" },
+                    { new Guid("55555555-0004-0004-0004-000000000004"), 1000000000L, null, "Area", null, null, "https://example.com/images/area/area-raj-004.jpg" },
+                    { new Guid("55555555-0005-0005-0005-000000000005"), null, 2000000003L, "Building", null, null, "https://example.com/images/building/bld-syl-005.jpg" },
+                    { new Guid("55555555-0006-0006-0006-000000000006"), null, null, "Unit", null, 4000000002L, "https://example.com/images/unit/unit-dha-006.jpg" },
+                    { new Guid("55555555-0007-0007-0007-000000000007"), 1000000003L, null, "Area", null, null, "https://example.com/images/area/area-cha-007.jpg" },
+                    { new Guid("55555555-0008-0008-0008-000000000008"), null, 2000000008L, "Building", null, null, "https://example.com/images/building/bld-khu-008.jpg" },
+                    { new Guid("55555555-0009-0009-0009-000000000009"), null, null, "Unit", null, 4000000004L, "https://example.com/images/unit/unit-raj-009.jpg" },
+                    { new Guid("55555555-0010-0010-0010-000000000010"), 1000000004L, null, "Area", null, null, "https://example.com/images/area/area-syl-010.jpg" },
+                    { new Guid("55555555-0011-0011-0011-000000000011"), null, 2000000011L, "Building", null, null, "https://example.com/images/building/bld-dha-011.jpg" },
+                    { new Guid("55555555-0012-0012-0012-000000000012"), null, null, "Unit", null, 4000000005L, "https://example.com/images/unit/unit-cha-012.jpg" },
+                    { new Guid("55555555-0013-0013-0013-000000000013"), 1000000001L, null, "Area", null, null, "https://example.com/images/area/area-khu-013.jpg" },
+                    { new Guid("55555555-0014-0014-0014-000000000014"), null, 2000000002L, "Building", null, null, "https://example.com/images/building/bld-raj-014.jpg" },
+                    { new Guid("55555555-0015-0015-0015-000000000015"), null, null, "Unit", null, 4000000003L, "https://example.com/images/unit/unit-syl-015.jpg" },
+                    { new Guid("55555555-0016-0016-0016-000000000016"), 1000000004L, null, "Area", null, null, "https://example.com/images/area/area-dha-016.jpg" },
+                    { new Guid("55555555-0017-0017-0017-000000000017"), null, 2000000005L, "Building", null, null, "https://example.com/images/building/bld-cha-017.jpg" },
+                    { new Guid("55555555-0018-0018-0018-000000000018"), null, null, "Unit", null, 4000000007L, "https://example.com/images/unit/unit-khu-018.jpg" },
+                    { new Guid("55555555-0019-0019-0019-000000000019"), 1000000007L, null, "Area", null, null, "https://example.com/images/area/area-raj-019.jpg" },
+                    { new Guid("55555555-0020-0020-0020-000000000020"), null, 2000000011L, "Building", null, null, "https://example.com/images/building/bld-syl-020.jpg" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -386,9 +422,24 @@ namespace ResidentialAreas.API.Migrations
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_Code",
+                name: "IX_Images_AreaCode",
                 table: "Images",
-                column: "Code");
+                column: "AreaCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_BuildingCode",
+                table: "Images",
+                column: "BuildingCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_ParkingSlotCode",
+                table: "Images",
+                column: "ParkingSlotCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_UnitCode",
+                table: "Images",
+                column: "UnitCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ParkingSlots_AssignedResidentId",
@@ -415,6 +466,12 @@ namespace ResidentialAreas.API.Migrations
                 name: "IX_Units_BuildingId_UnitNo",
                 table: "Units",
                 columns: new[] { "BuildingId", "UnitNo" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Units_Code",
+                table: "Units",
+                column: "Code",
                 unique: true);
         }
 

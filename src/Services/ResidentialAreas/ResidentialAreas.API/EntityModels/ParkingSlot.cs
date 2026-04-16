@@ -52,5 +52,8 @@ namespace ResidentialAreas.API.EntityModels
         
         [Required(ErrorMessage = "The last updated date is required.")]
         public DateTime? UpdatedAt { get; set; }
+
+        public virtual ICollection<Image>? Images { get; set; } = new List<Image>();
+
     }
 }

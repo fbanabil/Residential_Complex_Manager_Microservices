@@ -72,7 +72,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 Id = Guid.NewGuid(),
                 ImageType = ImageType.Area,
                 Url = imgPath,
-                Code = newArea.Code
+                AreaCode = newArea.Code
             }).ToList();
 
             _areaDbContext.Images.AddRange(areaImages);

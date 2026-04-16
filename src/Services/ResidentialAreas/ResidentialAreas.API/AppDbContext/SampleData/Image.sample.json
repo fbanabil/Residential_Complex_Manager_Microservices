@@ -2,121 +2,181 @@
   {
     "Id": "55555555-0001-0001-0001-000000000001",
     "ImageType": "Area",
-    "Code": 1000000000,
+    "AreaCode": 1000000000,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-dha-001.jpg"
   },
   {
     "Id": "55555555-0002-0002-0002-000000000002",
     "ImageType": "Building",
-    "Code": 2000000001,
+    "AreaCode": null,
+    "BuildingCode": 2000000001,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-cha-002.jpg"
   },
   {
     "Id": "55555555-0003-0003-0003-000000000003",
     "ImageType": "Unit",
-    "Code": 4000000003,
+    "AreaCode": null,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": 4000000003,
     "Url": "https://example.com/images/unit/unit-khu-003.jpg"
   },
   {
     "Id": "55555555-0004-0004-0004-000000000004",
     "ImageType": "Area",
-    "Code": 1000000000,
+    "AreaCode": 1000000000,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-raj-004.jpg"
   },
   {
     "Id": "55555555-0005-0005-0005-000000000005",
     "ImageType": "Building",
-    "Code": 2000000003,
+    "AreaCode": null,
+    "BuildingCode": 2000000003,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-syl-005.jpg"
   },
   {
     "Id": "55555555-0006-0006-0006-000000000006",
     "ImageType": "Unit",
-    "Code": 4000000002,
+    "AreaCode": null,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": 4000000002,
     "Url": "https://example.com/images/unit/unit-dha-006.jpg"
   },
   {
     "Id": "55555555-0007-0007-0007-000000000007",
     "ImageType": "Area",
-    "Code": 1000000003,
+    "AreaCode": 1000000003,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-cha-007.jpg"
   },
   {
     "Id": "55555555-0008-0008-0008-000000000008",
     "ImageType": "Building",
-    "Code": 2000000008,
+    "AreaCode": null,
+    "BuildingCode": 2000000008,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-khu-008.jpg"
   },
   {
     "Id": "55555555-0009-0009-0009-000000000009",
     "ImageType": "Unit",
-    "Code": 4000000004,
+    "AreaCode": null,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": 4000000004,
     "Url": "https://example.com/images/unit/unit-raj-009.jpg"
   },
   {
     "Id": "55555555-0010-0010-0010-000000000010",
     "ImageType": "Area",
-    "Code": 1000000004,
+    "AreaCode": 1000000004,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-syl-010.jpg"
   },
   {
     "Id": "55555555-0011-0011-0011-000000000011",
     "ImageType": "Building",
-    "Code": 2000000011,
+    "AreaCode": null,
+    "BuildingCode": 2000000011,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-dha-011.jpg"
   },
   {
     "Id": "55555555-0012-0012-0012-000000000012",
     "ImageType": "Unit",
-    "Code": 4000000005,
+    "AreaCode": null,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": 4000000005,
     "Url": "https://example.com/images/unit/unit-cha-012.jpg"
   },
   {
     "Id": "55555555-0013-0013-0013-000000000013",
     "ImageType": "Area",
-    "Code": 1000000001,
+    "AreaCode": 1000000001,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-khu-013.jpg"
   },
   {
     "Id": "55555555-0014-0014-0014-000000000014",
     "ImageType": "Building",
-    "Code": 2000000002,
+    "AreaCode": null,
+    "BuildingCode": 2000000002,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-raj-014.jpg"
   },
   {
     "Id": "55555555-0015-0015-0015-000000000015",
     "ImageType": "Unit",
-    "Code": 4000000003,
+    "AreaCode": null,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": 4000000003,
     "Url": "https://example.com/images/unit/unit-syl-015.jpg"
   },
   {
     "Id": "55555555-0016-0016-0016-000000000016",
     "ImageType": "Area",
-    "Code": 1000000004,
+    "AreaCode": 1000000004,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-dha-016.jpg"
   },
   {
     "Id": "55555555-0017-0017-0017-000000000017",
     "ImageType": "Building",
-    "Code": 2000000005,
+    "AreaCode": null,
+    "BuildingCode": 2000000005,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-cha-017.jpg"
   },
   {
     "Id": "55555555-0018-0018-0018-000000000018",
     "ImageType": "Unit",
-    "Code": 4000000007,
+    "AreaCode": null,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": 4000000007,
     "Url": "https://example.com/images/unit/unit-khu-018.jpg"
   },
   {
     "Id": "55555555-0019-0019-0019-000000000019",
     "ImageType": "Area",
-    "Code": 1000000007,
+    "AreaCode": 1000000007,
+    "BuildingCode": null,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/area/area-raj-019.jpg"
   },
   {
     "Id": "55555555-0020-0020-0020-000000000020",
     "ImageType": "Building",
-    "Code": 2000000011,
+    "AreaCode": null,
+    "BuildingCode": 2000000011,
+    "ParkingSlotCode": null,
+    "UnitCode": null,
     "Url": "https://example.com/images/building/bld-syl-020.jpg"
   }
 ]

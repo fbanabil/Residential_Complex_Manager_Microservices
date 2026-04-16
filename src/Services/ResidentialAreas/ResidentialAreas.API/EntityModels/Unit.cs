@@ -1,7 +1,8 @@
 ﻿namespace ResidentialAreas.API.EntityModels
 {
     [Table("Units")]
-    [Index(nameof(BuildingId), nameof(UnitNo), IsUnique = true)] 
+    [Index(nameof(BuildingId), nameof(UnitNo), IsUnique = true)]
+    [Index(nameof(Code), IsUnique = true)]
     public class Unit
     {
         [Key]
@@ -68,6 +69,8 @@
 
         public virtual ICollection<Facility> Facilities { get; set; } = new List<Facility>();
         public virtual ICollection<ParkingSlot> ParkingSlots { get; set; } = new List<ParkingSlot>();
+        public virtual ICollection<Image>? Images { get; set; } = new List<Image>();
+
 
 
     }

@@ -50,6 +50,8 @@
         public DateTime? UpdatedAt { get; set; }
         public virtual ICollection<Unit>? Units { get; set; } = new List<Unit>();
         public virtual ICollection<Facility>? Facilities { get; set; } = new List<Facility>();
-        public virtual ICollection<ParkingSlot>? ParkingSlots { get; set; } = new List<ParkingSlot>();   
+        public virtual ICollection<ParkingSlot>? ParkingSlots { get; set; } = new List<ParkingSlot>();
+        public virtual ICollection<Image>? Images { get; set; } = new List<Image>();
+
     }
 }

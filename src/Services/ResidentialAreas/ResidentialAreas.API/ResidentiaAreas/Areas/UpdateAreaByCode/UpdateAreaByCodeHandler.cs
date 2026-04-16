@@ -45,7 +45,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
 
 
 
-            List<string?>? existingImageUrls = await _areaDbContext.Images.Where(ai => ai.Code == area.Code && ai.ImageType == ImageType.Area).Select(ai => ai.Url).ToListAsync(cancellationToken);
+            List<string?>? existingImageUrls = await _areaDbContext.Images.Where(ai => ai.AreaCode == area.Code && ai.ImageType == ImageType.Area).Select(ai => ai.Url).ToListAsync(cancellationToken);
 
 
             List<string?>? removedImagePaths = request.RemovedImagesUrls?.Select(url => url != null && url.Contains("images/") ? "images/" + url.Split("images/").LastOrDefault() : url).ToList();
@@ -54,7 +54,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
 
 
             await _imageSaver.DeleteImages(imagesToRemove);
-            await _areaDbContext.Images.Where(ai => ai.Code == area.Code && ai.ImageType == ImageType.Area && imagesToRemove.Contains(ai.Url)).ExecuteDeleteAsync(cancellationToken);
+            await _areaDbContext.Images.Where(ai => ai.AreaCode == area.Code && ai.ImageType == ImageType.Area && imagesToRemove.Contains(ai.Url)).ExecuteDeleteAsync(cancellationToken);
 
 
 
@@ -73,13 +73,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
                         _logger.LogError("Failed to save image for area with code {AreaCode}", area.Code);
                         imagePath = "images/default.jpg";
                     }
-                    _areaDbContext.Images.Add(new Image { Code = area.Code, ImageType = ImageType.Area, Url = imagePath });
+                    _areaDbContext.Images.Add(new Image { AreaCode = area.Code, ImageType = ImageType.Area, Url = imagePath });
                 }
             }
 
             await _areaDbContext.SaveChangesAsync(cancellationToken);
 
-            List<string?>? allImageUrls = await _areaDbContext.Images.AsNoTracking().Where(ai => ai.Code == area.Code && ai.ImageType == ImageType.Area).Select(ai => ai.Url).ToListAsync(cancellationToken);
+            List<string?>? allImageUrls = await _areaDbContext.Images.AsNoTracking().Where(ai => ai.AreaCode == area.Code && ai.ImageType == ImageType.Area).Select(ai => ai.Url).ToListAsync(cancellationToken);
 
             return new UpdateAreaByCodeResult(area.Id, area.Code, area.Name, area.City, area.State, area.Country, area.PostalCode, area.Address, area.GeoBoundary, area.Status.ToString(), allImageUrls);
         }
