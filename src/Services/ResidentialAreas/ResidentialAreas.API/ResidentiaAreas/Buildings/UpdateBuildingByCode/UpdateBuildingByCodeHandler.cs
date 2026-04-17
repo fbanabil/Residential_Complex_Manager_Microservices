@@ -1,29 +1,29 @@
-﻿using ResidentialAreas.API.Helpers.ImageSaver;
+using ResidentialAreas.API.Helpers.ImageSaver;
 
-namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
+namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
 {
-    public record UpdateBuildingByIdCommand(Guid Id, string Name, string BlockNo, int TotalFloors, string Address, string Status, List<string?>? RemovedImagesUrls, List<string?>? AddedBase64StringImages) : ICommand<UpdateBuildingByIdResult>;
-    public record UpdateBuildingByIdResult(Guid Id, long Code, string Name, string BlockNo, int? TotalFloors, string Address, string Status, long AreaCode, string AreaName, List<string?>? ImageUrls);
+    public record UpdateBuildingByCodeCommand(long Code, string Name, string BlockNo, int TotalFloors, string Address, string Status, List<string?>? RemovedImagesUrls, List<string?>? AddedBase64StringImages) : ICommand<UpdateBuildingByCodeResult>;
+    public record UpdateBuildingByCodeResult(Guid Id, long Code, string Name, string BlockNo, int? TotalFloors, string Address, string Status, long AreaCode, string AreaName, List<string?>? ImageUrls);
 
-    public class UpdateBuildingByIdHandler : ICommandHandler<UpdateBuildingByIdCommand, UpdateBuildingByIdResult>
+    public class UpdateBuildingByCodeHandler : ICommandHandler<UpdateBuildingByCodeCommand, UpdateBuildingByCodeResult>
     {
         private readonly AreaDbContext _areaDbContext;
-        private readonly ILogger<UpdateBuildingByIdHandler> _logger;
+        private readonly ILogger<UpdateBuildingByCodeHandler> _logger;
         private readonly IImageSaver _imageSaver;
 
-        public UpdateBuildingByIdHandler(AreaDbContext areaDbContext, ILogger<UpdateBuildingByIdHandler> logger, IImageSaver imageSaver)
+        public UpdateBuildingByCodeHandler(AreaDbContext areaDbContext, ILogger<UpdateBuildingByCodeHandler> logger, IImageSaver imageSaver)
         {
             _areaDbContext = areaDbContext;
             _logger = logger;
             _imageSaver = imageSaver;
         }
 
-        public async Task<UpdateBuildingByIdResult> Handle(UpdateBuildingByIdCommand request, CancellationToken cancellationToken)
+        public async Task<UpdateBuildingByCodeResult> Handle(UpdateBuildingByCodeCommand request, CancellationToken cancellationToken)
         {
-            Building? building = await _areaDbContext.Buildings.FirstOrDefaultAsync(b => b.Id == request.Id, cancellationToken);
+            Building? building = await _areaDbContext.Buildings.FirstOrDefaultAsync(b => b.Code == request.Code, cancellationToken);
             if (building == null)
             {
-                _logger.LogWarning("Building with Id {Id} not found for update.", request.Id);
+                _logger.LogWarning("Building with Code {Code} not found for update.", request.Code);
                 return null;
             }
 
@@ -76,7 +76,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
                 .Select(a => new { a.Code, a.Name })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return new UpdateBuildingByIdResult(building.Id!.Value, building.Code, building.Name ?? string.Empty, building.BlockNo ?? string.Empty, building.TotalFloors, building.Address ?? string.Empty, building.Status.ToString(), areaInfo?.Code ?? 0, areaInfo?.Name ?? string.Empty, allImageUrls);
+            return new UpdateBuildingByCodeResult(building.Id!.Value, building.Code, building.Name ?? string.Empty, building.BlockNo ?? string.Empty, building.TotalFloors, building.Address ?? string.Empty, building.Status.ToString(), areaInfo?.Code ?? 0, areaInfo?.Name ?? string.Empty, allImageUrls);
         }
     }
 }
