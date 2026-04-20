@@ -6,6 +6,6 @@
         Building,
         Unit,
         Facility,
-        ParkingSlot
+        ParkingSpace
     }
 }

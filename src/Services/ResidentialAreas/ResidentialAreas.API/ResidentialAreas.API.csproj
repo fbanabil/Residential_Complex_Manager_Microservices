@@ -40,10 +40,15 @@
     <Folder Include="ResidentiaAreas\Facilities\" />
     <Folder Include="ResidentiaAreas\ParkingSlots\" />
     <Folder Include="ResidentiaAreas\Units\" />
+    <Folder Include="wwwroot\images\areas\" />
+    <Folder Include="wwwroot\images\Buildings\" />
   </ItemGroup>
 	<ItemGroup>
 		<None Include="AppDbContext\SampleData\**\*.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Remove="AppDbContext\SampleData\ParkingSpace.sample.json" />
 	</ItemGroup>
 </Project>

@@ -12,8 +12,8 @@ using ResidentialAreas.API.AppDbContext;
 namespace ResidentialAreas.API.Migrations
 {
     [DbContext(typeof(AreaDbContext))]
-    [Migration("20260416164708_AfterSecondBlunder")]
-    partial class AfterSecondBlunder
+    [Migration("20260420092340_AnotherBlunderAndRearchitectureModelSpace")]
+    partial class AnotherBlunderAndRearchitectureModelSpace
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -405,6 +405,9 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("AssignedParkingSpaceId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("BlockNo")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -441,6 +444,8 @@ namespace ResidentialAreas.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AreaId");
+
+                    b.HasIndex("AssignedParkingSpaceId");
 
                     b.HasIndex("Code")
                         .IsUnique();
@@ -734,6 +739,14 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("FacilityCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long?>("FacilityCode"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long?>("FacilityCode"), 4000000000L, null, null, null, null, null);
+
                     b.Property<string>("FacilityType")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -754,9 +767,6 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<Guid?>("UnitId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .IsRequired()
                         .HasColumnType("timestamp with time zone");
@@ -766,8 +776,6 @@ namespace ResidentialAreas.API.Migrations
                     b.HasIndex("AreaId");
 
                     b.HasIndex("BuildingId");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("Facilities");
 
@@ -1056,11 +1064,14 @@ namespace ResidentialAreas.API.Migrations
                     b.Property<long?>("BuildingCode")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("FacilityCode")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("ImageType")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<long?>("ParkingSlotCode")
+                    b.Property<long?>("ParkingSpaceCode")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("UnitCode")
@@ -1076,7 +1087,9 @@ namespace ResidentialAreas.API.Migrations
 
                     b.HasIndex("BuildingCode");
 
-                    b.HasIndex("ParkingSlotCode");
+                    b.HasIndex("FacilityCode");
+
+                    b.HasIndex("ParkingSpaceCode");
 
                     b.HasIndex("UnitCode");
 
@@ -1088,140 +1101,140 @@ namespace ResidentialAreas.API.Migrations
                             Id = new Guid("55555555-0001-0001-0001-000000000001"),
                             AreaCode = 1000000000L,
                             ImageType = "Area",
-                            Url = "https://example.com/images/area/area-dha-001.jpg"
+                            Url = "https://example.com/images/area/area-001.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0002-0002-0002-000000000002"),
-                            BuildingCode = 2000000001L,
-                            ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-cha-002.jpg"
+                            AreaCode = 1000000001L,
+                            ImageType = "Area",
+                            Url = "https://example.com/images/area/area-002.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0003-0003-0003-000000000003"),
-                            ImageType = "Unit",
-                            UnitCode = 4000000003L,
-                            Url = "https://example.com/images/unit/unit-khu-003.jpg"
+                            AreaCode = 1000000002L,
+                            ImageType = "Area",
+                            Url = "https://example.com/images/area/area-003.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0004-0004-0004-000000000004"),
-                            AreaCode = 1000000000L,
+                            AreaCode = 1000000003L,
                             ImageType = "Area",
-                            Url = "https://example.com/images/area/area-raj-004.jpg"
+                            Url = "https://example.com/images/area/area-004.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0005-0005-0005-000000000005"),
-                            BuildingCode = 2000000003L,
+                            BuildingCode = 2000000000L,
                             ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-syl-005.jpg"
+                            Url = "https://example.com/images/building/building-005.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0006-0006-0006-000000000006"),
-                            ImageType = "Unit",
-                            UnitCode = 4000000002L,
-                            Url = "https://example.com/images/unit/unit-dha-006.jpg"
+                            BuildingCode = 2000000001L,
+                            ImageType = "Building",
+                            Url = "https://example.com/images/building/building-006.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0007-0007-0007-000000000007"),
-                            AreaCode = 1000000003L,
-                            ImageType = "Area",
-                            Url = "https://example.com/images/area/area-cha-007.jpg"
+                            BuildingCode = 2000000002L,
+                            ImageType = "Building",
+                            Url = "https://example.com/images/building/building-007.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0008-0008-0008-000000000008"),
-                            BuildingCode = 2000000008L,
+                            BuildingCode = 2000000003L,
                             ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-khu-008.jpg"
+                            Url = "https://example.com/images/building/building-008.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0009-0009-0009-000000000009"),
                             ImageType = "Unit",
-                            UnitCode = 4000000004L,
-                            Url = "https://example.com/images/unit/unit-raj-009.jpg"
+                            UnitCode = 5000000000L,
+                            Url = "https://example.com/images/unit/unit-009.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0010-0010-0010-000000000010"),
-                            AreaCode = 1000000004L,
-                            ImageType = "Area",
-                            Url = "https://example.com/images/area/area-syl-010.jpg"
+                            ImageType = "Unit",
+                            UnitCode = 5000000001L,
+                            Url = "https://example.com/images/unit/unit-010.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0011-0011-0011-000000000011"),
-                            BuildingCode = 2000000011L,
-                            ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-dha-011.jpg"
+                            ImageType = "Unit",
+                            UnitCode = 5000000002L,
+                            Url = "https://example.com/images/unit/unit-011.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0012-0012-0012-000000000012"),
                             ImageType = "Unit",
-                            UnitCode = 4000000005L,
-                            Url = "https://example.com/images/unit/unit-cha-012.jpg"
+                            UnitCode = 5000000003L,
+                            Url = "https://example.com/images/unit/unit-012.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0013-0013-0013-000000000013"),
-                            AreaCode = 1000000001L,
-                            ImageType = "Area",
-                            Url = "https://example.com/images/area/area-khu-013.jpg"
+                            FacilityCode = 4000000000L,
+                            ImageType = "Facility",
+                            Url = "https://example.com/images/facility/facility-013.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0014-0014-0014-000000000014"),
-                            BuildingCode = 2000000002L,
-                            ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-raj-014.jpg"
+                            FacilityCode = 4000000001L,
+                            ImageType = "Facility",
+                            Url = "https://example.com/images/facility/facility-014.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0015-0015-0015-000000000015"),
-                            ImageType = "Unit",
-                            UnitCode = 4000000003L,
-                            Url = "https://example.com/images/unit/unit-syl-015.jpg"
+                            FacilityCode = 4000000002L,
+                            ImageType = "Facility",
+                            Url = "https://example.com/images/facility/facility-015.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0016-0016-0016-000000000016"),
-                            AreaCode = 1000000004L,
-                            ImageType = "Area",
-                            Url = "https://example.com/images/area/area-dha-016.jpg"
+                            FacilityCode = 4000000003L,
+                            ImageType = "Facility",
+                            Url = "https://example.com/images/facility/facility-016.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0017-0017-0017-000000000017"),
-                            BuildingCode = 2000000005L,
-                            ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-cha-017.jpg"
+                            ImageType = "ParkingSpace",
+                            ParkingSpaceCode = 3000000000L,
+                            Url = "https://example.com/images/parking-space/parking-space-017.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0018-0018-0018-000000000018"),
-                            ImageType = "Unit",
-                            UnitCode = 4000000007L,
-                            Url = "https://example.com/images/unit/unit-khu-018.jpg"
+                            ImageType = "ParkingSpace",
+                            ParkingSpaceCode = 3000000001L,
+                            Url = "https://example.com/images/parking-space/parking-space-018.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0019-0019-0019-000000000019"),
-                            AreaCode = 1000000007L,
-                            ImageType = "Area",
-                            Url = "https://example.com/images/area/area-raj-019.jpg"
+                            ImageType = "ParkingSpace",
+                            ParkingSpaceCode = 3000000002L,
+                            Url = "https://example.com/images/parking-space/parking-space-019.jpg"
                         },
                         new
                         {
                             Id = new Guid("55555555-0020-0020-0020-000000000020"),
-                            BuildingCode = 2000000011L,
-                            ImageType = "Building",
-                            Url = "https://example.com/images/building/bld-syl-020.jpg"
+                            ImageType = "ParkingSpace",
+                            ParkingSpaceCode = 3000000003L,
+                            Url = "https://example.com/images/parking-space/parking-space-020.jpg"
                         });
                 });
 
@@ -1231,22 +1244,21 @@ namespace ResidentialAreas.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AssignedResidentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("BuildingId")
+                    b.Property<Guid?>("AssignedUnitId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("CreatedAt")
                         .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("ParkingSpaceId")
+                        .HasColumnType("uuid");
+
                     b.Property<long>("SlotCode")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("SlotCode"));
-                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("SlotCode"), 3000000000L, null, null, null, null, null);
 
                     b.Property<string>("SlotType")
                         .IsRequired()
@@ -1256,23 +1268,18 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<Guid?>("UnitId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedResidentId");
+                    b.HasIndex("AssignedUnitId");
 
-                    b.HasIndex("BuildingId");
+                    b.HasIndex("ParkingSpaceId");
 
                     b.HasIndex("SlotCode")
                         .IsUnique();
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("ParkingSlots");
 
@@ -1280,222 +1287,512 @@ namespace ResidentialAreas.API.Migrations
                         new
                         {
                             Id = new Guid("66666666-0001-0001-0001-000000000001"),
-                            BuildingId = new Guid("22222222-0001-0001-0001-000000000001"),
+                            AssignedUnitId = new Guid("33333333-0001-0001-0001-000000000001"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 21, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0001-0001-0001-000000000001"),
                             SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0001-0001-0001-000000000001"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 21, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0002-0002-0002-000000000002"),
-                            BuildingId = new Guid("22222222-0002-0002-0002-000000000002"),
+                            AssignedUnitId = new Guid("33333333-0002-0002-0002-000000000002"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 22, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0002-0002-0002-000000000002"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Standard",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0002-0002-0002-000000000002"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 22, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0003-0003-0003-000000000003"),
-                            BuildingId = new Guid("22222222-0003-0003-0003-000000000003"),
+                            AssignedUnitId = new Guid("33333333-0003-0003-0003-000000000003"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 23, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0003-0003-0003-000000000003"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Large",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0003-0003-0003-000000000003"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 23, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0004-0004-0004-000000000004"),
-                            BuildingId = new Guid("22222222-0004-0004-0004-000000000004"),
+                            AssignedUnitId = new Guid("33333333-0004-0004-0004-000000000004"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 24, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0004-0004-0004-000000000004"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Handicapped",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0004-0004-0004-000000000004"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 24, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0005-0005-0005-000000000005"),
-                            BuildingId = new Guid("22222222-0005-0005-0005-000000000005"),
+                            AssignedUnitId = new Guid("33333333-0005-0005-0005-000000000005"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 25, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0005-0005-0005-000000000005"),
                             SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0005-0005-0005-000000000005"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 25, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0006-0006-0006-000000000006"),
-                            BuildingId = new Guid("22222222-0006-0006-0006-000000000006"),
+                            AssignedUnitId = new Guid("33333333-0006-0006-0006-000000000006"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 26, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0006-0006-0006-000000000006"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Standard",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0006-0006-0006-000000000006"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 26, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0007-0007-0007-000000000007"),
-                            BuildingId = new Guid("22222222-0007-0007-0007-000000000007"),
+                            AssignedUnitId = new Guid("33333333-0007-0007-0007-000000000007"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 27, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0007-0007-0007-000000000007"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Large",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0007-0007-0007-000000000007"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 27, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0008-0008-0008-000000000008"),
-                            BuildingId = new Guid("22222222-0008-0008-0008-000000000008"),
+                            AssignedUnitId = new Guid("33333333-0008-0008-0008-000000000008"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 28, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0008-0008-0008-000000000008"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Handicapped",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0008-0008-0008-000000000008"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 28, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0009-0009-0009-000000000009"),
-                            BuildingId = new Guid("22222222-0009-0009-0009-000000000009"),
+                            AssignedUnitId = new Guid("33333333-0009-0009-0009-000000000009"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 29, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0009-0009-0009-000000000009"),
                             SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0009-0009-0009-000000000009"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 29, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0010-0010-0010-000000000010"),
-                            BuildingId = new Guid("22222222-0010-0010-0010-000000000010"),
+                            AssignedUnitId = new Guid("33333333-0010-0010-0010-000000000010"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 30, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0010-0010-0010-000000000010"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Standard",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0010-0010-0010-000000000010"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 30, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0011-0011-0011-000000000011"),
-                            BuildingId = new Guid("22222222-0011-0011-0011-000000000011"),
+                            AssignedUnitId = new Guid("33333333-0011-0011-0011-000000000011"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 31, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0011-0011-0011-000000000011"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Large",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0011-0011-0011-000000000011"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 31, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0012-0012-0012-000000000012"),
-                            BuildingId = new Guid("22222222-0012-0012-0012-000000000012"),
+                            AssignedUnitId = new Guid("33333333-0012-0012-0012-000000000012"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 32, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0012-0012-0012-000000000012"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Handicapped",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0012-0012-0012-000000000012"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 32, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0013-0013-0013-000000000013"),
-                            BuildingId = new Guid("22222222-0013-0013-0013-000000000013"),
+                            AssignedUnitId = new Guid("33333333-0013-0013-0013-000000000013"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 33, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0013-0013-0013-000000000013"),
                             SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0013-0013-0013-000000000013"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 33, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0014-0014-0014-000000000014"),
-                            BuildingId = new Guid("22222222-0014-0014-0014-000000000014"),
+                            AssignedUnitId = new Guid("33333333-0014-0014-0014-000000000014"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 34, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0014-0014-0014-000000000014"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Standard",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0014-0014-0014-000000000014"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 34, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0015-0015-0015-000000000015"),
-                            BuildingId = new Guid("22222222-0015-0015-0015-000000000015"),
+                            AssignedUnitId = new Guid("33333333-0015-0015-0015-000000000015"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 35, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0015-0015-0015-000000000015"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Large",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0015-0015-0015-000000000015"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 35, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0016-0016-0016-000000000016"),
-                            BuildingId = new Guid("22222222-0016-0016-0016-000000000016"),
+                            AssignedUnitId = new Guid("33333333-0016-0016-0016-000000000016"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 36, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0016-0016-0016-000000000016"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Handicapped",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0016-0016-0016-000000000016"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 36, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0017-0017-0017-000000000017"),
-                            BuildingId = new Guid("22222222-0017-0017-0017-000000000017"),
+                            AssignedUnitId = new Guid("33333333-0017-0017-0017-000000000017"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 37, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0017-0017-0017-000000000017"),
                             SlotCode = 0L,
                             SlotType = "Compact",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0017-0017-0017-000000000017"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 37, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0018-0018-0018-000000000018"),
-                            BuildingId = new Guid("22222222-0018-0018-0018-000000000018"),
+                            AssignedUnitId = new Guid("33333333-0018-0018-0018-000000000018"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 38, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0018-0018-0018-000000000018"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Standard",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0018-0018-0018-000000000018"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 38, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0019-0019-0019-000000000019"),
-                            BuildingId = new Guid("22222222-0019-0019-0019-000000000019"),
+                            AssignedUnitId = new Guid("33333333-0019-0019-0019-000000000019"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 39, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0019-0019-0019-000000000019"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Large",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0019-0019-0019-000000000019"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 39, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = new Guid("66666666-0020-0020-0020-000000000020"),
-                            BuildingId = new Guid("22222222-0020-0020-0020-000000000020"),
+                            AssignedUnitId = new Guid("33333333-0020-0020-0020-000000000020"),
                             CreatedAt = new DateTime(2026, 4, 12, 12, 40, 0, 0, DateTimeKind.Utc),
+                            ParkingSpaceId = new Guid("77777777-0020-0020-0020-000000000020"),
                             SlotCode = 0L,
-                            SlotType = "Compact",
+                            SlotType = "Handicapped",
                             Status = "Active",
-                            UnitId = new Guid("33333333-0020-0020-0020-000000000020"),
                             UpdatedAt = new DateTime(2026, 4, 12, 12, 40, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
+            modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSpace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AreaId")
+                        .IsRequired()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BlockNo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("ParkingSpaceCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("ParkingSpaceCode"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("ParkingSpaceCode"), 3000000000L, null, null, null, null, null);
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("Name", "AreaId")
+                        .IsUnique();
+
+                    b.ToTable("ParkingSpaces");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("77777777-0001-0001-0001-000000000001"),
+                            AreaId = new Guid("11111111-0001-0001-0001-000000000001"),
+                            BlockNo = "A",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 1, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 1",
+                            Name = "Parking Space 1",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 1, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0002-0002-0002-000000000002"),
+                            AreaId = new Guid("11111111-0002-0002-0002-000000000002"),
+                            BlockNo = "B",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 2, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 2",
+                            Name = "Parking Space 2",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 2, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0003-0003-0003-000000000003"),
+                            AreaId = new Guid("11111111-0003-0003-0003-000000000003"),
+                            BlockNo = "C",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 3, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 3",
+                            Name = "Parking Space 3",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 3, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0004-0004-0004-000000000004"),
+                            AreaId = new Guid("11111111-0004-0004-0004-000000000004"),
+                            BlockNo = "D",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 4, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 4",
+                            Name = "Parking Space 4",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 4, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0005-0005-0005-000000000005"),
+                            AreaId = new Guid("11111111-0005-0005-0005-000000000005"),
+                            BlockNo = "E",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 5, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 5",
+                            Name = "Parking Space 5",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 5, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0006-0006-0006-000000000006"),
+                            AreaId = new Guid("11111111-0006-0006-0006-000000000006"),
+                            BlockNo = "A",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 6, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 6",
+                            Name = "Parking Space 6",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 6, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0007-0007-0007-000000000007"),
+                            AreaId = new Guid("11111111-0007-0007-0007-000000000007"),
+                            BlockNo = "B",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 7, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 7",
+                            Name = "Parking Space 7",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 7, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0008-0008-0008-000000000008"),
+                            AreaId = new Guid("11111111-0008-0008-0008-000000000008"),
+                            BlockNo = "C",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 8, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 8",
+                            Name = "Parking Space 8",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 8, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0009-0009-0009-000000000009"),
+                            AreaId = new Guid("11111111-0009-0009-0009-000000000009"),
+                            BlockNo = "D",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 9, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 9",
+                            Name = "Parking Space 9",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 9, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0010-0010-0010-000000000010"),
+                            AreaId = new Guid("11111111-0010-0010-0010-000000000010"),
+                            BlockNo = "E",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 10, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 10",
+                            Name = "Parking Space 10",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 10, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0011-0011-0011-000000000011"),
+                            AreaId = new Guid("11111111-0011-0011-0011-000000000011"),
+                            BlockNo = "A",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 11, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 11",
+                            Name = "Parking Space 11",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 11, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0012-0012-0012-000000000012"),
+                            AreaId = new Guid("11111111-0012-0012-0012-000000000012"),
+                            BlockNo = "B",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 12, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 12",
+                            Name = "Parking Space 12",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 12, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0013-0013-0013-000000000013"),
+                            AreaId = new Guid("11111111-0013-0013-0013-000000000013"),
+                            BlockNo = "C",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 13, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 13",
+                            Name = "Parking Space 13",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 13, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0014-0014-0014-000000000014"),
+                            AreaId = new Guid("11111111-0014-0014-0014-000000000014"),
+                            BlockNo = "D",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 14, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 14",
+                            Name = "Parking Space 14",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 14, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0015-0015-0015-000000000015"),
+                            AreaId = new Guid("11111111-0015-0015-0015-000000000015"),
+                            BlockNo = "E",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 15, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 15",
+                            Name = "Parking Space 15",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 15, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0016-0016-0016-000000000016"),
+                            AreaId = new Guid("11111111-0016-0016-0016-000000000016"),
+                            BlockNo = "A",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 16, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 16",
+                            Name = "Parking Space 16",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 16, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0017-0017-0017-000000000017"),
+                            AreaId = new Guid("11111111-0017-0017-0017-000000000017"),
+                            BlockNo = "B",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 17, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 17",
+                            Name = "Parking Space 17",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 17, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0018-0018-0018-000000000018"),
+                            AreaId = new Guid("11111111-0018-0018-0018-000000000018"),
+                            BlockNo = "C",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 18, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 18",
+                            Name = "Parking Space 18",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 18, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0019-0019-0019-000000000019"),
+                            AreaId = new Guid("11111111-0019-0019-0019-000000000019"),
+                            BlockNo = "D",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 19, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 19",
+                            Name = "Parking Space 19",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 19, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-0020-0020-0020-000000000020"),
+                            AreaId = new Guid("11111111-0020-0020-0020-000000000020"),
+                            BlockNo = "E",
+                            CreatedAt = new DateTime(2026, 4, 12, 12, 20, 0, 0, DateTimeKind.Utc),
+                            Description = "Basement parking zone 20",
+                            Name = "Parking Space 20",
+                            ParkingSpaceCode = 0L,
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2026, 4, 12, 12, 20, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -1522,7 +1819,7 @@ namespace ResidentialAreas.API.Migrations
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Code"));
-                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Code"), 4000000000L, null, null, null, null, null);
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Code"), 5000000000L, null, null, null, null, null);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -1894,7 +2191,13 @@ namespace ResidentialAreas.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ResidentialAreas.API.EntityModels.ParkingSpace", "AssignedParkingSpace")
+                        .WithMany("Buildings")
+                        .HasForeignKey("AssignedParkingSpaceId");
+
                     b.Navigation("Area");
+
+                    b.Navigation("AssignedParkingSpace");
                 });
 
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.Facility", b =>
@@ -1906,10 +2209,6 @@ namespace ResidentialAreas.API.Migrations
                     b.HasOne("ResidentialAreas.API.EntityModels.Building", "Building")
                         .WithMany("Facilities")
                         .HasForeignKey("BuildingId");
-
-                    b.HasOne("ResidentialAreas.API.EntityModels.Unit", null)
-                        .WithMany("Facilities")
-                        .HasForeignKey("UnitId");
 
                     b.Navigation("Area");
 
@@ -1930,10 +2229,16 @@ namespace ResidentialAreas.API.Migrations
                         .HasPrincipalKey("Code")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ResidentialAreas.API.EntityModels.ParkingSlot", "ParkingSlot")
+                    b.HasOne("ResidentialAreas.API.EntityModels.Facility", "Facility")
                         .WithMany("Images")
-                        .HasForeignKey("ParkingSlotCode")
-                        .HasPrincipalKey("SlotCode")
+                        .HasForeignKey("FacilityCode")
+                        .HasPrincipalKey("FacilityCode")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ResidentialAreas.API.EntityModels.ParkingSpace", "ParkingSpace")
+                        .WithMany("Images")
+                        .HasForeignKey("ParkingSpaceCode")
+                        .HasPrincipalKey("ParkingSpaceCode")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ResidentialAreas.API.EntityModels.Unit", "Unit")
@@ -1946,24 +2251,37 @@ namespace ResidentialAreas.API.Migrations
 
                     b.Navigation("Building");
 
-                    b.Navigation("ParkingSlot");
+                    b.Navigation("Facility");
+
+                    b.Navigation("ParkingSpace");
 
                     b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSlot", b =>
                 {
-                    b.HasOne("ResidentialAreas.API.EntityModels.Building", "Building")
+                    b.HasOne("ResidentialAreas.API.EntityModels.Unit", "AssignedUnit")
                         .WithMany("ParkingSlots")
-                        .HasForeignKey("BuildingId");
+                        .HasForeignKey("AssignedUnitId");
 
-                    b.HasOne("ResidentialAreas.API.EntityModels.Unit", "Unit")
+                    b.HasOne("ResidentialAreas.API.EntityModels.ParkingSpace", "ParkingSpace")
                         .WithMany("ParkingSlots")
-                        .HasForeignKey("UnitId");
+                        .HasForeignKey("ParkingSpaceId");
 
-                    b.Navigation("Building");
+                    b.Navigation("AssignedUnit");
 
-                    b.Navigation("Unit");
+                    b.Navigation("ParkingSpace");
+                });
+
+            modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSpace", b =>
+                {
+                    b.HasOne("ResidentialAreas.API.EntityModels.Area", "Area")
+                        .WithMany("ParkingSpaces")
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Area");
                 });
 
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.Unit", b =>
@@ -1984,6 +2302,8 @@ namespace ResidentialAreas.API.Migrations
                     b.Navigation("Facilities");
 
                     b.Navigation("Images");
+
+                    b.Navigation("ParkingSpaces");
                 });
 
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.Building", b =>
@@ -1992,20 +2312,25 @@ namespace ResidentialAreas.API.Migrations
 
                     b.Navigation("Images");
 
-                    b.Navigation("ParkingSlots");
-
                     b.Navigation("Units");
                 });
 
-            modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSlot", b =>
+            modelBuilder.Entity("ResidentialAreas.API.EntityModels.Facility", b =>
                 {
                     b.Navigation("Images");
                 });
 
+            modelBuilder.Entity("ResidentialAreas.API.EntityModels.ParkingSpace", b =>
+                {
+                    b.Navigation("Buildings");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("ParkingSlots");
+                });
+
             modelBuilder.Entity("ResidentialAreas.API.EntityModels.Unit", b =>
                 {
-                    b.Navigation("Facilities");
-
                     b.Navigation("Images");
 
                     b.Navigation("ParkingSlots");

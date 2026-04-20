@@ -36,11 +36,18 @@ namespace ResidentialAreas.API.AppDbContext
                 modelbuilder.Entity<EntityModels.Unit>().HasData(unitList);
             }
 
-            var parkingSpaces = File.ReadAllText(Path.Combine(basePath, "ParkingSlot.sample.json"));
-            var parkingSpaceList = JsonSerializer.Deserialize<List<ParkingSlot>>(parkingSpaces, options);
+            var parkingSpaces = File.ReadAllText(Path.Combine(basePath, "ParkingSpace.sample.json"));
+            var parkingSpaceList = JsonSerializer.Deserialize<List<ParkingSpace>>(parkingSpaces, options);
             if (parkingSpaceList != null)
             {
-                modelbuilder.Entity<ParkingSlot>().HasData(parkingSpaceList);
+                modelbuilder.Entity<ParkingSpace>().HasData(parkingSpaceList);
+            }
+
+            var parkingSlots = File.ReadAllText(Path.Combine(basePath, "ParkingSlot.sample.json"));
+            var parkingSlotList = JsonSerializer.Deserialize<List<ParkingSlot>>(parkingSlots, options);
+            if (parkingSlotList != null)
+            {
+                modelbuilder.Entity<ParkingSlot>().HasData(parkingSlotList);
             }
 
             var facilities = File.ReadAllText(Path.Combine(basePath, "Facilitie.sample.json"));

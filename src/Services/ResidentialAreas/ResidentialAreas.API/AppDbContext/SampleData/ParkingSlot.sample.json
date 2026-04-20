@@ -1,202 +1,22 @@
 [
-  {
-    "Id": "66666666-0001-0001-0001-000000000001",
-    "BuildingId": "22222222-0001-0001-0001-000000000001",
-    "UnitId": "33333333-0001-0001-0001-000000000001",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:21:00Z",
-    "UpdatedAt": "2026-04-12T12:21:00Z"
-  },
-  {
-    "Id": "66666666-0002-0002-0002-000000000002",
-    "BuildingId": "22222222-0002-0002-0002-000000000002",
-    "UnitId": "33333333-0002-0002-0002-000000000002",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:22:00Z",
-    "UpdatedAt": "2026-04-12T12:22:00Z"
-  },
-  {
-    "Id": "66666666-0003-0003-0003-000000000003",
-    "BuildingId": "22222222-0003-0003-0003-000000000003",
-    "UnitId": "33333333-0003-0003-0003-000000000003",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:23:00Z",
-    "UpdatedAt": "2026-04-12T12:23:00Z"
-  },
-  {
-    "Id": "66666666-0004-0004-0004-000000000004",
-    "BuildingId": "22222222-0004-0004-0004-000000000004",
-    "UnitId": "33333333-0004-0004-0004-000000000004",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:24:00Z",
-    "UpdatedAt": "2026-04-12T12:24:00Z"
-  },
-  {
-    "Id": "66666666-0005-0005-0005-000000000005",
-    "BuildingId": "22222222-0005-0005-0005-000000000005",
-    "UnitId": "33333333-0005-0005-0005-000000000005",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:25:00Z",
-    "UpdatedAt": "2026-04-12T12:25:00Z"
-  },
-  {
-    "Id": "66666666-0006-0006-0006-000000000006",
-    "BuildingId": "22222222-0006-0006-0006-000000000006",
-    "UnitId": "33333333-0006-0006-0006-000000000006",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:26:00Z",
-    "UpdatedAt": "2026-04-12T12:26:00Z"
-  },
-  {
-    "Id": "66666666-0007-0007-0007-000000000007",
-    "BuildingId": "22222222-0007-0007-0007-000000000007",
-    "UnitId": "33333333-0007-0007-0007-000000000007",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:27:00Z",
-    "UpdatedAt": "2026-04-12T12:27:00Z"
-  },
-  {
-    "Id": "66666666-0008-0008-0008-000000000008",
-    "BuildingId": "22222222-0008-0008-0008-000000000008",
-    "UnitId": "33333333-0008-0008-0008-000000000008",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:28:00Z",
-    "UpdatedAt": "2026-04-12T12:28:00Z"
-  },
-  {
-    "Id": "66666666-0009-0009-0009-000000000009",
-    "BuildingId": "22222222-0009-0009-0009-000000000009",
-    "UnitId": "33333333-0009-0009-0009-000000000009",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:29:00Z",
-    "UpdatedAt": "2026-04-12T12:29:00Z"
-  },
-  {
-    "Id": "66666666-0010-0010-0010-000000000010",
-    "BuildingId": "22222222-0010-0010-0010-000000000010",
-    "UnitId": "33333333-0010-0010-0010-000000000010",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:30:00Z",
-    "UpdatedAt": "2026-04-12T12:30:00Z"
-  },
-  {
-    "Id": "66666666-0011-0011-0011-000000000011",
-    "BuildingId": "22222222-0011-0011-0011-000000000011",
-    "UnitId": "33333333-0011-0011-0011-000000000011",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:31:00Z",
-    "UpdatedAt": "2026-04-12T12:31:00Z"
-  },
-  {
-    "Id": "66666666-0012-0012-0012-000000000012",
-    "BuildingId": "22222222-0012-0012-0012-000000000012",
-    "UnitId": "33333333-0012-0012-0012-000000000012",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:32:00Z",
-    "UpdatedAt": "2026-04-12T12:32:00Z"
-  },
-  {
-    "Id": "66666666-0013-0013-0013-000000000013",
-    "BuildingId": "22222222-0013-0013-0013-000000000013",
-    "UnitId": "33333333-0013-0013-0013-000000000013",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:33:00Z",
-    "UpdatedAt": "2026-04-12T12:33:00Z"
-  },
-  {
-    "Id": "66666666-0014-0014-0014-000000000014",
-    "BuildingId": "22222222-0014-0014-0014-000000000014",
-    "UnitId": "33333333-0014-0014-0014-000000000014",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:34:00Z",
-    "UpdatedAt": "2026-04-12T12:34:00Z"
-  },
-  {
-    "Id": "66666666-0015-0015-0015-000000000015",
-    "BuildingId": "22222222-0015-0015-0015-000000000015",
-    "UnitId": "33333333-0015-0015-0015-000000000015",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:35:00Z",
-    "UpdatedAt": "2026-04-12T12:35:00Z"
-  },
-  {
-    "Id": "66666666-0016-0016-0016-000000000016",
-    "BuildingId": "22222222-0016-0016-0016-000000000016",
-    "UnitId": "33333333-0016-0016-0016-000000000016",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:36:00Z",
-    "UpdatedAt": "2026-04-12T12:36:00Z"
-  },
-  {
-    "Id": "66666666-0017-0017-0017-000000000017",
-    "BuildingId": "22222222-0017-0017-0017-000000000017",
-    "UnitId": "33333333-0017-0017-0017-000000000017",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:37:00Z",
-    "UpdatedAt": "2026-04-12T12:37:00Z"
-  },
-  {
-    "Id": "66666666-0018-0018-0018-000000000018",
-    "BuildingId": "22222222-0018-0018-0018-000000000018",
-    "UnitId": "33333333-0018-0018-0018-000000000018",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:38:00Z",
-    "UpdatedAt": "2026-04-12T12:38:00Z"
-  },
-  {
-    "Id": "66666666-0019-0019-0019-000000000019",
-    "BuildingId": "22222222-0019-0019-0019-000000000019",
-    "UnitId": "33333333-0019-0019-0019-000000000019",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:39:00Z",
-    "UpdatedAt": "2026-04-12T12:39:00Z"
-  },
-  {
-    "Id": "66666666-0020-0020-0020-000000000020",
-    "BuildingId": "22222222-0020-0020-0020-000000000020",
-    "UnitId": "33333333-0020-0020-0020-000000000020",
-    "SlotType": "Compact",
-    "AssignedResidentId": null,
-    "Status": "Active",
-    "CreatedAt": "2026-04-12T12:40:00Z",
-    "UpdatedAt": "2026-04-12T12:40:00Z"
-  }
+  { "Id": "66666666-0001-0001-0001-000000000001", "ParkingSpaceId": "77777777-0001-0001-0001-000000000001", "AssignedUnitId": "33333333-0001-0001-0001-000000000001", "SlotType": "Compact", "Status": "Active", "CreatedAt": "2026-04-12T12:21:00Z", "UpdatedAt": "2026-04-12T12:21:00Z" },
+  { "Id": "66666666-0002-0002-0002-000000000002", "ParkingSpaceId": "77777777-0002-0002-0002-000000000002", "AssignedUnitId": "33333333-0002-0002-0002-000000000002", "SlotType": "Standard", "Status": "Active", "CreatedAt": "2026-04-12T12:22:00Z", "UpdatedAt": "2026-04-12T12:22:00Z" },
+  { "Id": "66666666-0003-0003-0003-000000000003", "ParkingSpaceId": "77777777-0003-0003-0003-000000000003", "AssignedUnitId": "33333333-0003-0003-0003-000000000003", "SlotType": "Large", "Status": "Active", "CreatedAt": "2026-04-12T12:23:00Z", "UpdatedAt": "2026-04-12T12:23:00Z" },
+  { "Id": "66666666-0004-0004-0004-000000000004", "ParkingSpaceId": "77777777-0004-0004-0004-000000000004", "AssignedUnitId": "33333333-0004-0004-0004-000000000004", "SlotType": "Handicapped", "Status": "Active", "CreatedAt": "2026-04-12T12:24:00Z", "UpdatedAt": "2026-04-12T12:24:00Z" },
+  { "Id": "66666666-0005-0005-0005-000000000005", "ParkingSpaceId": "77777777-0005-0005-0005-000000000005", "AssignedUnitId": "33333333-0005-0005-0005-000000000005", "SlotType": "Compact", "Status": "Active", "CreatedAt": "2026-04-12T12:25:00Z", "UpdatedAt": "2026-04-12T12:25:00Z" },
+  { "Id": "66666666-0006-0006-0006-000000000006", "ParkingSpaceId": "77777777-0006-0006-0006-000000000006", "AssignedUnitId": "33333333-0006-0006-0006-000000000006", "SlotType": "Standard", "Status": "Active", "CreatedAt": "2026-04-12T12:26:00Z", "UpdatedAt": "2026-04-12T12:26:00Z" },
+  { "Id": "66666666-0007-0007-0007-000000000007", "ParkingSpaceId": "77777777-0007-0007-0007-000000000007", "AssignedUnitId": "33333333-0007-0007-0007-000000000007", "SlotType": "Large", "Status": "Active", "CreatedAt": "2026-04-12T12:27:00Z", "UpdatedAt": "2026-04-12T12:27:00Z" },
+  { "Id": "66666666-0008-0008-0008-000000000008", "ParkingSpaceId": "77777777-0008-0008-0008-000000000008", "AssignedUnitId": "33333333-0008-0008-0008-000000000008", "SlotType": "Handicapped", "Status": "Active", "CreatedAt": "2026-04-12T12:28:00Z", "UpdatedAt": "2026-04-12T12:28:00Z" },
+  { "Id": "66666666-0009-0009-0009-000000000009", "ParkingSpaceId": "77777777-0009-0009-0009-000000000009", "AssignedUnitId": "33333333-0009-0009-0009-000000000009", "SlotType": "Compact", "Status": "Active", "CreatedAt": "2026-04-12T12:29:00Z", "UpdatedAt": "2026-04-12T12:29:00Z" },
+  { "Id": "66666666-0010-0010-0010-000000000010", "ParkingSpaceId": "77777777-0010-0010-0010-000000000010", "AssignedUnitId": "33333333-0010-0010-0010-000000000010", "SlotType": "Standard", "Status": "Active", "CreatedAt": "2026-04-12T12:30:00Z", "UpdatedAt": "2026-04-12T12:30:00Z" },
+  { "Id": "66666666-0011-0011-0011-000000000011", "ParkingSpaceId": "77777777-0011-0011-0011-000000000011", "AssignedUnitId": "33333333-0011-0011-0011-000000000011", "SlotType": "Large", "Status": "Active", "CreatedAt": "2026-04-12T12:31:00Z", "UpdatedAt": "2026-04-12T12:31:00Z" },
+  { "Id": "66666666-0012-0012-0012-000000000012", "ParkingSpaceId": "77777777-0012-0012-0012-000000000012", "AssignedUnitId": "33333333-0012-0012-0012-000000000012", "SlotType": "Handicapped", "Status": "Active", "CreatedAt": "2026-04-12T12:32:00Z", "UpdatedAt": "2026-04-12T12:32:00Z" },
+  { "Id": "66666666-0013-0013-0013-000000000013", "ParkingSpaceId": "77777777-0013-0013-0013-000000000013", "AssignedUnitId": "33333333-0013-0013-0013-000000000013", "SlotType": "Compact", "Status": "Active", "CreatedAt": "2026-04-12T12:33:00Z", "UpdatedAt": "2026-04-12T12:33:00Z" },
+  { "Id": "66666666-0014-0014-0014-000000000014", "ParkingSpaceId": "77777777-0014-0014-0014-000000000014", "AssignedUnitId": "33333333-0014-0014-0014-000000000014", "SlotType": "Standard", "Status": "Active", "CreatedAt": "2026-04-12T12:34:00Z", "UpdatedAt": "2026-04-12T12:34:00Z" },
+  { "Id": "66666666-0015-0015-0015-000000000015", "ParkingSpaceId": "77777777-0015-0015-0015-000000000015", "AssignedUnitId": "33333333-0015-0015-0015-000000000015", "SlotType": "Large", "Status": "Active", "CreatedAt": "2026-04-12T12:35:00Z", "UpdatedAt": "2026-04-12T12:35:00Z" },
+  { "Id": "66666666-0016-0016-0016-000000000016", "ParkingSpaceId": "77777777-0016-0016-0016-000000000016", "AssignedUnitId": "33333333-0016-0016-0016-000000000016", "SlotType": "Handicapped", "Status": "Active", "CreatedAt": "2026-04-12T12:36:00Z", "UpdatedAt": "2026-04-12T12:36:00Z" },
+  { "Id": "66666666-0017-0017-0017-000000000017", "ParkingSpaceId": "77777777-0017-0017-0017-000000000017", "AssignedUnitId": "33333333-0017-0017-0017-000000000017", "SlotType": "Compact", "Status": "Active", "CreatedAt": "2026-04-12T12:37:00Z", "UpdatedAt": "2026-04-12T12:37:00Z" },
+  { "Id": "66666666-0018-0018-0018-000000000018", "ParkingSpaceId": "77777777-0018-0018-0018-000000000018", "AssignedUnitId": "33333333-0018-0018-0018-000000000018", "SlotType": "Standard", "Status": "Active", "CreatedAt": "2026-04-12T12:38:00Z", "UpdatedAt": "2026-04-12T12:38:00Z" },
+  { "Id": "66666666-0019-0019-0019-000000000019", "ParkingSpaceId": "77777777-0019-0019-0019-000000000019", "AssignedUnitId": "33333333-0019-0019-0019-000000000019", "SlotType": "Large", "Status": "Active", "CreatedAt": "2026-04-12T12:39:00Z", "UpdatedAt": "2026-04-12T12:39:00Z" },
+  { "Id": "66666666-0020-0020-0020-000000000020", "ParkingSpaceId": "77777777-0020-0020-0020-000000000020", "AssignedUnitId": "33333333-0020-0020-0020-000000000020", "SlotType": "Handicapped", "Status": "Active", "CreatedAt": "2026-04-12T12:40:00Z", "UpdatedAt": "2026-04-12T12:40:00Z" }
 ]
