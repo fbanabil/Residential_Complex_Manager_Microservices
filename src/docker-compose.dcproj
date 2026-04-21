@@ -17,5 +17,6 @@
     <None Include=".dockerignore" />
     <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\Area.rest" />
     <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\Facility.rest" />
+    <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\ParkingSpace.rest" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
 {
     public record FilterAreaQuery(string? Name, string? City, string? State, string? Country, string? PostalCode, string? Address, string? Status):IQuery<FilterAreaResult>;
-    public record FilterAreaResult(List<FilterAreaResponseInstance>? Areas);
+    public record FilterAreaResult(List<FilterAreaResponseInstance>? Areas, string? ErrorMessage);
     public class FilterAreaHandler : IQueryHandler<FilterAreaQuery, FilterAreaResult>
     {
         private readonly AreaDbContext _areaDbContext;
@@ -19,7 +19,10 @@
                 statusValue = System.Enum.Parse<Status>(request.Status, true);
             }
 
-            IQueryable<Area> query = _areaDbContext.Areas.Include(i=>i.Images).AsNoTracking()
+
+            try
+            {
+                IQueryable<Area> query = _areaDbContext.Areas.Include(i => i.Images).AsNoTracking()
                 .Where(a => (string.IsNullOrEmpty(request.Name) || a.Name.Contains(request.Name)) &&
                             (string.IsNullOrEmpty(request.City) || a.City.Contains(request.City)) &&
                             (string.IsNullOrEmpty(request.State) || a.State.Contains(request.State)) &&
@@ -28,10 +31,16 @@
                             (string.IsNullOrEmpty(request.Address) || a.Address.Contains(request.Address)) &&
                             (!statusValue.HasValue || a.Status == statusValue.Value));
 
-            var areas = await query.ToListAsync(cancellationToken);
+                var areas = await query.ToListAsync(cancellationToken);
 
-
-            return new FilterAreaResult(areas.Select(area => area.Adapt<FilterAreaResponseInstance>() with { ImageUrls = area.Images?.Select(i => i.Url).ToList() }).ToList());
+                return new FilterAreaResult(areas.Select(area => area.Adapt<FilterAreaResponseInstance>() with { ImageUrls = area.Images?.Select(i => i.Url).ToList() }).ToList(), null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while filtering areas with query: {@Query}", request);
+                return new FilterAreaResult(null, "An error occurred while processing your request. Please try again later.");
+            }
+            
         }
     }
 }

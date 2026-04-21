@@ -52,6 +52,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 
                 var command = request.Adapt<AddNewAreaCommand>();
                 var result = await sender.Send(command);
+
+                if(result .ErrorMessage != null)
+                {
+                    return Results.Problem(result.ErrorMessage);
+                }
+
                 var response = result.Adapt<AddNewAreaResponse>();
 
                 if(response == null)

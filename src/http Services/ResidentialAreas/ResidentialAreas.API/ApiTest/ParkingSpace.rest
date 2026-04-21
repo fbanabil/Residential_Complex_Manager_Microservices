@@ -1,0 +1,106 @@
+@baseUrl = https://localhost:8081
+
+# Add New Parking Space
+POST {{baseUrl}}/parking-spaces/add
+Content-Type: application/json
+
+{
+  "areaCode": 1000000000,
+  "name": "Parking Space A-203",
+  "description": "Basement parking zone A-99",
+  "blockNo": "A",
+  "status": "Active",
+  "imageBase64": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+###
+
+# Get Parking Space By ID (seed data)
+GET {{baseUrl}}/parking-spaces/77777777-0001-0001-0001-000000000001
+
+###
+
+# Update Parking Space By ID - success
+POST {{baseUrl}}/parking-spaces/update-by-id
+Content-Type: application/json
+
+{
+  "id": "77777777-0001-0001-0001-000000000001",
+  "areaCode": 1000000000,
+  "name": "Parking Space 1 Updated",
+  "description": "Updated basement parking zone 1",
+  "blockNo": "A",
+  "status": "Maintenance",
+  "removedImagesUrls": ["https://localhost:8081/images/ParkingSpaces/040b4139-3b41-4e7e-84e5-5d7b45fb65b0.png",
+    "https://localhost:8081/images/ParkingSpaces/9c3e91b0-a5dd-4cd6-9d13-e980bf012793.png",
+    "https://localhost:8081/images/default.jpg"],
+  "addedBase64StringImages": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+###
+
+# Update Parking Space By ID - not found
+POST {{baseUrl}}/parking-spaces/update-by-id
+Content-Type: application/json
+
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+  "areaCode": 1000000000,
+  "name": "Unknown Parking Space",
+  "description": "Should return not found",
+  "blockNo": "A",
+  "status": "Active",
+  "removedImagesUrls": [],
+  "addedBase64StringImages": []
+}
+
+###
+
+# Update Parking Space By ID - validation error (invalid areaCode/status)
+POST {{baseUrl}}/parking-spaces/update-by-id
+Content-Type: application/json
+
+{
+  "id": "77777777-0001-0001-0001-000000000001",
+  "areaCode": 999,
+  "name": "Invalid Update",
+  "description": "Invalid data test",
+  "blockNo": "A",
+  "status": "InvalidStatus",
+  "removedImagesUrls": [],
+  "addedBase64StringImages": []
+}
+
+###
+
+# Get Parking Space By ID (after update verification)
+GET {{baseUrl}}/parking-spaces/77777777-0001-0001-0001-000000000001
+
+###
+
+# Filter Parking Spaces - all
+GET {{baseUrl}}/parking-spaces/filter
+
+###
+
+# Filter Parking Spaces - by area code
+GET {{baseUrl}}/parking-spaces/filter?areaCode=1000000000
+
+###
+
+# Filter Parking Spaces - by block and status
+GET {{baseUrl}}/parking-spaces/filter?blockNo=A&status=Active
+
+###
+
+# Filter Parking Spaces - by name
+GET {{baseUrl}}/parking-spaces/filter?name=Parking%20Space%201
+
+###
+
+# Validation test - invalid area code range
+GET {{baseUrl}}/parking-spaces/filter?areaCode=999

@@ -33,7 +33,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
                 var query = request.Adapt<FilterAreaQuery>();
                 var result = await sender.Send(query);
 
-                if(result.Areas == null || !result.Areas.Any())
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    return Results.Problem(detail: result.ErrorMessage);
+                }
+
+
+                if (result.Areas == null || !result.Areas.Any())
                 {
                     return Results.Ok(new FilterAreaResponse(new List<FilterAreaResponseInstance>()));
                 }

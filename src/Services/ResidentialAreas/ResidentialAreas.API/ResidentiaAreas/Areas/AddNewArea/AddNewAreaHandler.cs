@@ -4,7 +4,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 {
     public record AddNewAreaCommand(string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? ImageBase64) : ICommand<AddNewAreaResult>;
 
-    public record AddNewAreaResult(Guid Id, string Name, long Code);
+    public record AddNewAreaResult(Guid? Id, string? Name, long? Code, string? ErrorMessage);
     public class AddNewAreaHandler : ICommandHandler<AddNewAreaCommand, AddNewAreaResult>
     {
         private readonly AreaDbContext _areaDbContext;
@@ -62,8 +62,18 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 UpdatedAt = DateTime.UtcNow
             };
 
-            _areaDbContext.Areas.Add(newArea);
-            await _areaDbContext.SaveChangesAsync(cancellationToken);
+
+            try
+            {
+                _areaDbContext.Areas.Add(newArea);
+                await _areaDbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return new AddNewAreaResult(null, null, null, $"Error saving area: Please try again later");
+            }
+
+
 
 
             List<Image> areaImages = new List<Image>();
@@ -75,10 +85,19 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 AreaCode = newArea.Code
             }).ToList();
 
-            _areaDbContext.Images.AddRange(areaImages);
-            await _areaDbContext.SaveChangesAsync(cancellationToken);
 
-            return new AddNewAreaResult(newArea.Id, newArea.Name, newArea.Code);
+            try
+            {
+                _areaDbContext.Images.AddRange(areaImages);
+                await _areaDbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return new AddNewAreaResult(newArea.Id, newArea.Name, newArea.Code, $"Error saving images: Please try again later");
+            }
+
+
+            return new AddNewAreaResult(newArea.Id, newArea.Name, newArea.Code, null);
         }
     }
 }
