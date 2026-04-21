@@ -37,8 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ResidentiaAreas\ParkingSlots\" />
-    <Folder Include="ResidentiaAreas\Units\" />
     <Folder Include="wwwroot\images\areas\" />
     <Folder Include="wwwroot\images\Buildings\" />
   </ItemGroup>

@@ -1,0 +1,79 @@
+@baseUrl = https://localhost:8081
+
+# Add new parking slot
+POST {{baseUrl}}/parking-slots/add
+Content-Type: application/json
+
+{
+  "parkingSpaceCode": 3000000000,
+  "assignedUnitCode": 5000000000,
+  "slotType": "Compact",
+  "status": "Active"
+}
+
+###
+
+# Get parking slot by id (seed sample)
+GET {{baseUrl}}/parking-slots/66666666-0001-0001-0001-000000000001
+
+###
+
+# Update parking slot by id - success
+POST {{baseUrl}}/parking-slots/update-by-id
+Content-Type: application/json
+
+{
+  "id": "66666666-0001-0001-0001-000000000001",
+  "parkingSpaceCode": 3000000000,
+  "assignedUnitCode": 5000000000,
+  "slotType": "Standard",
+  "status": "Maintenance"
+}
+
+###
+
+# Update parking slot by id - unassign unit
+POST {{baseUrl}}/parking-slots/update-by-id
+Content-Type: application/json
+
+{
+  "id": "66666666-0001-0001-0001-000000000001",
+  "parkingSpaceCode": 3000000000,
+  "assignedUnitCode": null,
+  "slotType": "Compact",
+  "status": "Active"
+}
+
+###
+
+# Update parking slot by id - not found
+POST {{baseUrl}}/parking-slots/update-by-id
+Content-Type: application/json
+
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+  "parkingSpaceCode": 3000000000,
+  "assignedUnitCode": 5000000000,
+  "slotType": "Compact",
+  "status": "Active"
+}
+
+###
+
+# Filter parking slots - all
+GET {{baseUrl}}/parking-slots/filter
+
+###
+
+# Filter parking slots - by parking space code
+GET {{baseUrl}}/parking-slots/filter?parkingSpaceCode=3000000000
+
+###
+
+# Filter parking slots - by slot type
+GET {{baseUrl}}/parking-slots/filter?slotType=Compact
+
+###
+
+# Filter parking slots - by status
+GET {{baseUrl}}/parking-slots/filter?status=Active

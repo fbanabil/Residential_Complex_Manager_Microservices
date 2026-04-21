@@ -1,0 +1,92 @@
+@baseUrl = https://localhost:8081
+
+# Add new unit
+POST {{baseUrl}}/units/add
+Content-Type: application/json
+
+{
+  "buildingCode": 2000000000,
+  "unitNo": "C-1201",
+  "floorNo": 12,
+  "unitType": "Apartment",
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "areaSqft": 1285.50,
+  "occupancyStatus": "Vacant",
+  "ownershipType": "Owned",
+  "currentLeaseId": null,
+  "imageBase64": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+###
+
+# Get unit by id (seed sample)
+GET {{baseUrl}}/units/33333333-0001-0001-0001-000000000001
+
+###
+
+# Update unit by id - success
+POST {{baseUrl}}/units/update-by-id
+Content-Type: application/json
+
+{
+  "id": "33333333-0001-0001-0001-000000000001",
+  "buildingCode": 2000000000,
+  "unitNo": "A-02-UPDATED",
+  "floorNo": 2,
+  "unitType": "Apartment",
+  "bedrooms": 2,
+  "bathrooms": 2,
+  "areaSqft": 900.00,
+  "occupancyStatus": "Occupied",
+  "ownershipType": "Owned",
+  "currentLeaseId": null,
+  "removedImagesUrls": [],
+  "addedBase64StringImages": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+###
+
+# Update unit by id - not found
+POST {{baseUrl}}/units/update-by-id
+Content-Type: application/json
+
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+  "buildingCode": 2000000000,
+  "unitNo": "X-999",
+  "floorNo": 1,
+  "unitType": "Apartment",
+  "bedrooms": 1,
+  "bathrooms": 1,
+  "areaSqft": 500,
+  "occupancyStatus": "Vacant",
+  "ownershipType": "Owned",
+  "currentLeaseId": null,
+  "removedImagesUrls": [],
+  "addedBase64StringImages": []
+}
+
+###
+
+# Filter units - all
+GET {{baseUrl}}/units/filter
+
+###
+
+# Filter units - by building code
+GET {{baseUrl}}/units/filter?buildingCode=2000000000
+
+###
+
+# Filter units - by unit type and occupancy status
+GET {{baseUrl}}/units/filter?unitType=Apartment&occupancyStatus=Vacant
+
+###
+
+# Filter units - by ownership type
+GET {{baseUrl}}/units/filter?ownershipType=Owned
