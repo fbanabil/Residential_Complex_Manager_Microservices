@@ -1,0 +1,119 @@
+@baseUrl = https://localhost:8081
+
+
+
+
+#Get All Areas or Filter
+GET {{baseUrl}}/areas/filter
+
+###
+GET {{baseUrl}}/areas/filter?city=Chi
+
+###
+
+
+
+
+
+
+#Add New Area  
+
+
+POST {{baseUrl}}/areas
+Content-Type: application/json
+
+{
+  "name": "Chittagong Res 01",
+  "city": "Chittagong",
+  "state": "Chittagong",
+  "country": "Bangladesh",
+  "postalCode": "1234",
+  "address": "Chittagong",
+  "geoBoundary": "{\"type\": \"Polygon\", \"coordinates\": [[[90.36, 23.71], [90.362, 23.71], [90.362, 23.712], [90.36, 23.712], [90.36, 23.71]]]}",
+  "status": "Active",
+  "imageBase64": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+###
+
+
+
+
+
+
+
+# Get Area By ID
+
+GET {{baseUrl}}/areas/6c07d7a9-35f4-49b4-9873-dbb80a9f1961
+
+
+###
+
+
+# Get Area By Code
+
+GET {{baseUrl}}/areas/code/1000000021
+
+###
+
+
+
+
+
+
+
+
+# Update Area By Id
+POST {{baseUrl}}/areas/update-by-id
+Content-Type: application/json
+
+
+{
+  "id": "6c07d7a9-35f4-49b4-9873-dbb80a9f1961",
+  "name": "Chittagong Res 01",
+  "city": "Chittagong",
+  "state": "Chittagong",
+  "country": "Bangladesh",
+  "postalCode": "2222",
+  "address": "Chittagong",
+  "geoBoundary": "{\"type\": \"Polygon\", \"coordinates\": [[[90.36, 23.71], [90.362, 23.71], [90.362, 23.712], [90.36, 23.712], [90.36, 23.71]]]}",
+  "status": "Inactive",
+  "removedImagesUrls": [
+    "https://localhost:8081/images/areas/77c62beb-076c-45e8-be5f-9d9b82d6c25d.png"
+  ],
+  "addedBase64StringImages": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII=","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+###
+
+
+
+# Update By Code
+
+POST {{baseUrl}}/areas/update-by-code
+Content-Type: application/json
+
+
+{
+  "code":1000000021,
+  "name": "Chittagong Res 01",
+  "city": "Chittagong",
+  "state": "Chittagong",
+  "country": "Bangladesh",
+  "postalCode": "2222",
+  "address": "Chittagong",
+  "geoBoundary": "{\"type\": \"Polygon\", \"coordinates\": [[[90.36, 23.71], [90.362, 23.71], [90.362, 23.712], [90.36, 23.712], [90.36, 23.71]]]}",
+  "status": "Inactive",
+  "removedImagesUrls": [
+    "https://localhost:8081/images/areas/cb32cafa-4681-4e24-a5d3-6d9fdb602d6a.png",
+    "https://localhost:8081/images/areas/44ca2356-42e2-462d-9986-88a1dd4d2a20.png",
+    "https://localhost:8081/images/areas/e6809c37-ef36-4b13-99c3-7679067eddbe.png"
+  ],
+  "addedBase64StringImages": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}

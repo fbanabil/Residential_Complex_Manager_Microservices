@@ -1,0 +1,50 @@
+@baseUrl = https://localhost:8081
+
+### Add new facility under area
+POST {{baseUrl}}/facilities/add
+Content-Type: application/json
+
+{
+  "areaCode": 1000000001,
+  "buildingCode": null,
+  "name": "Community Gym",
+  "facilityType": "Gym",
+  "capacity": 40,
+  "bookingRequired": true,
+  "hourlyRate": 250,
+  "rules": "{\"open\":\"06:00\",\"close\":\"22:00\",\"notes\":[\"Residents only\"]}",
+  "status": "Active",
+  "imageBase64": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
+
+### Get facility by id
+GET {{baseUrl}}/facilities/80ba06c6-ce9d-4729-8d84-e041978b0ddc
+
+### Filter facilities
+GET {{baseUrl}}/facilities/filter?name=Gym&status=Active
+
+### Filter facilities by area code
+GET {{baseUrl}}/facilities/filter?areaCode=1000000001
+
+### Update facility by id
+POST {{baseUrl}}/facilities/update-by-id
+Content-Type: application/json
+
+{
+  "id": "80ba06c6-ce9d-4729-8d84-e041978b0ddc",
+  "areaCode": 1000000001,
+  "buildingCode": null,
+  "name": "Community Gym Updated",
+  "facilityType": "Gym",
+  "capacity": 45,
+  "bookingRequired": true,
+  "hourlyRate": 300,
+  "rules": "{\"open\":\"06:00\",\"close\":\"23:00\",\"notes\":[\"Residents only\",\"No shoes on mat\"]}",
+  "status": "Active",
+  "removedImagesUrls": ["https://localhost:8081/images/Facilities/e581da6d-ebc0-41f7-8ca1-765f8cf2339e.png"],
+  "addedBase64StringImages": [
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+yX2cAAAAASUVORK5CYII="
+  ]
+}
