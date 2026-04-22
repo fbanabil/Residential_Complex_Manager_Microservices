@@ -8,9 +8,21 @@ services:
   residentialareadb:      
     image: postgres:16 
 
+    
+  authenticationservicedb:
+    image: mysql:8.0
+
+
   pgAdmin:
     image: dpage/pgadmin4:latest
 
 
+  authenticationservice.api:
+    image: ${DOCKER_REGISTRY-}authenticationserviceapi
+    build:
+      context: .
+      dockerfile: Services/AuthenticationService.API/Dockerfile
+
 volumes:
   residentialareadbdata:
+  authenticationservicedbdata:

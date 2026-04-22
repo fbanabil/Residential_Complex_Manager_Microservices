@@ -8,8 +8,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "6001:8080"
+      - "6061:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -31,6 +31,19 @@ services:
       - residentialareadbdata:/var/lib/postgresql/data
 
 
+  authenticationservicedb:
+    container_name: authenticationdb
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Your_strong_Password123!
+    ports:
+      - "14330:1433"
+    volumes:
+      - authenticationservicedbdata:/var/opt/mssql
+
+
   pgAdmin:
     container_name: pgAdmin
     environment:
@@ -41,3 +54,20 @@ services:
       - "8082:80"
     depends_on:
       - residentialareadb
+
+
+  authenticationservice.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "6002:8080"
+      - "6062:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - authenticationservicedb

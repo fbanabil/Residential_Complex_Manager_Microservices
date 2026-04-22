@@ -420,5 +420,5 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-*\appsettings.json
+*\appsettings.Development.json
 /src/Services/ResidentialAreas/ResidentialAreas.API/wwwroot/images/*

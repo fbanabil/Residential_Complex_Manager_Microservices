@@ -1,4 +1,4 @@
-@baseUrl = https://localhost:8081
+@baseUrl = https://localhost:6061
 
 ### Add new facility under area
 POST {{baseUrl}}/facilities/add

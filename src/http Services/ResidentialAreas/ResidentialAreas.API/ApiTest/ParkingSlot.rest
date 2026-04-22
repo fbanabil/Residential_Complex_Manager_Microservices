@@ -1,4 +1,4 @@
-@baseUrl = https://localhost:8081
+@baseUrl = https://localhost:6061
 
 # Add new parking slot
 POST {{baseUrl}}/parking-slots/add
