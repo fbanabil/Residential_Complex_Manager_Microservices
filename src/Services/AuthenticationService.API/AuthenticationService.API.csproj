@@ -37,7 +37,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EntityModels\" />
     <Folder Include="Grpc.Helpers\" />
   </ItemGroup>
 

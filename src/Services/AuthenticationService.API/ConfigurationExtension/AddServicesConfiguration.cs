@@ -1,7 +1,9 @@
 ﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.Helpers.Authorization;
 using Carter;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using ResidentialAreas.API.Helpers.ImageSaver;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -32,6 +34,10 @@ namespace AuthenticationService.API.ConfigurationExtension
             });
             builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
             builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddSingleton<IImageSaver, ImageSaver>();
+            builder.Services.AddSingleton<IAuthorizationTokenCreator, AuthorizationTokenCreator>();
+
         }
     }
 }

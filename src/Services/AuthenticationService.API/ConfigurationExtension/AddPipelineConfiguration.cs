@@ -37,6 +37,7 @@ namespace AuthenticationService.API.ConfigurationExtension
                 });
 
             }
+
             app.MapGrpcService<GreeterService>();
             app.MapCarter();
         }
