@@ -21,7 +21,7 @@ services:
     image: ${DOCKER_REGISTRY-}authenticationserviceapi
     build:
       context: .
-      dockerfile: Services/AuthenticationService.API/Dockerfile
+      dockerfile: Services/AuthenticationService/AuthenticationService.API/Dockerfile
 
 volumes:
   residentialareadbdata:

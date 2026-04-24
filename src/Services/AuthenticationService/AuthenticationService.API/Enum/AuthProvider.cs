@@ -2,6 +2,7 @@
 {
     public enum AuthProvider
     {
+        Local,
         Google,
         Facebook,
         Twitter,
