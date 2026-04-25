@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Grpc.Helpers\" />
+    <Folder Include="Keys\" />
   </ItemGroup>
 
   <ItemGroup>
