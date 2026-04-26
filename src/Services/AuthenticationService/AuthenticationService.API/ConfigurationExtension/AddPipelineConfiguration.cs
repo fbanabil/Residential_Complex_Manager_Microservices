@@ -12,6 +12,9 @@ namespace AuthenticationService.API.ConfigurationExtension
             app.UseStaticFiles();
             app.UseHsts();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
 
             using (var scope = app.Services.CreateScope())
             {
@@ -40,6 +43,8 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             app.MapGrpcService<GreeterService>();
             app.MapCarter();
+
+            
         }
     }
 }

@@ -5,7 +5,8 @@ namespace AuthenticationService.API.Apis.AddNewUser
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/add-new-user", () => "Hello World!").WithTags("AddNewUser");
+            app.MapGet("/add-new-user", () => "Hello World!").WithTags("AddNewUser")
+                .AllowAnonymous();
         }
     }
 }

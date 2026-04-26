@@ -63,13 +63,13 @@ namespace AuthenticationService.API.AuthenticationDbContest
                 .HasOne(u => u.ProfileImage)
                 .WithMany()
                 .HasForeignKey(u => u.ProfileImageId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.NidImage)
                 .WithMany()
                 .HasForeignKey(u => u.NidImageId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

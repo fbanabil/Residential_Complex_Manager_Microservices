@@ -4,6 +4,9 @@ using Carter;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using ResidentialAreas.API.Helpers.ImageSaver;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -23,6 +26,46 @@ namespace AuthenticationService.API.ConfigurationExtension
             });
 
 
+
+            var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+            var publicKey = jwtSettingsSection.GetValue<string>("PublicKey");
+
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(publicKey);
+
+            var rsaSecurityKey = new RsaSecurityKey(rsa);
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = jwtSettingsSection.GetValue<string>("Issuer"),
+                        ValidAudience = jwtSettingsSection.GetValue<string>("Audience"),
+                        IssuerSigningKey = rsaSecurityKey
+                    };
+                });
+
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+            });
+
+
+
+
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddGrpc();
@@ -36,7 +79,7 @@ namespace AuthenticationService.API.ConfigurationExtension
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddSingleton<IImageSaver, ImageSaver>();
-            builder.Services.AddSingleton<IAuthorizationTokenCreator, AuthorizationTokenCreator>();
+            builder.Services.AddSingleton<IAuthenticationTokenCreator, AuthenticationTokenCreator>();
 
         }
     }
