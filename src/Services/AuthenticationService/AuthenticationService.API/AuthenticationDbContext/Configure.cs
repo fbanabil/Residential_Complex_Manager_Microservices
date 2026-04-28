@@ -17,6 +17,11 @@ namespace AuthenticationService.API.AuthenticationDbContest
                 .HasConversion<string>()
                 .HasMaxLength(30);
 
+            modelBuilder.Entity<SecurityTokens>()
+                .Property(st => st.Type)
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
             modelBuilder.Entity<UserRole>()
                 .HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)

@@ -7,6 +7,9 @@ using ResidentialAreas.API.Helpers.ImageSaver;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AuthenticationService.API.Helpers.Email;
+using AuthenticationService.API.Helpers.GetHostUrl;
+using AuthenticationService.API.Helpers.PasswordHelper;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -80,6 +83,9 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             builder.Services.AddSingleton<IImageSaver, ImageSaver>();
             builder.Services.AddSingleton<IAuthenticationTokenCreator, AuthenticationTokenCreator>();
+            builder.Services.AddScoped<IEmailHelper,EmailHelper>();
+            builder.Services.AddScoped<IGetHostUrl,GetHostUrl>();
+            builder.Services.AddScoped<IPasswordHasher,PasswordHasher>();
 
         }
     }

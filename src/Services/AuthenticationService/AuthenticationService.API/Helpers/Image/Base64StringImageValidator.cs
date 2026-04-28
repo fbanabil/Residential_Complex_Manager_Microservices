@@ -1,4 +1,4 @@
-﻿namespace ResidentialAreas.API.Helpers.Image
+﻿namespace AuthenticationService.API.Helpers.Image
 {
     public static class Base64StringImageValidator
     {

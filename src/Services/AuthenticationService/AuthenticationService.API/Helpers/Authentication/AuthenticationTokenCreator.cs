@@ -32,7 +32,7 @@ namespace AuthenticationService.API.Helpers.Authorization
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: credentials
             );
             return await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));

@@ -18,6 +18,7 @@ namespace AuthenticationService.API.AuthenticationDbContest
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<UserConsent> UserConsents => Set<UserConsent>();
         public DbSet<Image> Images => Set<Image>();
+        public DbSet<SecurityTokens> SecurityTokens => Set<SecurityTokens>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
