@@ -9,7 +9,7 @@ using FluentValidation;
 using MediatR;
 using Carter;
 
-namespace AuthenticationService.API.Apis.AddNewUser
+namespace AuthenticationService.API.Apis.User.AddNewUser
 {
 
     public record RegisterUserRequest(
@@ -23,13 +23,10 @@ namespace AuthenticationService.API.Apis.AddNewUser
     );
 
     public record RegisterUserResponse(
-        string UserId,
+        Guid UserId,
         string UserName,
         string Email,
-        string Phone,
-        string Status,
-        string ProfileImageUrl,
-        string NidImageUrl
+        string Message
     );
 
     public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
@@ -41,13 +38,15 @@ namespace AuthenticationService.API.Apis.AddNewUser
             RuleFor(x => x.Email).NotEmpty().WithMessage("The email is required.")
                 .EmailAddress().WithMessage("The email must be a valid email address.");
             RuleFor(x => x.Password).NotEmpty().WithMessage("The password is required.")
-                .MinimumLength(6).WithMessage("The password must be at least 6 characters long.");
+                .MinimumLength(8).WithMessage("The password must be at least 8 characters long.");
             RuleFor(x => x.ConfirmPassword).NotEmpty().WithMessage("The confirm password is required.")
                 .Equal(x => x.Password).WithMessage("The confirm password must match the password.");
+            RuleFor(x=>x.Password ).Must(password => password.Any(char.IsUpper)).WithMessage("The password must contain at least one uppercase letter.")
+                .Must(password => password.Any(char.IsLower)).WithMessage("The password must contain at least one lowercase letter.")
+                .Must(password => password.Any(char.IsDigit)).WithMessage("The password must contain at least one digit.")
+                .Must(password => password.Any(ch => !char.IsLetterOrDigit(ch))).WithMessage("The password must contain at least one special character.");
             RuleFor(x => x.Phone).NotEmpty().WithMessage("The phone number is required.")
                 .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("The phone number must be a valid international phone number.");
-            RuleFor(x => x.Status).NotEmpty().WithMessage("The status is required.")
-                .IsEnumName(typeof(Status)).WithMessage("The status must be a valid value (Active, Inactive, Banned).");
             RuleFor(x => x.Bas64ProfileImage).NotEmpty().WithMessage("The profile image is required.")
                 .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringImage(imageBase64)))
                 .WithMessage("The profile image must be a valid Base64 string.");
@@ -61,7 +60,7 @@ namespace AuthenticationService.API.Apis.AddNewUser
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/users/register", async (RegisterUserRequest request, ISender sender, IValidator<RegisterUserRequest> validator) =>
+            app.MapPost("/auth/users/register", async (RegisterUserRequest request, ISender sender, IValidator<RegisterUserRequest> validator) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
 

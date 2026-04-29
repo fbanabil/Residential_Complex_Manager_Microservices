@@ -22,6 +22,12 @@ namespace AuthenticationService.API.AuthenticationDbContest
                 .HasConversion<string>()
                 .HasMaxLength(20);
 
+            modelBuilder.Entity<Image>()
+                .Property(i => i.ImageType)
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+
             modelBuilder.Entity<UserRole>()
                 .HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)

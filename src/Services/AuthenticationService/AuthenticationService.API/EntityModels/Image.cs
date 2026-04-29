@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AuthenticationService.API.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthenticationService.API.EntityModels
@@ -14,6 +15,9 @@ namespace AuthenticationService.API.EntityModels
 
         [Required]
         public string ImagePath { get; set; } = string.Empty;
+
+        [Required]
+        public ImageTypes ImageType { get; set; }
 
         [Required]
         public Guid UserId { get; set; }

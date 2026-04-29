@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AuthenticationService.API.Helpers.Email;
 using AuthenticationService.API.Helpers.GetHostUrl;
 using AuthenticationService.API.Helpers.PasswordHelper;
+using AuthenticationService.API.Helpers.NewFolder;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -86,6 +87,7 @@ namespace AuthenticationService.API.ConfigurationExtension
             builder.Services.AddScoped<IEmailHelper,EmailHelper>();
             builder.Services.AddScoped<IGetHostUrl,GetHostUrl>();
             builder.Services.AddScoped<IPasswordHasher,PasswordHasher>();
+            builder.Services.AddScoped<IVerificationTokenGenerator, VerificationTokenGenerator>();
 
         }
     }
