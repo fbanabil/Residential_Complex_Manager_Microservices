@@ -81,6 +81,12 @@ namespace AuthenticationService.API.AuthenticationDbContest
                 .WithMany()
                 .HasForeignKey(u => u.NidImageId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<SecurityTokens>()
+                .HasOne(st => st.User)
+                .WithMany()
+                .HasForeignKey(st => st.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

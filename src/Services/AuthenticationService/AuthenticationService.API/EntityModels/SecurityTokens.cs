@@ -1,5 +1,6 @@
 ﻿using AuthenticationService.API.Enum;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthenticationService.API.EntityModels
 {
@@ -25,6 +26,7 @@ namespace AuthenticationService.API.EntityModels
         public Guid UserId { get; set; }
 
         [Required]
+        [ForeignKey("UserId")]
         public virtual User? User { get; set; } = null!;
     }
 }
