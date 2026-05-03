@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.API.Helpers.NewFolder
+﻿namespace AuthenticationService.API.Helpers.VerificationToken
 {
     public interface IVerificationTokenGenerator
     {

@@ -18,7 +18,7 @@ namespace AuthenticationService.API.Helpers.Email
         {
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress
-            (_configuration["EmailSettings:SenderName"], _configuration["EmailSettings:SenderEmail"]));
+            (_configuration["EmailSettings:SenderName"], _configuration["EmailSettings:SenderEmail"]!));
             email.To.Add(MailboxAddress.Parse(emailAddress));
             email.Subject = subject;
             email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
@@ -26,9 +26,9 @@ namespace AuthenticationService.API.Helpers.Email
             using var smtp = new MailKit.Net.Smtp.SmtpClient();
             try
             {
-                await smtp.ConnectAsync(_configuration["EmailSettings:SmtpServer"], int.Parse(_configuration["EmailSettings:SmtpPort"]), MailKit.Security.SecureSocketOptions.StartTls);
+                await smtp.ConnectAsync(_configuration["EmailSettings:SmtpServer"]!, int.Parse(_configuration["EmailSettings:SmtpPort"]!), MailKit.Security.SecureSocketOptions.StartTls);
 
-                await smtp.AuthenticateAsync(_configuration["EmailSettings:Username"], _configuration["EmailSettings:Password"]);
+                await smtp.AuthenticateAsync(_configuration["EmailSettings:Username"]!, _configuration["EmailSettings:Password"]!);
 
                 await smtp.SendAsync(email);
 

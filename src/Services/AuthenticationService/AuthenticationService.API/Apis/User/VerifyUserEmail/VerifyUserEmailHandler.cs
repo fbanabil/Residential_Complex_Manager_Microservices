@@ -1,7 +1,7 @@
 ﻿using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.EntityModels;
 using AuthenticationService.API.Helpers.ErrorCarrier;
-using AuthenticationService.API.Helpers.NewFolder;
+using AuthenticationService.API.Helpers.VerificationToken;
 using CQRSPattern.CQRS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -41,14 +41,13 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
                     });
             }
 
-            // Fetch the actual token from the database for the given user and token type
+            // Fetch all tokens from the database for the given user and token type
 
-            EntityModels.SecurityTokens? actualToken = await _authDbContext.SecurityTokens.AsNoTracking().Where(t=> t.UserId == request.UserId && t.Type == Enum.TokenType.EmailConfirmation).FirstOrDefaultAsync();
+            var usersTokens = await _authDbContext.SecurityTokens.AsNoTracking().Where(t => t.UserId == request.UserId && t.Type == Enum.TokenType.EmailConfirmation).ToListAsync();
 
-            
             // Check if the token exists
 
-            if (actualToken == null)
+            if (usersTokens == null || !usersTokens.Any())
             {
                 return new VerifyUserEmailResult(null,
                     new ErrorCarrier()
@@ -58,6 +57,11 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
                         Detail = "No email verification token found for the user."
                     });
             }
+
+            // Get latest token
+            EntityModels.SecurityTokens actualToken = usersTokens.OrderByDescending(t => t.ExpiresAt).FirstOrDefault()!;
+
+            await _authDbContext.SecurityTokens.Where(t => t.Id != actualToken.Id).ExecuteDeleteAsync(cancellationToken);
 
 
 
@@ -85,7 +89,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
                     {
                         Title = "EXPIRED",
                         StatusCode = 400,
-                        Detail = "The email verification token has expired."
+                        Detail = "The email verification token has expired. Try resending the email verification link."
                     });
             }
 

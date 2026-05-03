@@ -4,7 +4,7 @@ using AuthenticationService.API.Enum;
 using AuthenticationService.API.Helpers.Email;
 using AuthenticationService.API.Helpers.ErrorCarrier;
 using AuthenticationService.API.Helpers.GetHostUrl;
-using AuthenticationService.API.Helpers.NewFolder;
+using AuthenticationService.API.Helpers.VerificationToken;
 using AuthenticationService.API.Helpers.PasswordHelper;
 using CQRSPattern.CQRS;
 using Microsoft.EntityFrameworkCore;
@@ -220,7 +220,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                     UserId = userToAdd.Id,
                     Token = hashedToken,
                     Type = TokenType.EmailConfirmation,
-                    ExpiresAt = DateTime.UtcNow.AddHours(24),
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(5),
                     IsUsed = false
                 };
 
@@ -249,7 +249,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 UserId: userToAdd.Id,
                 UserName: userToAdd.Username,
                 Email: userToAdd.Email,
-                Message: "User registered successfully. Please verify your email to activate your account." + msg
+                Message: "User registered successfully. Please verify your email within 24 hours to activate your account." + msg
             );
 
             return new RegisterUserResult(response, null);

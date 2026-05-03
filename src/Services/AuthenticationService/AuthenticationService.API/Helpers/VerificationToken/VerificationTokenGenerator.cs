@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace AuthenticationService.API.Helpers.NewFolder
+namespace AuthenticationService.API.Helpers.VerificationToken
 {
     public class VerificationTokenGenerator : IVerificationTokenGenerator
     {

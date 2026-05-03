@@ -41,5 +41,6 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             return Results.Ok(result.Result);
         }
+   
     }
 }
