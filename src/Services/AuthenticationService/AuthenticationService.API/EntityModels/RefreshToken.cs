@@ -14,8 +14,8 @@ namespace AuthenticationService.API.EntityModels
         [Required]
         public Guid UserId { get; set; }
 
-        [Required]
-        public Guid ClientId { get; set; }
+
+        public Guid? ClientId { get; set; }
 
         [Required]
         [StringLength(500)]

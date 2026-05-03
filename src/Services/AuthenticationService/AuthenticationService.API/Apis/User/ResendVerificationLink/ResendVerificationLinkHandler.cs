@@ -98,13 +98,13 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
                 _authDbContext.SecurityTokens.Add(verificationToken);
                 await _authDbContext.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch
             {
                 return new ResendVerificationLinkResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
                     StatusCode = 500,
-                    Detail = $"An error occurred while saving the verification token: {ex.Message}"
+                    Detail = "An error occurred while saving the verification token."
                 });
             }
 

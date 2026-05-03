@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace AuthenticationService.API.Helpers.Authorization
 {
-    public record UserPayload(string UserId, string Username, string Email, string Role);
+    public record UserPayload(string UserId, string Username, string Email, List<string> Roles);
 
     public class AuthenticationTokenCreator : IAuthenticationTokenCreator
     {
@@ -25,7 +25,7 @@ namespace AuthenticationService.API.Helpers.Authorization
                 new Claim(JwtRegisteredClaimNames.Sub, payload.UserId),
                 new Claim(JwtRegisteredClaimNames.UniqueName, payload.Username),
                 new Claim(JwtRegisteredClaimNames.Email, payload.Email),
-                new Claim(ClaimTypes.Role, payload.Role)
+                new Claim(ClaimTypes.Role, string.Join(",", payload.Roles))
             };
 
             var token = new JwtSecurityToken(
