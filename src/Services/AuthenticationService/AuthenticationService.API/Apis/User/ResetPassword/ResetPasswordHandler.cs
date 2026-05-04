@@ -151,7 +151,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             // Update the user's password and mark the token as used
             try
             {
-                EntityModels.User? user = await _authDbContext.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+                EntityModels.User? user = await _authDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
                 if (user == null)
                 {
                     return new ResetPasswordConfirmResult(null, new ErrorCarrier()
@@ -165,10 +165,11 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
 
                 // Update password and token status
                 user.PasswordHash = hashedNewPassword;
-                tokenRecord.IsUsed = true;
-                _authDbContext.Users.Update(user);
-                _authDbContext.SecurityTokens.Update(tokenRecord);
-                await _authDbContext.SaveChangesAsync(cancellationToken);
+                
+                await _authDbContext.Users.Where(u => u.Id == request.UserId).ExecuteUpdateAsync(u => u.SetProperty(p => p.PasswordHash, hashedNewPassword), cancellationToken);
+
+                await _authDbContext.SecurityTokens.Where(t => t.UserId == request.UserId && t.Type == TokenType.PasswordReset && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow).ExecuteUpdateAsync(t => t.SetProperty(p => p.IsUsed, true), cancellationToken);
+
                 return new ResetPasswordConfirmResult(newRandomPassword, null);
             }
             catch 

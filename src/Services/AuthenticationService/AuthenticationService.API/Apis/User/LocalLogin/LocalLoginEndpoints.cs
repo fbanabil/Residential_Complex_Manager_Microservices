@@ -27,8 +27,9 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
         {
             app.MapPost("/auth/local-login", HandleLocalLogin)
                 .WithName("LocalLogin")
-                .WithTags("User Authentication")
+                .WithTags("Authentication")
                 .WithSummary("Authenticates a user using their email and password.")
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
                 .AllowAnonymous();
         }
 
@@ -41,13 +42,16 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
-            var command = request.Adapt<LocalLoginCommand>();
-            var result = await sender.Send(command);
 
+            var command = request.Adapt<LocalLoginCommand>();
+            
+            
+            var result = await sender.Send(command);
             if (result.Error is not null)
             {
                 return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);
             }
+
 
             var response = result.Result.Adapt<LocalLoginResponse>();
 
@@ -60,11 +64,11 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
+            
             if (response!.RefreshToken is not null)
             {
                 httpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, CookieOptions);
             }
-
             httpContext.Response.Headers.Append("Authorization", $"Bearer {response.AccessToken}");
 
             return Results.Ok(response!.AccessToken);

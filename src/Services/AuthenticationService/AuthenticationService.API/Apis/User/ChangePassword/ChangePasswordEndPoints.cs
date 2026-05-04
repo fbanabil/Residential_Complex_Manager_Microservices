@@ -41,7 +41,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("auth/change-password", async (HttpContext httpContext, ChangePasswordRequest request, ISender sender, IValidator<ChangePasswordRequest> validator) =>
+            app.MapPost("/user/change-password", async (HttpContext httpContext, ChangePasswordRequest request, ISender sender, IValidator<ChangePasswordRequest> validator) =>
             {
                 // Validate the request
                 var validationResult = await validator.ValidateAsync(request);
@@ -80,7 +80,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
                 return Results.Ok(new ChangePasswordResponse(true, "Password changed successfully"));
             })
                 .WithName("ChangePassword")
-                .WithTags("User")
+                .WithTags("User Management")
                 .WithSummary("Change the password of the currently authenticated user.")
                 .ProducesProblem(StatusCodes.Status500InternalServerError)
                 .RequireAuthorization();

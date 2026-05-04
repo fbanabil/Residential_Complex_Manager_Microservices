@@ -23,13 +23,13 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
         {
             app.MapPost("/auth/resend-verify-email-link", HandleResendVerifyEmailLink)
                 .WithName("ResendVerifyEmailLink_01")
-                .WithTags("User Email Verification")
+                .WithTags("Authentication")
                 .WithSummary("Resends a verification link for a user's email address.")
                 .AllowAnonymous();
 
             app.MapGet("/auth/get-verify-email-link", HandleResendVerifyEmailLink)
                 .WithName("ResendVerifyEmailLink_02")
-                .WithTags("User Email Verification")
+                .WithTags("Authentication")
                 .WithSummary("Resends a verification link for a user's email address.")
                 .AllowAnonymous();
         }

@@ -11,16 +11,20 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
         {
             app.MapGet("/auth/verify-email", HandleVerifyEmail)
                 .WithName("VerifyUserEmail _ 01")
-                .WithTags("User Email Verification")
+                .WithTags("Authentication")
                 .WithSummary("Verifies a user's email address using a verification token.")
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
                .AllowAnonymous();
 
             app.MapPost("/auth/verify-email", HandleVerifyEmail)
                .WithName("VerifyUserEmail _ 02")
-                .WithTags("User Email Verification")
+                .WithTags("Authentication")
                 .WithSummary("Verifies a user's email address using a verification token.")
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
                .AllowAnonymous();
         }
+
+
 
         private static async Task<IResult> HandleVerifyEmail([FromQuery] Guid userId, [FromQuery] string token, ISender sender)
         {

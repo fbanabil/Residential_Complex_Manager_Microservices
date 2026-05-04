@@ -56,23 +56,27 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
         }
     }
 
+
     public class AddNewUserEndpoints : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/auth/users/register", async (RegisterUserRequest request, ISender sender, IValidator<RegisterUserRequest> validator) =>
             {
+                // Validate the request
                 var validationResult = await validator.ValidateAsync(request);
-
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
+
+                // Map the request to the command
                 var command = request.Adapt<RegisterUserCommand>();
 
-                var result = await sender.Send(command);
 
+                // Send the command to the handler
+                var result = await sender.Send(command);
                 if (result.ErrorCarrier != null)
                 {
                     return Results.Problem(detail: result.ErrorCarrier.Detail, statusCode: result.ErrorCarrier.StatusCode, title: result.ErrorCarrier.Title);
@@ -81,10 +85,11 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 var response = result.Response.Adapt<RegisterUserResponse>();
 
                 return Results.Ok(response);
-
             })
             .WithName("RegisterUser")
-            .WithTags("Users")
+            .WithTags("Authentication")
+            .WithSummary("Register a new user")
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .AllowAnonymous();
 
         }

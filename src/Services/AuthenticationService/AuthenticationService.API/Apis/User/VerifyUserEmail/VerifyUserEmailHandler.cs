@@ -114,7 +114,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             try
             {
-                await _authDbContext.SecurityTokens.Where(s => s.Id == actualToken.Id).ExecuteDeleteAsync(cancellationToken);
+                await _authDbContext.SecurityTokens.Where(s => s.Id == actualToken.Id).ExecuteUpdateAsync(setter => setter.SetProperty(s => s.IsUsed, true));
                 await _authDbContext.Users.Where(u => u.Id == actualToken.UserId).ExecuteUpdateAsync(setter => setter.SetProperty(u => u.IsEmailVerified, true));
             }
             catch

@@ -22,7 +22,9 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 return Results.Challenge(properties, new[] { GoogleDefaults.AuthenticationScheme });
             })
                 .WithName("OAuth Login")
-                .WithTags("OAuth")
+                .WithTags("Authentication")
+                .WithSummary("Initiates the OAuth login process by redirecting the user to Google's authentication page.")
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
                 .AllowAnonymous();
 
 
@@ -91,8 +93,10 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 // Return the access token in the response body
                 return Results.Ok(response.AccessToken);
             })
-                .WithName("OAuth Sining")
-                .WithTags("OAuth")
+                .WithName("OAuth Signing")
+                .WithTags("Authentication")
+                .WithSummary("Handles the callback from Google after the user has authenticated and processes the login logic.")
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
                 .AllowAnonymous(); ;
         }
     }

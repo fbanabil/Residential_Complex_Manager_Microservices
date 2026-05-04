@@ -18,7 +18,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/api/user/refreash-token", async (HttpContext httpContext, [FromQuery] string email, ISender sender, IValidator<string> emailValidator) =>
+            app.MapPost("/auth/user/refreash-token", async (HttpContext httpContext, [FromQuery] string email, ISender sender, IValidator<string> emailValidator) =>
             {
                 var validationResult = emailValidator.Validate(email);
                 if (!validationResult.IsValid)
@@ -55,7 +55,9 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
                 return Results.Ok(result.Result!.AccessToken);
             })
                 .WithName("RefreashToken")
-                .WithTags("User")
+                .WithTags("Authentication")
+                .WithSummary("Refreashes the access token using the provided refreash token and email.")
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
                 .AllowAnonymous();
         }
     }
