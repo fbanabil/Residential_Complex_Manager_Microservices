@@ -14,6 +14,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Carter" Version="8.2.1" />
     <PackageReference Include="MailKit" Version="4.16.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.26" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.26" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
@@ -40,7 +41,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Apis\User\OAuthLogins\" />
     <Folder Include="Grpc.Helpers\" />
     <Folder Include="Keys\" />
     <Folder Include="wwwroot\images\nidImages\" />

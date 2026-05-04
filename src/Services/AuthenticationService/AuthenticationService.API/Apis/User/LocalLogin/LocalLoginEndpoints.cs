@@ -8,7 +8,7 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
 {
 
     public record LocalLoginRequest(string Email, string Password);
-    public record LocalLoginResponse(string AccessToken, string RefreshToken);
+    public record LocalLoginResponse(string AccessToken, string? RefreshToken);
 
 
     public class LocalLoginRequestValidator : AbstractValidator<LocalLoginRequest>
@@ -60,7 +60,12 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
-            httpContext.Response.Cookies.Append("refreshToken", response!.RefreshToken, CookieOptions);
+            if (response!.RefreshToken is not null)
+            {
+                httpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, CookieOptions);
+            }
+
+            httpContext.Response.Headers.Append("Authorization", $"Bearer {response.AccessToken}");
 
             return Results.Ok(response!.AccessToken);
         }

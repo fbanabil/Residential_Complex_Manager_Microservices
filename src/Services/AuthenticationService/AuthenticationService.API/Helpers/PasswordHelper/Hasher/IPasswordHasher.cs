@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.API.Helpers.PasswordHelper
+﻿namespace AuthenticationService.API.Helpers.PasswordHelper.Hasher
 {
     public interface IPasswordHasher
     {

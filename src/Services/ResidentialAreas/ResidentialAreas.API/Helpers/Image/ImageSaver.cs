@@ -42,9 +42,9 @@ namespace ResidentialAreas.API.Helpers.ImageSaver
             string imageType = match.Groups["type"].Value;
             string base64Data = match.Groups["data"].Value;
 
-            if (imageType != "jpeg" && imageType != "png" && imageType != "jpg")
+            if (imageType != "jpeg" && imageType != "png" && imageType != "jpg" && imageType != "webp")
             {
-                throw new ArgumentException("Unsupported image type. Only JPEG and PNG are allowed.");
+                throw new ArgumentException("Unsupported image type. Only JPEG, PNG, and WebP are allowed.");
             }
 
             byte[] imageBytes;

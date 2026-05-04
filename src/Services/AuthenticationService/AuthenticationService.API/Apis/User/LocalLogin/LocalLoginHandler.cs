@@ -1,7 +1,7 @@
 ﻿using AuthenticationService.API.AuthenticationDbContest;
-using AuthenticationService.API.Helpers.Authorization;
+using AuthenticationService.API.Helpers.Authenticate;
 using AuthenticationService.API.Helpers.ErrorCarrier;
-using AuthenticationService.API.Helpers.PasswordHelper;
+using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
 using AuthenticationService.API.Helpers.RefreashTokenHelper;
 using AuthenticationService.API.Helpers.VerificationToken;
 using Microsoft.AspNetCore.Authentication;
@@ -106,15 +106,10 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             }
             catch
             {
-                return new LocalLoginResult(null, new ErrorCarrier()
-                {
-                    Title = "INTERNAL_SERVER_ERROR",
-                    StatusCode = 500,
-                    Detail = $"An error occurred while saving the refresh token."
-                });
+                // User is authenticated but failed to store refresh token, so continue without refresh token.
             }
 
- 
+
             return new LocalLoginResult(new LocalLoginResponse(token, refreshToken), null);
         }
     }

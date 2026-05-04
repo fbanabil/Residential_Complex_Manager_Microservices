@@ -5,12 +5,12 @@ using AuthenticationService.API.Helpers.Email;
 using AuthenticationService.API.Helpers.ErrorCarrier;
 using AuthenticationService.API.Helpers.GetHostUrl;
 using AuthenticationService.API.Helpers.VerificationToken;
-using AuthenticationService.API.Helpers.PasswordHelper;
 using CQRSPattern.CQRS;
 using Microsoft.EntityFrameworkCore;
 using ResidentialAreas.API.Helpers.ImageSaver;
 using System.Text.Encodings.Web;
 using System.Windows.Input;
+using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
 
 namespace AuthenticationService.API.Apis.User.AddNewUser
 {

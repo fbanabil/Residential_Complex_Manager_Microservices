@@ -49,7 +49,7 @@
             }
 
             string imageType = base64[prefix.Length..markerIndex];
-            if (imageType is not ("jpg" or "jpeg" or "png"))
+            if (imageType is not ("jpg" or "jpeg" or "png" or "webp"))
             {
                 return false;
             }

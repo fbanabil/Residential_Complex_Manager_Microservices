@@ -2,7 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace AuthenticationService.API.Helpers.Authorization
+namespace AuthenticationService.API.Helpers.Authenticate
 {
     public record UserPayload(string UserId, string Username, string Email, List<string> Roles);
 

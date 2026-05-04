@@ -1,5 +1,5 @@
 ﻿using AuthenticationService.API.AuthenticationDbContest;
-using AuthenticationService.API.Helpers.Authorization;
+using AuthenticationService.API.Helpers.Authenticate;
 using Carter;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +9,9 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AuthenticationService.API.Helpers.Email;
 using AuthenticationService.API.Helpers.GetHostUrl;
-using AuthenticationService.API.Helpers.PasswordHelper;
 using AuthenticationService.API.Helpers.VerificationToken;
+using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -29,8 +30,6 @@ namespace AuthenticationService.API.ConfigurationExtension
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-
-
             var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
             var publicKey = jwtSettingsSection.GetValue<string>("PublicKey");
 
@@ -39,11 +38,11 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             var rsaSecurityKey = new RsaSecurityKey(rsa);
 
-
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(options =>
                 {
@@ -58,8 +57,19 @@ namespace AuthenticationService.API.ConfigurationExtension
                         ValidAudience = jwtSettingsSection.GetValue<string>("Audience"),
                         IssuerSigningKey = rsaSecurityKey
                     };
-                });
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddGoogle(options =>
+                {
+                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
 
+                    options.Scope.Add("email");
+                    options.Scope.Add("profile");
+
+                    options.SaveTokens = true;
+
+                });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -67,13 +77,9 @@ namespace AuthenticationService.API.ConfigurationExtension
                 options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
             });
 
-
-
-
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddGrpc();
-
 
             builder.Services.AddSwaggerGen(c =>
             {
@@ -84,9 +90,9 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             builder.Services.AddSingleton<IImageSaver, ImageSaver>();
             builder.Services.AddSingleton<IAuthenticationTokenCreator, AuthenticationTokenCreator>();
-            builder.Services.AddScoped<IEmailHelper,EmailHelper>();
-            builder.Services.AddScoped<IGetHostUrl,GetHostUrl>();
-            builder.Services.AddScoped<IPasswordHasher,PasswordHasher>();
+            builder.Services.AddScoped<IEmailHelper, EmailHelper>();
+            builder.Services.AddScoped<IGetHostUrl, GetHostUrl>();
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IVerificationTokenGenerator, VerificationTokenGenerator>();
 
         }

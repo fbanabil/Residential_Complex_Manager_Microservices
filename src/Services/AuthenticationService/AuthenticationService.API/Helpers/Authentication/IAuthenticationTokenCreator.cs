@@ -1,4 +1,4 @@
-﻿namespace AuthenticationService.API.Helpers.Authorization
+﻿namespace AuthenticationService.API.Helpers.Authenticate
 {
     public interface IAuthenticationTokenCreator
     {
