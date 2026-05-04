@@ -1,5 +1,5 @@
-﻿
-using Mapster;
+﻿using Mapster;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Apis.Role
@@ -44,7 +44,7 @@ namespace AuthenticationService.API.Apis.Role
                 .Produces(StatusCodes.Status500InternalServerError)
                 .WithSummary("Adds a new role to the system.")
                 .WithDescription("This endpoint allows you to add a new role by providing its name and description.")
-                .AllowAnonymous();
+                .RequireAuthorization("AdminOnly");
 
 
         }

@@ -38,7 +38,6 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             EntityModels.User? user = await _authDbContext.Users.AsNoTracking().Include(u => u.UserRoles).ThenInclude(ur => ur.Role).FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
 
 
-
             string msg = "";
 
             #region Validation and Existing User Check
@@ -79,7 +78,6 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
 
             }
             #endregion
-
 
 
             #region New User Creation and Role Assignment
@@ -193,6 +191,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             #endregion
 
 
+            #region Send Email with Temporary Password
 
             // Send an email to the user with their temporary password and instructions to reset it after logging in
             bool passwordMail = await _emailHelper.SendEmail(newUser.Email,"Your Temporary Password for OAuth Login", $"A new account has been created for you with Google    OAuth. Your email is verified, and you can log in using Google. Your temporary password is: {RandomPassword}. Please reset your password after logging in.");
@@ -202,7 +201,10 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 msg = msg + " However, we were unable to send you an email with the temporary password. Please try to reset your password manually.";
             }
 
+            #endregion
 
+
+            #region Generate JWT Token
 
             // Create JWT token for the new user
             UserPayload newUserPayload = new UserPayload(
@@ -212,8 +214,14 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 Roles: new List<string> { "User" });
             // Generate access token and refresh token for the new user
             string newAccessToken = await _authTokenCreator.CreateToken(newUserPayload);
-            string newRefreshToken = await RefreashTokenGenerator.CreateTokenAsync();
 
+            #endregion
+
+
+            #region Cleanup Old Refresh Tokens and Generate New Refresh Token
+
+            // Generate a new refresh token for the new user and save it to the database
+            string newRefreshToken = await RefreashTokenGenerator.CreateTokenAsync();
             try
             {
                 await _authDbContext.RefreshTokens.Where(rt => rt.UserId == newUser.Id && rt.RevokedAt == null).ForEachAsync(rt =>
@@ -236,6 +244,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 msg = msg + " Something went wrong for refresh token. You may need to log in again after some time.";
             }
 
+            #endregion
 
 
             return new OAuthLoginResult(new OAuthLoginResponse(newAccessToken, newRefreshToken, msg), null);
