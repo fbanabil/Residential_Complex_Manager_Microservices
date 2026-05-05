@@ -125,7 +125,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             {
                 return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                 {
-                    Title = "Invalid or Expired Token",
+                    Title = "INVALID_OR_EXPIRED_TOKEN",
                     StatusCode = 400,
                     Detail = "The password reset token is invalid or has expired."
                 });
@@ -137,7 +137,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             {
                 return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                 {
-                    Title = "Invalid Token",
+                    Title = "INVALID_TOKEN",
                     StatusCode = 400,
                     Detail = "The provided token is invalid."
                 });
@@ -156,7 +156,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
                 {
                     return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                     {
-                        Title = "User Not Found",
+                        Title = "USER_NOT_FOUND",
                         StatusCode = 404,
                         Detail = $"No user found with ID {request.UserId}"
                     });
@@ -176,7 +176,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             { 
                 return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                 {
-                    Title = "Database Error",
+                    Title = "INTERNAL_SERVER_ERROR",
                     StatusCode = 500,
                     Detail = $"An error occurred while updating the user's password."
                 });

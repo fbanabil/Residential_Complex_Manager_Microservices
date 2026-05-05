@@ -12,6 +12,7 @@ using AuthenticationService.API.Helpers.GetHostUrl;
 using AuthenticationService.API.Helpers.VerificationToken;
 using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using AuthenticationService.API.HostService;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -29,6 +30,11 @@ namespace AuthenticationService.API.ConfigurationExtension
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+
+
+            builder.Services.AddHostedService<AddAdminHostService>();
+
 
             var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
             var publicKey = jwtSettingsSection.GetValue<string>("PublicKey");
@@ -94,6 +100,7 @@ namespace AuthenticationService.API.ConfigurationExtension
             builder.Services.AddScoped<IGetHostUrl, GetHostUrl>();
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IVerificationTokenGenerator, VerificationTokenGenerator>();
+
 
         }
     }
