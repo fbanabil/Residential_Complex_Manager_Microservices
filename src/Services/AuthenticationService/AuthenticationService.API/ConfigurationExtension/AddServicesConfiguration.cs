@@ -13,6 +13,7 @@ using AuthenticationService.API.Helpers.VerificationToken;
 using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AuthenticationService.API.HostService;
+using BuildingBlocks.Messaging.MassTransit;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -101,6 +102,11 @@ namespace AuthenticationService.API.ConfigurationExtension
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IVerificationTokenGenerator, VerificationTokenGenerator>();
 
+
+            var scope = builder.Services.BuildServiceProvider().CreateScope();
+
+            var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+            builder.Services.AddMessageBroker(configuration);
 
         }
     }

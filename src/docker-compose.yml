@@ -23,6 +23,12 @@ services:
       context: .
       dockerfile: Services/AuthenticationService/AuthenticationService.API/Dockerfile
 
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    
+
 volumes:
   residentialareadbdata:
   authenticationservicedbdata:
+  rabbitmq_data:  
