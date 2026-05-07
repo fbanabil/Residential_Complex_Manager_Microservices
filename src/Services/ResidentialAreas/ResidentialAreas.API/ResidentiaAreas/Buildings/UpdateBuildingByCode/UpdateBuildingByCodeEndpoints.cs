@@ -58,7 +58,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
                 .WithTags("Buildings")
                 .Produces<UpdateBuildingByCodeResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Updates a building by its code.");
+                .WithSummary("Updates a building by its code.")
+                .RequireAuthorization("ComplexManager");
         }
     }
 }

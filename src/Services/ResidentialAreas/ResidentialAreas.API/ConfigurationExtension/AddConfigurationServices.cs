@@ -1,5 +1,8 @@
-﻿using ResidentialAreas.API.Helpers.ImageSaver;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using ResidentialAreas.API.Helpers.ImageSaver;
 using ResidentialAreas.API.Helpers.LocationValidator;
+using System.Security.Cryptography;
 
 namespace ResidentialAreas.API.ConfigurationExtension
 {
@@ -22,6 +25,54 @@ namespace ResidentialAreas.API.ConfigurationExtension
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new() { Title = "My API", Version = "v1" });
+            });
+
+
+
+            var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+            var publicKey = jwtSettingsSection.GetValue<string>("PublicKey");
+
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(publicKey);
+
+            var rsaSecurityKey = new RsaSecurityKey(rsa);
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = jwtSettingsSection.GetValue<string>("Issuer"),
+                    ValidAudience = jwtSettingsSection.GetValue<string>("Audience"),
+
+                    IssuerSigningKey = rsaSecurityKey,
+
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+
+                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+
+                options.AddPolicy("TenantOnly", policy => policy.RequireRole("Tenant"));
+
+                options.AddPolicy("ComplexManager", policy => policy.RequireRole("ComplexManager"));
+
+                options.AddPolicy("UserOrTenant", policy => policy.RequireRole("User", "Tenant"));
+
+                options.AddPolicy("AdminOrUserOrTenant", policy => policy.RequireRole("Admin", "User", "Tenant"));
             });
 
 

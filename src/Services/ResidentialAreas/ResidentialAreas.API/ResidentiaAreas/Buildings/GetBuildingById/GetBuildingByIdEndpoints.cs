@@ -44,7 +44,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.GetBuildingById
                 .WithTags("Buildings")
                 .Produces<GetBuildingByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a building by its ID.");
+                .WithSummary("Gets a building by its ID.")
+                .RequireAuthorization();
         }
     }
 }

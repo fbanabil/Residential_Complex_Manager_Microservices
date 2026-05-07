@@ -48,7 +48,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
                 .WithTags("Areas")
                 .Produces<GetAreaByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a residential area by its ID.");
+                .WithSummary("Gets a residential area by its ID.")
+                .RequireAuthorization();
         }
     }
 }

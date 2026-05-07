@@ -52,7 +52,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
                 .WithTags("Areas")
                 .Produces<GetAreaByCodeResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a residential area by its code.");
+                .WithSummary("Gets a residential area by its code.")
+                .RequireAuthorization();
         }
     }
 }

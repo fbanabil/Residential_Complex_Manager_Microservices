@@ -52,7 +52,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
                 .WithTags("Areas")
                 .Produces<FilterAreaResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Filters residential areas based on the provided criteria as parameters.");
+                .WithSummary("Filters residential areas based on the provided criteria as parameters.")
+                .RequireAuthorization();
         }
     }
 }

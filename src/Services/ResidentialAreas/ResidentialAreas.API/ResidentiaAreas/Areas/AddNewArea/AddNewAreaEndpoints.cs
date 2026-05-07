@@ -78,7 +78,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 .Produces<AddNewAreaResponse>(StatusCodes.Status201Created)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Adds a new residential area to the system.")
-                .WithDescription("This endpoint allows clients to add a new residential area by providing the necessary details such as name, location, and status.");
+                .WithDescription("This endpoint allows clients to add a new residential area by providing the necessary details such as name, location, and status.")
+                .RequireAuthorization("AdminOnly");
         }
     }
 }

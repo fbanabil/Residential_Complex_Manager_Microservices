@@ -53,7 +53,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
                 .Produces<AddNewBuildingResult>(StatusCodes.Status201Created)
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Adds a new building to the specified area.");
+                .WithSummary("Adds a new building to the specified area.")
+                .RequireAuthorization("ComplexManager");
         }
     }
 }
