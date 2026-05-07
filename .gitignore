@@ -424,3 +424,4 @@ FodyWeavers.xsd
 /src/Services/ResidentialAreas/ResidentialAreas.API/wwwroot/images/*
 **/*.pem
 /src/Services/AuthenticationService/AuthenticationService.API/wwwroot/images/*
+ **/appsettings.dev.json
