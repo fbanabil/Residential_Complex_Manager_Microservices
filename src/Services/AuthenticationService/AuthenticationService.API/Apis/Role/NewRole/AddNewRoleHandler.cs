@@ -4,7 +4,7 @@ using CQRSPattern.CQRS;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthenticationService.API.Apis.Role
+namespace AuthenticationService.API.Apis.Role.NewRole
 {
     public record AddNewRoleCommand(string Name, string Description) : ICommand<AddNewRoleResult>;
     public record AddNewRoleResult(AddNewRoleResponse? Result, ErrorCarrier? ErrorCarrier);

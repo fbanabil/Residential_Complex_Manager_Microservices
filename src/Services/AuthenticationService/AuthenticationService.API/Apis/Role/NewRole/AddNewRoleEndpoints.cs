@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AuthenticationService.API.Apis.Role
+namespace AuthenticationService.API.Apis.Role.NewRole
 {
     public record AddNewRoleRequest(string Name, string Description);
     public record AddNewRoleResponse(Guid Id, string Name, string Description);
