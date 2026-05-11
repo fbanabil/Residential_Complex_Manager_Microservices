@@ -96,7 +96,11 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             builder.Services.AddEndpointsApiExplorer();
 
-            builder.Services.AddGrpc();
+            builder.Services.AddGrpc(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
+            //builder.Services.AddGrpcReflection();
 
             builder.Services.AddSwaggerGen(c =>
             {

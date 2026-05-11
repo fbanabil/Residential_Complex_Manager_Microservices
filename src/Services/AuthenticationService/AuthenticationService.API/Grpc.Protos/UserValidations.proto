@@ -1,0 +1,35 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AuthenticationService.API.Grpc";
+
+package userValidation;
+
+service UserValidations {
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+}
+
+message GetUserRequest {
+  string email = 1;
+}
+
+message GetUserResponse {
+  UserByRpc userByRpc = 1;
+  ErrorCarrierRpc error = 2;
+}
+
+message UserByRpc {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  string contactNumber = 4;
+  string role = 5;
+  string profileImageUrl = 6;
+  string nidImageUrl = 7;
+}
+
+
+message ErrorCarrierRpc{
+	string title = 1;
+	string statusCode = 2;
+	string errorMessage = 3;
+}

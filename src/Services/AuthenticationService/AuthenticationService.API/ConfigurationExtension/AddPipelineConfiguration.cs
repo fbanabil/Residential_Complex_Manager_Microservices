@@ -1,4 +1,5 @@
 ﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.Grpc;
 using AuthenticationService.API.Grpc.Services;
 using Carter;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,13 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             }
 
-            app.MapGrpcService<GreeterService>();
+            app.MapGrpcService<AuthenticationService.API.Grpc.Services.UserValidations>();
+
+            if (app.Environment.IsDevelopment())
+            {
+                //app.MapGrpcReflectionService();
+            }
+
             app.MapCarter();
 
             

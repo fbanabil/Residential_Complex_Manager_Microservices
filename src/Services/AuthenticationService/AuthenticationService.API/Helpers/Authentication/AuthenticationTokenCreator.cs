@@ -15,11 +15,13 @@ namespace AuthenticationService.API.Helpers.Authenticate
             _configuration = configuration;
         }
 
-        public async Task<string> CreateToken(UserPayload payload)
+        public Task<string> CreateToken(UserPayload payload)
         {
             using var rsa = System.Security.Cryptography.RSA.Create();
             rsa.ImportFromPem(_configuration["JwtSettings:PrivateKey"]);
-            var credentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+
+            var key = new RsaSecurityKey(rsa.ExportParameters(true));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, payload.UserId),
@@ -35,9 +37,10 @@ namespace AuthenticationService.API.Helpers.Authenticate
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: credentials
             );
-            return await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Task.FromResult(jwt);
         }
-
-
     }
 }
