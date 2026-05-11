@@ -70,7 +70,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.FilterUnit
                 .WithTags("Units")
                 .Produces<FilterUnitResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Filters units based on provided criteria.");
+                .WithSummary("Filters units based on provided criteria.")
+                .RequireAuthorization();
         }
     }
 }

@@ -64,7 +64,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
                 .WithTags("ParkingSlots")
                 .Produces<UpdateParkingSlotByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Updates a parking slot by its ID.");
+                .WithSummary("Updates a parking slot by its ID.")
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

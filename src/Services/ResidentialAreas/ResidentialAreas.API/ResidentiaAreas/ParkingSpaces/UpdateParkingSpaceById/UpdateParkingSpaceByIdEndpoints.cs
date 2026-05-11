@@ -61,7 +61,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.UpdateParkingSpaceB
                 .WithTags("ParkingSpaces")
                 .Produces<UpdateParkingSpaceByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Updates a parking space by its ID.");
+                .WithSummary("Updates a parking space by its ID.")
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

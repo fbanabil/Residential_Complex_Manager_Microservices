@@ -82,13 +82,16 @@ namespace AuthenticationService.API.ConfigurationExtension
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 
-                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+                options.AddPolicy("ComplexManagerOnly", policy => policy.RequireRole("ComplexManager"));
 
                 options.AddPolicy("TenantOnly", policy => policy.RequireRole("Tenant"));
 
-                options.AddPolicy("UserOrTenant", policy => policy.RequireRole("User", "Tenant"));
+                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 
-                options.AddPolicy("AdminOrUserOrTenant", policy => policy.RequireRole("Admin", "User", "Tenant"));
+                options.AddPolicy("AdminOrComplexManager", policy => policy.RequireRole("Admin", "ComplexManager"));
+
+                options.AddPolicy("AdminOrComplexManagerOrTenant", policy => policy.RequireRole("Admin", "ComplexManager", "Tenant"));
+
             });
 
             builder.Services.AddEndpointsApiExplorer();

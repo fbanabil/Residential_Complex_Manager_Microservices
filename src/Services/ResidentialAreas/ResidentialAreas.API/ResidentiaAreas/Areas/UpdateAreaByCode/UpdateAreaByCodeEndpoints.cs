@@ -70,7 +70,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
                 .Produces<UpdateAreaByCodeResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Updates a residential area by its code.")
-                .RequireAuthorization("AdminOnly");
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

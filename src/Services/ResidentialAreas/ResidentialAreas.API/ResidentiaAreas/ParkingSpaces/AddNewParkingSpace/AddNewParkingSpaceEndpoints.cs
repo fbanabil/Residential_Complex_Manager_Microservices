@@ -63,7 +63,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
                 .Produces<AddNewParkingSpaceResponse>(StatusCodes.Status201Created)
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Adds a new parking space under an area.");
+                .WithSummary("Adds a new parking space under an area.")
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

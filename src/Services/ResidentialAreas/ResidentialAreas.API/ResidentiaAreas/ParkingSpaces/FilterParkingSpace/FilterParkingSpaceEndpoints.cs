@@ -51,7 +51,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.FilterParkingSpace
                 .WithTags("ParkingSpaces")
                 .Produces<FilterParkingSpaceResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Filters parking spaces based on provided criteria.");
+                .WithSummary("Filters parking spaces based on provided criteria.")
+                .RequireAuthorization();
         }
     }
 }

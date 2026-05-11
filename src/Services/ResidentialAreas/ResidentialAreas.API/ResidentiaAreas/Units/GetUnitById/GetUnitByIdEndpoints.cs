@@ -44,7 +44,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.GetUnitById
                 .WithTags("Units")
                 .Produces<GetUnitByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a unit by its ID.");
+                .WithSummary("Gets a unit by its ID.")
+                .RequireAuthorization();
         }
     }
 }

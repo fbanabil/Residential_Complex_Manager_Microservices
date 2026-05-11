@@ -46,7 +46,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.GetParkingSpaceById
                 .WithTags("ParkingSpaces")
                 .Produces<GetParkingSpaceByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a parking space by its ID.");
+                .WithSummary("Gets a parking space by its ID.")
+                .RequireAuthorization();
         }
     }
 }

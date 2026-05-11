@@ -122,7 +122,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
                 .WithTags("Facilities")
                 .Produces<UpdateFacilityByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Updates a facility by its ID.");
+                .WithSummary("Updates a facility by its ID.")
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

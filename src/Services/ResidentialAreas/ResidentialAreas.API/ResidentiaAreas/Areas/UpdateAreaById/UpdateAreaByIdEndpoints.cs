@@ -74,7 +74,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
                 .Produces<UpdateAreaByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Updates a residential area by its ID.")
-                .RequireAuthorization("AdminOnly");
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

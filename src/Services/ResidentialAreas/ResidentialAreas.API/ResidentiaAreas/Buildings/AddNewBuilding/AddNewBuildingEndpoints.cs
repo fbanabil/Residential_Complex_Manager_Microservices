@@ -54,7 +54,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Adds a new building to the specified area.")
-                .RequireAuthorization("ComplexManager");
+                .RequireAuthorization("AdminOrComplexManager");
         }
     }
 }

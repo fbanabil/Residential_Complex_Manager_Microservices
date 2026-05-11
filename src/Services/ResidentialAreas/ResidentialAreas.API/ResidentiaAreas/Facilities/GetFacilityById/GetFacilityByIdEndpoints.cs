@@ -44,7 +44,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.GetFacilityById
                 .WithTags("Facilities")
                 .Produces<GetFacilityByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a facility by its ID.");
+                .WithSummary("Gets a facility by its ID.")
+                .RequireAuthorization();
         }
     }
 }

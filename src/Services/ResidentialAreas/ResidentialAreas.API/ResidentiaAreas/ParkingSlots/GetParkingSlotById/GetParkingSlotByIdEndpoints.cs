@@ -39,7 +39,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.GetParkingSlotById
                 .WithTags("ParkingSlots")
                 .Produces<GetParkingSlotByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Gets a parking slot by its ID.");
+                .WithSummary("Gets a parking slot by its ID.")
+                .RequireAuthorization();
         }
     }
 }

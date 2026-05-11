@@ -73,7 +73,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.FilterFacility
                 .WithTags("Facilities")
                 .Produces<FilterFacilityResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Filters facilities based on provided criteria.");
+                .WithSummary("Filters facilities based on provided criteria.")
+                .RequireAuthorization();
         }
     }
 }

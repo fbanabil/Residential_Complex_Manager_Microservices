@@ -49,7 +49,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.FilterBuilding
                 .WithTags("Buildings")
                 .Produces<FilterBuildingResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
-                .WithSummary("Filters buildings based on the provided criteria as parameters.");
+                .WithSummary("Filters buildings based on the provided criteria as parameters.")
+                .RequireAuthorization();
         }
     }
 }
