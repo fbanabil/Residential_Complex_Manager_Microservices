@@ -100,7 +100,7 @@ namespace AuthenticationService.API.ConfigurationExtension
             {
                 options.EnableDetailedErrors = true;
             });
-            //builder.Services.AddGrpcReflection();
+            builder.Services.AddGrpcReflection();
 
             builder.Services.AddSwaggerGen(c =>
             {

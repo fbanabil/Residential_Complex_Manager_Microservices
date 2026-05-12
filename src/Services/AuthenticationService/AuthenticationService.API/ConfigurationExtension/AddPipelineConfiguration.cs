@@ -46,7 +46,7 @@ namespace AuthenticationService.API.ConfigurationExtension
 
             if (app.Environment.IsDevelopment())
             {
-                //app.MapGrpcReflectionService();
+                app.MapGrpcReflectionService();
             }
 
             app.MapCarter();

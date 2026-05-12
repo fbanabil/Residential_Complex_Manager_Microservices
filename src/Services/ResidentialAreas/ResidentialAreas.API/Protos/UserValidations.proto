@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "AuthenticationService.API.Grpc";
+option csharp_namespace = "ResidentialAreas.API.Grpc";
 
 package userValidation;
 

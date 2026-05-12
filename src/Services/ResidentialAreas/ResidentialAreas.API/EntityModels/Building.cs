@@ -34,10 +34,16 @@
         [StringLength(100, ErrorMessage = "The building name cannot exceed 100 characters.")]
         public string? Name { get; set; } = string.Empty;
 
-        
-        
 
-        
+
+
+
+        public Guid? TenantId { get; set; }
+
+
+
+
+
         [Required(ErrorMessage = "The block number is required.")]
         [StringLength(30, ErrorMessage = "The block number cannot exceed 30 characters.")]
         public string? BlockNo { get; set; } = string.Empty;

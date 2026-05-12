@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using ResidentialAreas.API.Helpers.ImageSaver;
 using ResidentialAreas.API.Helpers.LocationValidator;
 using System.Security.Cryptography;
+using ResidentialAreas.API.Grpc;
 
 namespace ResidentialAreas.API.ConfigurationExtension
 {
@@ -76,6 +77,12 @@ namespace ResidentialAreas.API.ConfigurationExtension
                 options.AddPolicy("AdminOrComplexManagerOrTenant", policy => policy.RequireRole("Admin", "ComplexManager", "Tenant"));
 
             });
+
+            builder.Services.AddGrpcClient<ResidentialAreas.API.Grpc.UserValidations.UserValidationsClient>(options =>
+            {
+                options.Address = new Uri(builder.Configuration.GetValue<string>("GrpcSettings:UserValidationServiceUrl")!);
+            });
+
 
 
             builder.Services.AddScoped<IImageSaver,ImageSaver>();

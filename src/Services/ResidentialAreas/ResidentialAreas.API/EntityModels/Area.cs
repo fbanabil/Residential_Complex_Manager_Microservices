@@ -81,7 +81,9 @@
         [Required(ErrorMessage = "The last updated date is required.")]
         public DateTime UpdatedAt { get; set; }    
 
-       
+
+        public Guid? ComplexManagerId { get; set; }
+
 
 
         public virtual ICollection<ParkingSpace>? ParkingSpaces { get; set; } = new List<ParkingSpace>();

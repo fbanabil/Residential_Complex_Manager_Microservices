@@ -1,6 +1,7 @@
 ﻿using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.Grpc;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthenticationService.API.Grpc.Services
@@ -17,6 +18,7 @@ namespace AuthenticationService.API.Grpc.Services
         }
 
 
+        [Authorize(Policy = "AdminOnly")]
         public override async Task<GetUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
         {
             try
@@ -43,7 +45,9 @@ namespace AuthenticationService.API.Grpc.Services
                             ContactNumber = string.Empty,
                             Role = string.Empty,
                             ProfileImageUrl = string.Empty,
-                            NidImageUrl = string.Empty
+                            NidImageUrl = string.Empty,
+                            IsEmailConfirmed = false,
+                            IsUserVerified = false
                         },
                         Error = new ErrorCarrierRpc
                         {
@@ -69,7 +73,9 @@ namespace AuthenticationService.API.Grpc.Services
                         ContactNumber = user.Phone ?? string.Empty,
                         Role = string.Join(", ", roles),
                         ProfileImageUrl = user.ProfileImage?.ImagePath ?? string.Empty,
-                        NidImageUrl = user.NidImage?.ImagePath ?? string.Empty
+                        NidImageUrl = user.NidImage?.ImagePath ?? string.Empty,
+                        IsEmailConfirmed = user.IsEmailVerified,
+                        IsUserVerified = user.IsUserVerified
                     },
                     Error = new ErrorCarrierRpc
                     {
