@@ -17,8 +17,10 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-
+      - ../certs/rootCA.pem:/usr/local/share/ca-certificates/rootCA.crt:ro
+    command: >
+      sh -c "update-ca-certificates &&
+             dotnet ResidentialAreas.API.dll"
 
   residentialareadb:
     container_name: residentialareadb
@@ -40,6 +42,8 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=Your_strong_Password123!
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticPassword123!
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/aspnetapp.pfx
     ports:
       - "14330:1433"
     volumes:
@@ -79,6 +83,7 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ../certs/authservice.pfx:/home/app/.aspnet/https/aspnetapp.pfx:ro
     depends_on:
       - authenticationservicedb
       - rabbitmq

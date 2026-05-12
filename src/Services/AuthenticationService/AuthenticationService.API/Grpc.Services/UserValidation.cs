@@ -18,7 +18,7 @@ namespace AuthenticationService.API.Grpc.Services
         }
 
 
-        [Authorize(Policy = "AdminOnly")]
+
         public override async Task<GetUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
         {
             try

@@ -425,3 +425,4 @@ FodyWeavers.xsd
 **/*.pem
 /src/Services/AuthenticationService/AuthenticationService.API/wwwroot/images/*
  **/appsettings.dev.json
+certs/**
