@@ -8,6 +8,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticPassword123!
+      - GrpcSettings__UserValidationServiceUrl=https://authenticationservice.api:8081 
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/aspnetapp.pfx
     ports:
       - "6001:8080"
@@ -21,6 +22,9 @@ services:
     command: >
       sh -c "update-ca-certificates &&
              dotnet ResidentialAreas.API.dll"
+    depends_on:
+        - residentialareadb
+        - authenticationservice.api
 
   residentialareadb:
     container_name: residentialareadb
