@@ -102,6 +102,7 @@ namespace AuthenticationService.API.ConfigurationExtension
             });
             builder.Services.AddGrpcReflection();
 
+
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new() { Title = "My API", Version = "v1" });

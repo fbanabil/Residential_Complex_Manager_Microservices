@@ -29,4 +29,8 @@ RUN dotnet publish "./AuthenticationService.API.csproj" -c $BUILD_CONFIGURATION 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+ENV ASPNETCORE_URLS=http://+:8080,http://+:8081
+ENV ASPNETCORE_HTTP_PORTS=8080,8081
+
 ENTRYPOINT ["dotnet", "AuthenticationService.API.dll"]

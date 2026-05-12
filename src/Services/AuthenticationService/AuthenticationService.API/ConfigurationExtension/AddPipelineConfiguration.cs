@@ -11,8 +11,8 @@ namespace AuthenticationService.API.ConfigurationExtension
         public static async Task AddCustomPipeline(this WebApplication app)
         {
             app.UseStaticFiles();
-            app.UseHsts();
-            app.UseHttpsRedirection();
+            //app.UseHsts();
+            //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
 
