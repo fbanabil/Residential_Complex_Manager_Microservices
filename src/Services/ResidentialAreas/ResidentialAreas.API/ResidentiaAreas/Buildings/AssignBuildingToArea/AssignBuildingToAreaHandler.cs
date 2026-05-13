@@ -1,4 +1,5 @@
 ﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
+using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
 {
@@ -8,17 +9,19 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
     public class AssignBuildingToAreaHandler : ICommandHandler<AssignBuildingToAreaCommand, AssignBuildingToAreaResult>
     {
         private readonly AreaDbContext _areaDbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AssignBuildingToAreaHandler(AreaDbContext areaDbContext)
+        public AssignBuildingToAreaHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor)
         {
             _areaDbContext = areaDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AssignBuildingToAreaResult> Handle(AssignBuildingToAreaCommand request, CancellationToken cancellationToken)
         {
+            // Validate area existence and permissions
             Area? area = await _areaDbContext.Areas.AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
-
             if (area == null)
             {
                 return new AssignBuildingToAreaResult(null, new ErrorCarrier
@@ -29,11 +32,29 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
                 });
             }
 
-            List<long> buildingCodes = request.BuildingCodes.Distinct().ToList();
-            List<Building> buildings = await _areaDbContext.Buildings.AsNoTracking()
-                .Where(b => buildingCodes.Contains(b.Code))
-                .ToListAsync(cancellationToken);
 
+
+            // Validate user permissions
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
+            var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+
+
+            // Only allow Admins or the Complex Manager of the area to assign buildings
+            if ((!userRoles.Contains("Admin")) && userIdClaim != null && userIdClaim.Value != area.ComplexManagerId.ToString())
+            {
+                return new AssignBuildingToAreaResult(null, new ErrorCarrier
+                {
+                    Title = "UNAUTHORIZED",
+                    StatusCode = 403,
+                    Detail = "You are not authorized to assign buildings to this area."
+                });
+            }
+
+
+
+            // Validate building codes by fetching them from the database and comparing counts
+            List<long> buildingCodes = request.BuildingCodes.Distinct().ToList();
+            List<Building> buildings = await _areaDbContext.Buildings.AsNoTracking().Where(b => buildingCodes.Contains(b.Code)).ToListAsync(cancellationToken);
             if (buildings.Count != buildingCodes.Count)
             {
                 List<long> missingCodes = buildingCodes.Except(buildings.Select(b => b.Code)).ToList();
@@ -45,6 +66,24 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
                 });
             }
 
+
+
+            // Check if any building is already assigned to a different area
+            int conflicts = buildings.Count(b => b.AreaId != null && b.AreaId != area.Id);
+            if(conflicts > 0)
+            {
+                return new AssignBuildingToAreaResult(null, new ErrorCarrier
+                {
+                    Title = "BUILDING_ASSIGNMENT_CONFLICT",
+                    StatusCode = 409,
+                    Detail = $"{conflicts} building(s) are already assigned to a different area."
+                });
+            }
+
+
+
+
+            // Perform bulk update to assign buildings to the area
             try
             {
                 int updated = await _areaDbContext.Buildings
@@ -72,6 +111,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
                     Detail = "An error occurred while assigning buildings."
                 });
             }
+
+
 
             return new AssignBuildingToAreaResult(new AssignBuildingToAreaResponse(true, $"{buildingCodes.Count} building(s) assigned to area {request.AreaCode}."), null);
         }

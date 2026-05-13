@@ -1,5 +1,6 @@
 ﻿using ResidentialAreas.API.Grpc;
 using ResidentialAreas.API.Helpers.ErrorCarrier;
+using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
 {
@@ -12,17 +13,57 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
     {
         private readonly UserValidations.UserValidationsClient _userValidationsClient;
         private readonly AreaDbContext _areaDbContest;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public AssignTenantToBuildingsHandler(UserValidations.UserValidationsClient userValidationsClient, AreaDbContext areaDbContest)
+        public AssignTenantToBuildingsHandler(UserValidations.UserValidationsClient userValidationsClient, AreaDbContext areaDbContest, IHttpContextAccessor httpContextAccessor)
         {
             _userValidationsClient = userValidationsClient;
             _areaDbContest = areaDbContest;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
         public async Task<AssignTenantToBuildingResult> Handle(AssignTenantToBuildingCommand request, CancellationToken cancellationToken)
         {
+            // Extract the user ID and roles from the HTTP context
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
+            var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+
+
+
+            // Check if the user has the "Admin" role or the "ComplexManager" role with permission to manage the area of the building
+            if (!userRoles.Contains("Admin"))
+            {
+
+                // If the user does not have the "Admin" role, check if they have the "ComplexManager" role
+                if (!userRoles.Contains("ComplexManager"))
+                {
+                    return new AssignTenantToBuildingResult(null, new ErrorCarrier
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = 403,
+                        Detail = "You do not have permission to assign a tenant to a building"
+                    });
+                }
+
+
+                // If the user has the "ComplexManager" role, check if they have permission to manage the area of the building
+                var complexManagerIdOfTheAreaOfBuilding = await _areaDbContest.Buildings.AsNoTracking().Where(b => b.Code == request.BuildingCode && b.Area != null).Select(b => b.Area!.ComplexManagerId).FirstOrDefaultAsync(cancellationToken);
+
+
+                // If the complex manager ID of the area of the building is null or does not match the user ID, return a forbidden error
+                if (complexManagerIdOfTheAreaOfBuilding == null || complexManagerIdOfTheAreaOfBuilding != Guid.Parse(userIdClaim.Value))
+                {
+                    return new AssignTenantToBuildingResult(null, new ErrorCarrier
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = 403,
+                        Detail = "You do not have permission to assign a tenant to this building"
+                    });
+                }
+            }
+
+
             // Validate the user by calling the User Validations gRPC service
             GetUserResponse user = await _userValidationsClient.GetUserAsync(new GetUserRequest { Email = request.Email }, cancellationToken: cancellationToken);
 
