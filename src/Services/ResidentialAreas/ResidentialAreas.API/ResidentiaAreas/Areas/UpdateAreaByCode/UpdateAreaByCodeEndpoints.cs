@@ -52,16 +52,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
 
                 var command = request.Adapt<UpdateAreaByCodeCommand>();
                 var result = await sender.Send(command);
-                if (result == null)
+                
+                if(result.Error is not null)
                 {
-                    return Results.NotFound($"Area with code {request.Code} not found.");
+                    return Results.Problem(result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
-                var response = result.Adapt<UpdateAreaByCodeResponse>();
 
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
+                var response = result.Result.Adapt<UpdateAreaByCodeResponse>();
 
                 return Results.Ok(response);
             })
