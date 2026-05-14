@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.Helpers.Image;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
@@ -7,12 +6,13 @@ using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
 {
     public record UpdateAreaByIdRequest(Guid Id, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? RemovedImagesUrls, List<string?>? AddedBase64StringImages);
-    public record UpdateAreaByIdResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? ImageUrls);
 
+    public record UpdateAreaByIdResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, List<string?>? ImageUrls);
 
     public class UpdateAreaByIdValidator : AbstractValidator<UpdateAreaByIdRequest>
     {
         private readonly ILocationValidator _locationValidator;
+
         public UpdateAreaByIdValidator(ILocationValidator locationValidator)
         {
             _locationValidator = locationValidator;
@@ -37,8 +37,6 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
         }
     }
 
-
-
     public class UpdateAreaByIdEndpoints : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
@@ -55,17 +53,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
                 var command = request.Adapt<UpdateAreaByIdCommand>();
                 var result = await sender.Send(command);
 
-                var response = result.Adapt<UpdateAreaByIdResponse>();
-
-                if(response == null)
+                if (result.Error is not null)
                 {
-                    return Results.NotFound("The area with the specified ID was not found.");
+                    return Results.Problem(result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
 
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
+                var response = result.Result.Adapt<UpdateAreaByIdResponse>();
 
                 return Results.Ok(response);
             })
