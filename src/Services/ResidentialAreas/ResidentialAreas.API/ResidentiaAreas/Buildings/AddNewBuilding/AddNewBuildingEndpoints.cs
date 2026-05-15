@@ -38,10 +38,10 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
+
                 var command = request.Adapt<AddNewBuildingCommand>();
 
                 var result = await sender.Send(command);
-
                 if(result.Error != null)
                 {
                     return Results.Problem(result.Error.Detail, statusCode: result.Error.StatusCode);
