@@ -1,34 +1,44 @@
 ﻿
+using ResidentialAreas.API.Helpers.ErrorCarrier;
 using ResidentialAreas.API.Helpers.ImageSaver;
+using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
 {
 
-    //public record AddNewBuildingCommand(long AreaCode, string Name, string BlockNo, int TotalFloors, string Address, string Status, List<string?>? ImageBase64) : ICommand<AddNewBuildingResult>;
+    public record AddNewBuildingCommand(long AreaCode, string Name, string BlockNo, int TotalFloors, string Address, string Status, List<string?>? ImageBase64) : ICommand<AddNewBuildingResult>;
 
-    //public record AddNewBuildingResult(Guid Id, long Code, string Name, string AreaName, long AreaCode);
+    public record AddNewBuildingResult(AddNewBuildingResponse? Result,ErrorCarrier? Error);
 
     public class AddNewBuildingHandler : ICommandHandler<AddNewBuildingCommand, AddNewBuildingResult>
     {
         private readonly AreaDbContext _areaDbContext;
         private readonly ILogger<AddNewBuildingHandler> _logger;
         private readonly IImageSaver _imageSaver;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+       
 
-        public AddNewBuildingHandler(AreaDbContext areaDbContext, ILogger<AddNewBuildingHandler> logger, IImageSaver imageSaver)
+        public AddNewBuildingHandler(AreaDbContext areaDbContext, ILogger<AddNewBuildingHandler> logger, IImageSaver imageSaver, IHttpContextAccessor httpContextAccessor)
         {
             _areaDbContext = areaDbContext;
             _logger = logger;
             _imageSaver = imageSaver;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AddNewBuildingResult> Handle(AddNewBuildingCommand request, CancellationToken cancellationToken)
         {
             Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
-
-            if(area == null)
+            if (area == null)
             {
-                _logger.LogWarning("Area with code {AreaCode} not found.", request.AreaCode);
-                return null;            }
+                return new AddNewBuildingResult(null, new ErrorCarrier()
+                {
+                    Title = "NOT FOUND",
+                    Detail = $"Area with code {request.AreaCode} not found.",
+                    StatusCode = StatusCodes.Status404NotFound
+                });
+            }
+
 
             List<string?>? imagePaths = await _imageSaver.SaveImageAsync(request.ImageBase64, "wwwroot/images/Buildings");
 

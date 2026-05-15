@@ -45,7 +45,7 @@ services:
     restart: always
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Your_strong_Password123!
+      - MSSQL_SA_PASSWORD=Fahad12345!
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticPassword123!
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/aspnetapp.pfx
     ports:
@@ -79,6 +79,7 @@ services:
       - RabbitMQ__Password=guest
       - RabbitMQ__VirtualHost=/
       - RabbitMQ__EmailQueue=email_queue
+      - ConnectionStrings__DefaultConnection=Server=authenticationdb,1433;Database=AuthenticationDB;User Id=sa;Password=Fahad12345!;Encrypt=False;TrustServerCertificate=True;
     ports:
       - "6002:8080"
       - "6062:8081"

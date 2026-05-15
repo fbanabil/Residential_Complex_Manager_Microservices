@@ -3,11 +3,11 @@ using ResidentialAreas.API.Helpers.Image;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
 {
-    public record AddNewBuildingCommand(long AreaCode, string Name, string BlockNo, int TotalFloors, string Address, string Status, List<string?>? ImageBase64) : ICommand<AddNewBuildingResult>;
+    public record AddNewBuildingRequest(long AreaCode, string Name, string BlockNo, int TotalFloors, string Address, string Status, List<string?>? ImageBase64);
 
-    public record AddNewBuildingResult(Guid Id, long Code, string Name, string AreaName,long AreaCode);
+    public record AddNewBuildingResponse(Guid Id, long Code, string Name, string AreaName,long AreaCode);
 
-    public class AddNewBuildingValidator : AbstractValidator<AddNewBuildingCommand>
+    public class AddNewBuildingValidator : AbstractValidator<AddNewBuildingRequest>
     {
         public AddNewBuildingValidator()
         {
@@ -31,26 +31,27 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/add", async (AddNewBuildingCommand command, IMediator mediator, IValidator<AddNewBuildingCommand> validator) =>
+            app.MapPost("/buildings/add", async (AddNewBuildingRequest request, ISender sender, IValidator<AddNewBuildingRequest> validator) =>
             {
-                var validationResult = await validator.ValidateAsync(command);
+                var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
+                var command = request.Adapt<AddNewBuildingCommand>();
 
-                var result = await mediator.Send(command);
+                var result = await sender.Send(command);
 
-                if(result is null)
+                if(result.Error != null)
                 {
-                    return Results.Problem("Failed to add new building. The specified area code does not exist.");
+                    return Results.Problem(result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
 
-                return Results.Created($"/api/areas/{command.AreaCode}/buildings/{result.Code}", result);
+                return Results.Created($"/api/areas/{request.AreaCode}/buildings/{result.Result?.Code}", result.Result);
             })
                 .WithName("AddNewBuilding")
                 .WithTags("Buildings")
-                .Produces<AddNewBuildingResult>(StatusCodes.Status201Created)
+                .Produces<AddNewBuildingResponse>(StatusCodes.Status201Created)
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Adds a new building to the specified area.")
