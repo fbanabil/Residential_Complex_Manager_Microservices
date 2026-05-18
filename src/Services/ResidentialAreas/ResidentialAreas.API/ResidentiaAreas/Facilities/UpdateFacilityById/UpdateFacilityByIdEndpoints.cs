@@ -67,7 +67,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
                 .IsEnumName(typeof(Status)).WithMessage("Status must be a valid value (Active, Inactive, Maintenance).");
 
             RuleFor(x => x.AddedBase64StringImages)
-                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringLiset(imageBase64)))
+                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringList(imageBase64)))
                 .WithMessage("The image must be a valid Base64 string.");
         }
 

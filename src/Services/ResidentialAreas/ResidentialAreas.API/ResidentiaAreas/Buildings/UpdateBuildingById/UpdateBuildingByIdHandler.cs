@@ -74,14 +74,32 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
 
 
 
+            // Begin a transaction to ensure atomicity of the update operation
+            await using var transaction = await _areaDbContext.Database.BeginTransactionAsync(cancellationToken);
 
             // Update building properties
-            building.Name = request.Name;
-            building.BlockNo = request.BlockNo;
-            building.TotalFloors = request.TotalFloors;
-            building.Address = request.Address;
-            building.Status = (Status)System.Enum.Parse(typeof(Status), request.Status, true);
-            building.UpdatedAt = DateTime.UtcNow;
+            try
+            {
+                await _areaDbContext.Buildings.Where(b => b.Id == request.Id).ExecuteUpdateAsync(b => b
+                    .SetProperty(p => p.Name, request.Name)
+                    .SetProperty(p => p.BlockNo, request.BlockNo)
+                    .SetProperty(p => p.TotalFloors, request.TotalFloors)
+                    .SetProperty(p => p.Address, request.Address)
+                    .SetProperty(p => p.Status, (Status)System.Enum.Parse(typeof(Status), request.Status, true))
+                    .SetProperty(p => p.UpdatedAt, DateTime.UtcNow)
+                );
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                return new UpdateBuildingByIdResult(null, new ErrorCarrier
+                {
+                    Title = "INTERNAL_SERVER_ERROR",
+                    StatusCode = 500,
+                    Detail = "An error occurred while updating the building. Please try again later."
+                });
+            }
+
 
 
 
@@ -108,8 +126,6 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
             List<string?>? imagesToRemove = existingImageUrls.Where(url => removedImagePaths != null && removedImagePaths.Contains(url!)).ToList();
 
 
-            // Begin a transaction to ensure atomicity of the update operation
-            await using var transaction = await _areaDbContext.Database.BeginTransactionAsync(cancellationToken);
 
 
 

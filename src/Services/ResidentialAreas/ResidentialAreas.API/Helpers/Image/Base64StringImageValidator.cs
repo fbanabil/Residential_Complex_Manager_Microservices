@@ -3,7 +3,7 @@
     public static class Base64StringImageValidator
     {
 
-        public static bool IsBase64StringLiset(List<string?>? base64List)
+        public static bool IsBase64StringList(List<string?>? base64List)
         {
             if (base64List == null || base64List.Count == 0)
             {

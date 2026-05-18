@@ -10,6 +10,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
     {
         public UpdateBuildingByIdValidator()
         {
+            RuleFor(x => x.Id).NotEmpty().WithMessage("The building ID is required.");
             RuleFor(x => x.Name).NotEmpty().WithMessage("The building name is required.")
                 .MaximumLength(100).WithMessage("The building name cannot exceed 100 characters.");
             RuleFor(x => x.BlockNo).NotEmpty().WithMessage("The block number is required.")
@@ -19,8 +20,11 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
             RuleFor(x => x.Status).NotEmpty().WithMessage("The status is required.")
                 .IsEnumName(typeof(Status)).WithMessage("The status must be a valid value (Active, Inactive, Maintenance).");
             RuleFor(x => x.AddedBase64StringImages)
-                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringLiset(imageBase64)))
+                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringList(imageBase64)))
                 .WithMessage("The image must be a valid Base64 string.");
+            RuleFor(x => x.AddedBase64StringImages).Must(x => x == null || x.Count <= 10).WithMessage("You can add a maximum of 10 images.");
+            RuleFor(x => x.RemovedImagesUrls).Must(x => x == null || x.Count <= 10).WithMessage("You can remove a maximum of 10 images.");
+            RuleForEach(x => x.RemovedImagesUrls).Must(url => string.IsNullOrWhiteSpace(url) || Uri.TryCreate(url, UriKind.Absolute, out _)).WithMessage("Removed image URL must be a valid URL.");
         }
     }
 
@@ -28,16 +32,16 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/update-by-id", async (HttpContext httpContext, UpdateBuildingByIdRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByIdRequest> validator) =>
+            app.MapPost("/buildings/update-by-id", async (UpdateBuildingByIdRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByIdRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<UpdateBuildingByIdCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
                 if (result.Error != null)
                 {

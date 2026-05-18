@@ -23,7 +23,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
 
             RuleFor(x => x.ImageBase64)
                 .NotEmpty().WithMessage("At least one image is required.")
-                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringLiset(imageBase64)))
+                .MustAsync(async (imageBase64, cancellation) => await Task.FromResult(Base64StringImageValidator.IsBase64StringList(imageBase64)))
                 .WithMessage("The image must be a valid Base64 string.");
         }
     }
