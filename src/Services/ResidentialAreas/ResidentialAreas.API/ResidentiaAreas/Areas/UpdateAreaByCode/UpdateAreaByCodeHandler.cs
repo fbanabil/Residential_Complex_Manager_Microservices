@@ -196,7 +196,21 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
 
 
             // Commit the transaction if everything succeeded
-            await transaction.CommitAsync(cancellationToken);
+            try
+            {
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                _logger.LogError("Transaction commit failed while updating area with code {AreaCode}.", request.Code);
+                await transaction.RollbackAsync(cancellationToken);
+                return new UpdateAreaByCodeResult(null, new ErrorCarrier()
+                {
+                    Title = "TRANSACTION COMMIT FAILED",
+                    Detail = "An error occurred while finalizing the update. Please try again.",
+                    StatusCode = StatusCodes.Status500InternalServerError
+                });
+            }
 
 
 

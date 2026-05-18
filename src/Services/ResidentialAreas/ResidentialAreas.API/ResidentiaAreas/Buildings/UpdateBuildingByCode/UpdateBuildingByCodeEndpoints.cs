@@ -39,18 +39,14 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
                 }
 
                 var command = request.Adapt<UpdateBuildingByCodeCommand>();
-                var result = await sender.Send(command);
 
-                if (result == null)
+                var result = await sender.Send(command);
+                if (result.Error != null)
                 {
-                    return Results.NotFound($"Building with code {request.Code} not found.");
+                    return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);
                 }
 
-                var response = result.Adapt<UpdateBuildingByCodeResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
+                var response = result.Result.Adapt<UpdateBuildingByCodeResponse>();
 
                 return Results.Ok(response);
             })

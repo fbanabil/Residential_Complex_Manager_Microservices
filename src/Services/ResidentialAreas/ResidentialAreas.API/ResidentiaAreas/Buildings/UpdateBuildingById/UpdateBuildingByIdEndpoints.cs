@@ -39,16 +39,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
                 var command = request.Adapt<UpdateBuildingByIdCommand>();
                 var result = await sender.Send(command);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.NotFound("The building with the specified ID was not found.");
+                    return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);
                 }
 
-                var response = result.Adapt<UpdateBuildingByIdResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
+                var response = result.Result.Adapt<UpdateBuildingByIdResponse>();
 
                 return Results.Ok(response);
             })

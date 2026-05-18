@@ -95,5 +95,14 @@ namespace ResidentialAreas.API.Helpers.ImageSaver
             return savedImagePaths;
         }
 
+        public async Task<string> GetPath(string url)
+        {
+            if(url != null)
+            {
+                return (url != null && url.Contains("images/")) ? "images/" + url.Split("images/").LastOrDefault() : url!;
+            }
+            return string.Empty;
+        }
+
     }
 }
