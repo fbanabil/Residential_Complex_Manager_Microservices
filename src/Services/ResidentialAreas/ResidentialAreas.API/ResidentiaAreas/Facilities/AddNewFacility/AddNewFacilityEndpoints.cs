@@ -95,29 +95,25 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/facilities/add", async (HttpContext httpContext, AddNewFacilityRequest request, ISender sender, [FromServices] IValidator<AddNewFacilityRequest> validator) =>
+            app.MapPost("/facilities/add", async (AddNewFacilityRequest request, ISender sender, [FromServices] IValidator<AddNewFacilityRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<AddNewFacilityCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.Problem("Failed to add facility. Ensure the provided area/building exists and the request is valid.");
+                    return Results.Problem(title: result.Error.Title, detail: result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
 
-                var response = result.Adapt<AddNewFacilityResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
-
-                return Results.Created($"/facilities/{response.Id}", response);
+                var response = result.Result.Adapt<AddNewFacilityResponse>();
+                
+                return Results.Created($"/facilities/{response!.Id}", response);
             })
                 .WithName("AddNewFacility")
                 .WithTags("Facilities")
@@ -125,7 +121,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Adds a new facility under an area or a building.")
-                .RequireAuthorization("AdminOrComplexManager");
+                .RequireAuthorization("AdminOrComplexManagerOrTenant");
         }
     }
 }
