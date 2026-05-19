@@ -4,6 +4,13 @@ namespace ResidentialAreas.API.Helpers.ImageSaver
 {
     public class ImageSaver : IImageSaver
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ImageSaver(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
 
         public Task DeleteImages(List<string?>? existingImageUrls)
         {

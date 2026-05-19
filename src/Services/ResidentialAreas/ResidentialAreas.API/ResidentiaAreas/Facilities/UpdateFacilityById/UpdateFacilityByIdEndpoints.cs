@@ -94,27 +94,24 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/facilities/update-by-id", async (HttpContext httpContext, UpdateFacilityByIdRequest request, ISender sender, [FromServices] IValidator<UpdateFacilityByIdRequest> validator) =>
+            app.MapPost("/facilities/update-by-id", async (HttpContext httpContext, UpdateFacilityByIdRequest request, ISender sender, [FromServices] IValidator<UpdateFacilityByIdRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<UpdateFacilityByIdCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.NotFound("The facility with the specified ID was not found, or related area/building does not exist.");
+                    return Results.Problem(title : result.Error.Title, statusCode: StatusCodes.Status400BadRequest, detail: result.Error.Detail);
                 }
 
-                var response = result.Adapt<UpdateFacilityByIdResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
+
+                var response = result.Result.Adapt<UpdateFacilityByIdResponse>();
 
                 return Results.Ok(response);
             })
@@ -123,7 +120,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
                 .Produces<UpdateFacilityByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Updates a facility by its ID.")
-                .RequireAuthorization("AdminOrComplexManager");
+                .RequireAuthorization("AdminOrComplexManagerOrTenant");
         }
     }
 }

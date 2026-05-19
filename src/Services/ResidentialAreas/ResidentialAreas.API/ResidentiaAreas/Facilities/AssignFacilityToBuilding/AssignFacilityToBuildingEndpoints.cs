@@ -31,16 +31,16 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
                 .RequireAuthorization("AdminOrComplexManager");
         }
 
-        private static async Task<IResult> HandleAssignFacilityToBuilding(AssignFacilityToBuildingRequest request, ISender sender, [FromServices] IValidator<AssignFacilityToBuildingRequest> validator)
+        private static async Task<IResult> HandleAssignFacilityToBuilding(AssignFacilityToBuildingRequest request, ISender sender, [FromServices] IValidator<AssignFacilityToBuildingRequest> validator, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
             var command = request.Adapt<AssignFacilityToBuildingCommand>();
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
 
             if (result.Error != null)
             {

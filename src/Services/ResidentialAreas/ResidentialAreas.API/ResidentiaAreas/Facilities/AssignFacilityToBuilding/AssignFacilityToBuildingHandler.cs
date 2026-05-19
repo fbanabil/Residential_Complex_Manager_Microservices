@@ -1,4 +1,5 @@
 ﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
+using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuilding
 {
@@ -8,15 +9,18 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
     public class AssignFacilityToBuildingHandler : ICommandHandler<AssignFacilityToBuildingCommand, AssignFacilityToBuildingResult>
     {
         private readonly AreaDbContext _areaDbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AssignFacilityToBuildingHandler(AreaDbContext areaDbContext)
+        public AssignFacilityToBuildingHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor)
         {
             _areaDbContext = areaDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AssignFacilityToBuildingResult> Handle(AssignFacilityToBuildingCommand request, CancellationToken cancellationToken)
         {
-            Building? building = await _areaDbContext.Buildings.AsNoTracking().FirstOrDefaultAsync(b => b.Code == request.BuildingCode, cancellationToken);
+            // Validate Building
+            Building? building = await _areaDbContext.Buildings.AsNoTracking().Include(x => x.Area).FirstOrDefaultAsync(b => b.Code == request.BuildingCode, cancellationToken);
             if (building == null)
             {
                 return new AssignFacilityToBuildingResult(null, new ErrorCarrier
@@ -29,6 +33,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
 
 
 
+
+            // Validate Facility
             Facility? facility = await _areaDbContext.Facilities.AsNoTracking().FirstOrDefaultAsync(f => f.FacilityCode == request.FacilityCode, cancellationToken);
             if (facility == null)
             {
@@ -42,6 +48,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
 
 
 
+
+            // Validate Intigrity
             if (facility.BuildingId == building.Id)
             {
                 return new AssignFacilityToBuildingResult(null, new ErrorCarrier
@@ -54,6 +62,40 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
 
 
 
+
+            // Validate if user is allowed to make this changes
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
+            var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+            if(!userRoles.Contains("Admin"))
+            {
+                if (userRoles.Contains("Tenant") && (building.TenantId == null || building.TenantId != Guid.Parse(userIdClaim.Value)))
+                {
+                    return new AssignFacilityToBuildingResult(null, new ErrorCarrier()
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = StatusCodes.Status403Forbidden,
+                        Detail = "You are not allowed to make this changes."
+                    });
+                }
+
+                if (userRoles.Contains("ComplexManager") && (building.Area!.ComplexManagerId == null || building.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value)))
+                {
+                    return new AssignFacilityToBuildingResult(null, new ErrorCarrier()
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = StatusCodes.Status403Forbidden,
+                        Detail = "You are not allowed to make this changes."
+                    });
+                }
+
+            }
+            
+
+
+
+
+
+            // Make changes in database
             try
             {
                 int updated = await _areaDbContext.Facilities.Where(f => f.Id == facility.Id).ExecuteUpdateAsync(setters => setters.SetProperty(f => f.BuildingId, building.Id).SetProperty(f => f.UpdatedAt, DateTime.UtcNow), cancellationToken);
