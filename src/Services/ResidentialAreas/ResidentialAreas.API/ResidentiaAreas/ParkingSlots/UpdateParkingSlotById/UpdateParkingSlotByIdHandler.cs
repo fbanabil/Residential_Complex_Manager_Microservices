@@ -37,7 +37,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
 
 
             
-            ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking()
+            ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking().Include(ps => ps.Area)
                 .FirstOrDefaultAsync(p => p.ParkingSpaceCode == request.ParkingSpaceCode, cancellationToken);
 
             if (parkingSpace == null)
@@ -54,7 +54,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
             EntityModels.Unit? assignedUnit = null;
             if (request.AssignedUnitCode.HasValue)
             {
-                assignedUnit = await _areaDbContext.Units.AsNoTracking()
+                assignedUnit = await _areaDbContext.Units.AsNoTracking().Include(u => u.Building)
                     .FirstOrDefaultAsync(u => u.Code == request.AssignedUnitCode.Value, cancellationToken);
 
                 if (assignedUnit == null)
@@ -65,6 +65,17 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
                         Title = "UNIT_NOT_FOUND",
                         StatusCode = 404,
                         Detail = $"Assigned unit with code {request.AssignedUnitCode.Value} not found."
+                    });
+                }
+
+                if(assignedUnit.Building?.AreaId != null && assignedUnit.Building.AreaId != parkingSpace.AreaId)
+                {
+                    _logger.LogWarning("Assigned unit with code {UnitCode} does not belong to the same area as the parking space for parking slot update.", request.AssignedUnitCode.Value);
+                    return new UpdateParkingSlotByIdResult(null, new ErrorCarrier
+                    {
+                        Title = "UNIT_AREA_MISMATCH",
+                        StatusCode = 400,
+                        Detail = $"Assigned unit with code {request.AssignedUnitCode.Value} does not belong to the same area as the parking space."
                     });
                 }
             }

@@ -43,9 +43,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AddNewParkingSlot
             EntityModels.Unit? unit = null;
             if (request.AssignedUnitCode.HasValue)
             {
-                unit = await _areaDbContext.Units.AsNoTracking()
+                unit = await _areaDbContext.Units.AsNoTracking().Include(u => u.Building)
                     .FirstOrDefaultAsync(u => u.Code == request.AssignedUnitCode.Value, cancellationToken);
-
                 if (unit == null)
                 {
                     _logger.LogWarning("Assigned unit with code {UnitCode} not found while creating parking slot.", request.AssignedUnitCode.Value);
@@ -56,7 +55,19 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AddNewParkingSlot
                         Detail = $"Assigned unit with code {request.AssignedUnitCode.Value} not found."
                     });
                 }
+
+                if (unit.Building?.AreaId != null && unit.Building?.AreaId != parkingSpace.AreaId)
+                {
+                    _logger.LogWarning("Assigned unit with code {UnitCode} does not belong to the same area as the parking space while creating parkingslot.", request.AssignedUnitCode.Value);
+                    return new AddNewParkingSlotResult(null, new ErrorCarrier
+                    {
+                        Title = "UNIT_AREA_MISMATCH",
+                        StatusCode = 400,
+                        Detail = $"Assigned unit with code {request.AssignedUnitCode.Value} does not belong to the same area as the parking space."
+                    });
+                }
             }
+
 
 
 
