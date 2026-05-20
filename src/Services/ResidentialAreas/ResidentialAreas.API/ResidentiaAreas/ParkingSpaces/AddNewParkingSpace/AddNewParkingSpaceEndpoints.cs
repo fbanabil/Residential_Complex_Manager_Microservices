@@ -32,16 +32,16 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-spaces/add", async (HttpContext httpContext, AddNewParkingSpaceRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSpaceRequest> validator) =>
+            app.MapPost("/parking-spaces/add", async (AddNewParkingSpaceRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSpaceRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<AddNewParkingSpaceCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
 
                 if(result.ErrorCarrier != null)
@@ -51,12 +51,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
 
 
                 var response = result.Result.Adapt<AddNewParkingSpaceResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
 
-                return Results.Created($"/parking-spaces/{response.Id}", response);
+                return Results.Created($"/parking-spaces/{response!.Id}", response);
             })
                 .WithName("AddNewParkingSpace")
                 .WithTags("ParkingSpaces")

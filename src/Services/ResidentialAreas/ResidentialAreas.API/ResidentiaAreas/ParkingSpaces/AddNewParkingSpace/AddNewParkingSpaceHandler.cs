@@ -1,5 +1,6 @@
 ﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
 using ResidentialAreas.API.Helpers.ImageSaver;
+using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
 {
@@ -11,12 +12,14 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
         private readonly AreaDbContext _areaDbContext;
         private readonly ILogger<AddNewParkingSpaceHandler> _logger;
         private readonly IImageSaver _imageSaver;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AddNewParkingSpaceHandler(AreaDbContext areaDbContext, ILogger<AddNewParkingSpaceHandler> logger, IImageSaver imageSaver)
+        public AddNewParkingSpaceHandler(AreaDbContext areaDbContext, ILogger<AddNewParkingSpaceHandler> logger, IImageSaver imageSaver, IHttpContextAccessor httpContextAccessor)
         {
             _areaDbContext = areaDbContext;
             _logger = logger;
             _imageSaver = imageSaver;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AddNewParkingSpaceResult> Handle(AddNewParkingSpaceCommand request, CancellationToken cancellationToken)
@@ -46,9 +49,40 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             }
 
 
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
+            var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+            if(!userRoles.Contains("Admin"))
+            {
+                if (area.ComplexManagerId == null || area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
+                {
+                    _logger.LogWarning("Unauthorized attempt to create parking space in area {AreaCode} by user {UserId}.", request.AreaCode, userIdClaim.Value);
+                    return new AddNewParkingSpaceResult(null, new ErrorCarrier
+                    {
+                        Title = "Unauthorized",
+                        StatusCode = 403,
+                        Detail = "You do not have permission to create a parking space in this area."
+                    });
+                }
+            }
 
 
-            List<string?>? imagePaths = await _imageSaver.SaveImageAsync(request.ImageBase64, "wwwroot/images/ParkingSpaces");
+            List<string?>? imagePaths = new List<string?>();
+            try
+            {
+                imagePaths = await _imageSaver.SaveImageAsync(request.ImageBase64, "wwwroot/images/ParkingSpaces");
+            }
+            catch
+            {
+                _logger.LogError("Error occurred while saving parking space images to the file system.");
+                return new AddNewParkingSpaceResult(null, new ErrorCarrier
+                {
+                    Title = "Image upload error",
+                    StatusCode = 500,
+                    Detail = "An error occurred while uploading the parking space images. Please upload image later."
+                });
+            }
+
+
 
             ResidentialAreas.API.EntityModels.ParkingSpace parkingSpace = new ResidentialAreas.API.EntityModels.ParkingSpace
             {
@@ -63,6 +97,10 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             };
 
 
+
+            await using var transaction = await _areaDbContext.Database.BeginTransactionAsync(cancellationToken);
+
+
             try
             {
                 await _areaDbContext.ParkingSpaces.AddAsync(parkingSpace, cancellationToken);
@@ -70,6 +108,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while adding new parking space to the database.");
                 return new AddNewParkingSpaceResult(null, new ErrorCarrier
                 {
@@ -98,6 +137,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
                 }
                 catch (Exception ex)
                 {
+                    await transaction.RollbackAsync(cancellationToken);
                     _logger.LogError(ex, "Error occurred while saving parking space images to the database.");
                     return new AddNewParkingSpaceResult(null, new ErrorCarrier
                     {
@@ -108,6 +148,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
                 }
 
             }
+
+            var httpContext = _httpContextAccessor.HttpContext;
+            imagePaths = imagePaths.Select(path => $"{httpContext!.Request.Scheme}://{httpContext!.Request.Host.Value}/{path}").ToList();
 
             return new AddNewParkingSpaceResult(new AddNewParkingSpaceResponse
                 (
