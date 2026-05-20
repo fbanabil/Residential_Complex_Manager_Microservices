@@ -41,23 +41,23 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-slots/update-by-id", async (UpdateParkingSlotByIdRequest request, ISender sender, [FromServices] IValidator<UpdateParkingSlotByIdRequest> validator) =>
+            app.MapPost("/parking-slots/update-by-id", async (UpdateParkingSlotByIdRequest request, ISender sender, [FromServices] IValidator<UpdateParkingSlotByIdRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<UpdateParkingSlotByIdCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.NotFound("The parking slot with the specified ID was not found, or related parking space/unit does not exist.");
+                    return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);
                 }
 
-                var response = result.Adapt<UpdateParkingSlotByIdResponse>();
+                var response = result.Result.Adapt<UpdateParkingSlotByIdResponse>();
                 return Results.Ok(response);
             })
                 .WithName("UpdateParkingSlotById")
