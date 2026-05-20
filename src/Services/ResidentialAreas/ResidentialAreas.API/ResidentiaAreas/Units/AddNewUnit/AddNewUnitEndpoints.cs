@@ -57,29 +57,25 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.AddNewUnit
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/units/add", async (HttpContext httpContext, AddNewUnitRequest request, ISender sender, [FromServices] IValidator<AddNewUnitRequest> validator) =>
+            app.MapPost("/units/add", async (AddNewUnitRequest request, ISender sender, [FromServices] IValidator<AddNewUnitRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<AddNewUnitCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.Problem("Failed to add unit. Ensure the building exists and the request is valid.");
+                    return Results.Problem(title: result.Error.Title, detail: result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
 
-                var response = result.Adapt<AddNewUnitResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
+                var response = result.Result.Adapt<AddNewUnitResponse>();
 
-                return Results.Created($"/units/{response.Id}", response);
+                return Results.Created($"/units/{response!.Id}", response);
             })
                 .WithName("AddNewUnit")
                 .WithTags("Units")
