@@ -41,24 +41,24 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AddNewParkingSlot
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-slots/add", async (AddNewParkingSlotRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSlotRequest> validator) =>
+            app.MapPost("/parking-slots/add", async (AddNewParkingSlotRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSlotRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<AddNewParkingSlotCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.Problem("Failed to add parking slot. Ensure parking space/unit exists and request is valid.");
+                    return Results.Problem(title: result.Error.Title, detail: result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
 
-                var response = result.Adapt<AddNewParkingSlotResponse>();
-                return Results.Created($"/parking-slots/{response.Id}", response);
+                var response = result.Result.Adapt<AddNewParkingSlotResponse>();
+                return Results.Created($"/parking-slots/{response!.Id}", response);
             })
                 .WithName("AddNewParkingSlot")
                 .WithTags("ParkingSlots")
