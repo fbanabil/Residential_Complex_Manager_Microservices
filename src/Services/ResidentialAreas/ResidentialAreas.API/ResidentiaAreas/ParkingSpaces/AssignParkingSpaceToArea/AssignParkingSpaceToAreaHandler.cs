@@ -1,4 +1,5 @@
 ﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
+using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceToArea
 {
@@ -8,14 +9,17 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
     public class AssignParkingSpaceToAreaHandler : ICommandHandler<AssignParkingSpaceToAreaCommand, AssignParkingSpaceToAreaResult>
     {
         private readonly AreaDbContext _areaDbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AssignParkingSpaceToAreaHandler(AreaDbContext areaDbContext)
+        public AssignParkingSpaceToAreaHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor)
         {
             _areaDbContext = areaDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AssignParkingSpaceToAreaResult> Handle(AssignParkingSpaceToAreaCommand request, CancellationToken cancellationToken)
         {
+            // Validate area code
             Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
             if (area == null)
             {
@@ -28,7 +32,10 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
             }
 
 
-            ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking().FirstOrDefaultAsync(p => p.ParkingSpaceCode == request.ParkingSpaceCode, cancellationToken);
+
+
+            // Validate parking space code
+            ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking().Include(ps => ps.Area).FirstOrDefaultAsync(p => p.ParkingSpaceCode == request.ParkingSpaceCode, cancellationToken);
             if (parkingSpace == null)
             {
                 return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
@@ -50,8 +57,38 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
                 });
             }
 
-            
-            
+
+
+            // Validate if the user have the permission to assign parking spaces to the area (must be the complex manager of the area or an admin)
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
+            var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+            if(!userRoles.Contains("Admin"))
+            {
+                if(area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
+                {
+                    return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = 403,
+                        Detail = "You do not have permission to assign parking spaces to this area."
+                    });
+                }
+
+                if(parkingSpace.Area!=null && parkingSpace.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
+                {
+                    return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = 403,
+                        Detail = "You do not have permission to reassign this parking space from its current area."
+                    });
+                }
+            }
+
+
+
+
+            // Validate duplicate parking space name in the same area
             bool duplicateName = await _areaDbContext.ParkingSpaces.AsNoTracking().AnyAsync(p => p.AreaId == area.Id && p.Name == parkingSpace.Name && p.Id != parkingSpace.Id, cancellationToken);
             if (duplicateName)
             {
@@ -63,6 +100,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
                 });
             }
 
+
+
+            // Assign parking space to area
             try
             {
                 int updated = await _areaDbContext.ParkingSpaces.Where(p => p.Id == parkingSpace.Id).ExecuteUpdateAsync(setters => setters.SetProperty(p => p.AreaId, area.Id).SetProperty(p => p.UpdatedAt, DateTime.UtcNow), cancellationToken);

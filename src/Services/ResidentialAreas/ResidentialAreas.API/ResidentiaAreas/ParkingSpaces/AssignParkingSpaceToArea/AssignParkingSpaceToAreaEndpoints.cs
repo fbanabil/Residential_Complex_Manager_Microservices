@@ -31,16 +31,16 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
                 .RequireAuthorization("AdminOrComplexManager");
         }
 
-        private static async Task<IResult> HandleAssignParkingSpaceToArea(AssignParkingSpaceToAreaRequest request, ISender sender, [FromServices] IValidator<AssignParkingSpaceToAreaRequest> validator)
+        private static async Task<IResult> HandleAssignParkingSpaceToArea(AssignParkingSpaceToAreaRequest request, ISender sender, [FromServices] IValidator<AssignParkingSpaceToAreaRequest> validator, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
             var command = request.Adapt<AssignParkingSpaceToAreaCommand>();
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
 
             if (result.Error != null)
             {

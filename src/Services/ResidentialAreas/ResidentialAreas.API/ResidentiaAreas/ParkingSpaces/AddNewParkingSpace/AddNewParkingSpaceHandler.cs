@@ -24,6 +24,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
 
         public async Task<AddNewParkingSpaceResult> Handle(AddNewParkingSpaceCommand request, CancellationToken cancellationToken)
         {
+            // Check if area exists
             Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
             if (area == null)
             {
@@ -37,6 +38,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             }
 
 
+            // Check for duplicate parking space name within the same area
             bool existingParkingSpace = await _areaDbContext.ParkingSpaces.AnyAsync(ps => ps.AreaId == area.Id && ps.Name == request.Name, cancellationToken);
             if (existingParkingSpace) {
                 _logger.LogWarning("Parking space with name {ParkingSpaceName} already exists in area {AreaCode}.", request.Name, request.AreaCode);
@@ -49,6 +51,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             }
 
 
+
+            // Authorization check: Only complex manager of the area or users with "Admin" role can create parking space
             var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if(!userRoles.Contains("Admin"))
@@ -66,6 +70,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             }
 
 
+
+            // Save images to file system and get paths
             List<string?>? imagePaths = new List<string?>();
             try
             {
@@ -83,7 +89,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             }
 
 
-
+            // Create new parking space entity
             ResidentialAreas.API.EntityModels.ParkingSpace parkingSpace = new ResidentialAreas.API.EntityModels.ParkingSpace
             {
                 Id = Guid.NewGuid(),
@@ -97,10 +103,11 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
             };
 
 
-
+            // Start a database transaction to ensure data integrity
             await using var transaction = await _areaDbContext.Database.BeginTransactionAsync(cancellationToken);
 
 
+            // Get the parking space code for the area
             try
             {
                 await _areaDbContext.ParkingSpaces.AddAsync(parkingSpace, cancellationToken);
@@ -118,8 +125,8 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
                 });
             }
 
-            
 
+            // Add images to database if there are any
             if (imagePaths != null && imagePaths.Count > 0)
             {
                 List<Image> images = imagePaths.Select(path => new Image
@@ -149,8 +156,33 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
 
             }
 
+
+
+
+            // Commit the transaction after all operations are successful
+            try
+            {
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(ex, "Error occurred while committing the transaction for adding new parking space.");
+                return new AddNewParkingSpaceResult(null, new ErrorCarrier
+                {
+                    Title = "Database error",
+                    StatusCode = 500,
+                    Detail = "An error occurred while saving the parking space. Please try again later."
+                });
+            }
+
+
+
+            // Convert image paths to URLs
             var httpContext = _httpContextAccessor.HttpContext;
             imagePaths = imagePaths.Select(path => $"{httpContext!.Request.Scheme}://{httpContext!.Request.Host.Value}/{path}").ToList();
+
+
 
             return new AddNewParkingSpaceResult(new AddNewParkingSpaceResponse
                 (
