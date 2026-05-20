@@ -58,28 +58,24 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.UpdateUnitById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/units/update-by-id", async (HttpContext httpContext, UpdateUnitByIdRequest request, ISender sender, [FromServices] IValidator<UpdateUnitByIdRequest> validator) =>
+            app.MapPost("/units/update-by-id", async (UpdateUnitByIdRequest request, ISender sender, [FromServices] IValidator<UpdateUnitByIdRequest> validator, CancellationToken cancellationToken) =>
             {
-                var validationResult = await validator.ValidateAsync(request);
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<UpdateUnitByIdCommand>();
-                var result = await sender.Send(command);
+                var result = await sender.Send(command, cancellationToken);
 
-                if (result == null)
+                if (result.Error != null)
                 {
-                    return Results.NotFound("The unit with the specified ID was not found, or related building does not exist.");
+                    return Results.Problem(result.Error.Detail, statusCode: result.Error.StatusCode);
                 }
 
-                var response = result.Adapt<UpdateUnitByIdResponse>();
-                response = response with
-                {
-                    ImageUrls = response.ImageUrls?.Select(url => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{url}").ToList()
-                };
-
+                var response = result.Result.Adapt<UpdateUnitByIdResponse>();
+               
                 return Results.Ok(response);
             })
                 .WithName("UpdateUnitById")
