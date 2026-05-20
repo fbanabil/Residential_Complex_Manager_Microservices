@@ -1,4 +1,5 @@
 ﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
+using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AssigtnParkingSlotsToParkingSpace
 {
@@ -8,15 +9,18 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AssigtnParkingSlotsT
     public class AssigtnParkingSlotsToParkingSpaceHandler : ICommandHandler<AssigtnParkingSlotsToParkingSpaceCommand, AssigtnParkingSlotsToParkingSpaceResult>
     {
         private readonly AreaDbContext _areaDbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AssigtnParkingSlotsToParkingSpaceHandler(AreaDbContext areaDbContext)
+        public AssigtnParkingSlotsToParkingSpaceHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor)
         {
             _areaDbContext = areaDbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AssigtnParkingSlotsToParkingSpaceResult> Handle(AssigtnParkingSlotsToParkingSpaceCommand request, CancellationToken cancellationToken)
         {
-            ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking().FirstOrDefaultAsync(p => p.ParkingSpaceCode == request.ParkingSpaceCode, cancellationToken);
+            // Validate parking space existence
+            ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking().Include(ps => ps.Area).FirstOrDefaultAsync(p => p.ParkingSpaceCode == request.ParkingSpaceCode, cancellationToken);
             if (parkingSpace == null)
             {
                 return new AssigtnParkingSlotsToParkingSpaceResult(null, new ErrorCarrier
@@ -29,6 +33,29 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AssigtnParkingSlotsT
 
 
 
+            // Authorization check: Only Admins or the Complex Manager of the area can assign parking slots
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
+            var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+
+
+
+            // If the user is not an Admin, check if they are the Complex Manager of the area
+            if (!userRoles.Contains("Admin"))
+            {
+                if (parkingSpace.Area?.ComplexManagerId == null || parkingSpace.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
+                {
+                    return new AssigtnParkingSlotsToParkingSpaceResult(null, new ErrorCarrier
+                    {
+                        Title = "FORBIDDEN",
+                        StatusCode = 403,
+                        Detail = "You do not have permission to assign parking slots to this parking space."
+                    });
+                }
+            }
+
+
+
+            // Validate parking slot existence
             List<long> slotCodes = request.SlotCodes.Distinct().ToList();
             List<ParkingSlot> slots = await _areaDbContext.ParkingSlots.AsNoTracking().Where(s => slotCodes.Contains(s.SlotCode)).ToListAsync(cancellationToken);
             if (slots.Count != slotCodes.Count)
@@ -44,7 +71,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AssigtnParkingSlotsT
 
 
 
-
+            // Perform the update using ExecuteUpdateAsync for efficiency
             try
             {
                 int updated = await _areaDbContext.ParkingSlots.Where(s => slotCodes.Contains(s.SlotCode)).ExecuteUpdateAsync(setters => setters.SetProperty(s => s.ParkingSpaceId, parkingSpace.Id).SetProperty(s => s.UpdatedAt, DateTime.UtcNow), cancellationToken);
