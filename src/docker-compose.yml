@@ -26,9 +26,19 @@ services:
 
   rabbitmq:
     image: rabbitmq:4-management
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+
+  mongodb:
+    image: mongo:7.0
     
 
 volumes:
   residentialareadbdata:
   authenticationservicedbdata:
-  rabbitmq_data:  
+  rabbitmq_data:
+  mongo_data:  
