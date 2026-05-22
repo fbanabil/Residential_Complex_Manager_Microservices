@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Messaging.KafkaLogger.LogQueue
 {
-    public class ILogQueue
+    public interface ILogQueue
     {
+        bool TryEnqueue(LogModel log);
     }
 }
