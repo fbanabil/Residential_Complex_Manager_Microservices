@@ -11,6 +11,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Configs
         public LogLevel MinLevel { get; set; } = LogLevel.Information;
         public int QueueCapacity { get; set; } = 1000;
 
+        public KafkaSettings() { }
 
         public KafkaSettings(string serviceName)
         {
