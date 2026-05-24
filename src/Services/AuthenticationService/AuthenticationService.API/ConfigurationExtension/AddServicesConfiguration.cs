@@ -14,6 +14,7 @@ using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AuthenticationService.API.HostService;
 using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Messaging.KafkaLogger.Configs;
 
 namespace AuthenticationService.API.ConfigurationExtension
 {
@@ -26,6 +27,18 @@ namespace AuthenticationService.API.ConfigurationExtension
             {
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
             });
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+            builder.Logging.AddFilter("System", LogLevel.Warning);
+
+            builder.Logging.AddKafka(options =>
+            {
+                //builder.Configuration.GetSection("KafkaLogging").Bind(options);
+            });
+
+
 
             builder.Services.AddDbContext<AuthDbContext>(options =>
             {

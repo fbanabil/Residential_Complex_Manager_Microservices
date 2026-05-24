@@ -15,7 +15,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.ProducerAndConsumer
 {
     public class KafkaLogProducer : BackgroundService
     {
-        private readonly LogQueue _logQueue;
+        private readonly BuildingBlocks.Messaging.KafkaLogger.LogQueue.LogQueue _logQueue;
         private readonly KafkaSettings _settings;
 
         private static readonly JsonSerializerOptions JsonOptions = new()
@@ -24,7 +24,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.ProducerAndConsumer
             WriteIndented = false
         };
 
-        public KafkaLogProducer(LogQueue logQueue, IOptions<KafkaSettings> settings)
+        public KafkaLogProducer(BuildingBlocks.Messaging.KafkaLogger.LogQueue.LogQueue logQueue, IOptions<KafkaSettings> settings)
         {
             _logQueue = logQueue;
             _settings = settings.Value;

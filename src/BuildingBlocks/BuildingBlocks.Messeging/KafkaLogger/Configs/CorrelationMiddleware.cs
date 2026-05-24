@@ -20,7 +20,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Configs
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next, ILogger<CorrelationMiddleware> logger)
+        public async Task InvokeAsync(HttpContext context, ILogger<CorrelationMiddleware> logger)
         {
             var correlationId = context.Request.Headers.TryGetValue(HeaderName, out var value)
             ? value.ToString()

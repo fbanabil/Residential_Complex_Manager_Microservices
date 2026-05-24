@@ -13,6 +13,9 @@ namespace AuthenticationService.API.ConfigurationExtension
             app.UseStaticFiles();
             //app.UseHsts();
             //app.UseHttpsRedirection();
+
+          app.UseMiddleware<BuildingBlocks.Messaging.KafkaLogger.Configs.CorrelationMiddleware>();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
