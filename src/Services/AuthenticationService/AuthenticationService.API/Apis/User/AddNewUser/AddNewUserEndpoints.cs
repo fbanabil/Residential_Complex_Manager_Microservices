@@ -61,7 +61,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/auth/users/register", async (RegisterUserRequest request, ISender sender, IValidator<RegisterUserRequest> validator) =>
+            app.MapPost("/auth/users/register", async (RegisterUserRequest request, ISender sender, IValidator<RegisterUserRequest> validator, ILogger<AddNewUserEndpoints> logger) =>
             {
                 // Validate the request
                 var validationResult = await validator.ValidateAsync(request);

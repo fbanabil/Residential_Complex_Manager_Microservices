@@ -8,7 +8,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Configs
         public string Topic { get; set; } = "app-logs";
         public string Environment { get; set; } = "Docker";
         public string? ServiceName { get; set; }
-        public LogLevel MinLevel { get; set; } = LogLevel.Information;
+        public LogLevel MinLevel { get; set; } = LogLevel.Warning;
         public int QueueCapacity { get; set; } = 1000;
 
         public KafkaSettings() { }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Messaging.KafkaLogger.Configs
 {
-    public static class ConfigureLogger
+    public class KafkaSettingsConsumer : KafkaSettings
     {
+        public string GroupId { get; set; } = "logger-group-consumer";
     }
 }

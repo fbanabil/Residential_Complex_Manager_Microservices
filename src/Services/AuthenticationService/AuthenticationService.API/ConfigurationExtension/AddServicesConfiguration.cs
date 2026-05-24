@@ -27,11 +27,7 @@ namespace AuthenticationService.API.ConfigurationExtension
             {
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
             });
-
-            builder.Logging.ClearProviders();
-            builder.Logging.AddConsole();
-            builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
-            builder.Logging.AddFilter("System", LogLevel.Warning);
+            
 
             builder.Logging.AddKafka(options =>
             {
