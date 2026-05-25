@@ -15,9 +15,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger
         public string? Message { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public string? Exception { get; set; }
-        public Guid? UserID {  get; set; }
-        public string? UserRole { get; set; }
-        public string? UserName { get; set; }
+
         public Dictionary<string, string?> Properties { get; set; } = new(); 
 
         public string? ExceptionType { get; set; }

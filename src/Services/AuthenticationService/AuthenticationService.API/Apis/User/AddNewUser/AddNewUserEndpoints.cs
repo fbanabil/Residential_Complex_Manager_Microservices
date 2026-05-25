@@ -67,6 +67,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Validation failed for RegisterUserRequest: {Errors}", validationResult.Errors);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
@@ -83,6 +84,9 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 }
 
                 var response = result.Response.Adapt<RegisterUserResponse>();
+
+
+                logger.LogInformation("User registered successfully with ID: {UserId}", response!.UserId);
 
                 return Results.Ok(response);
             })

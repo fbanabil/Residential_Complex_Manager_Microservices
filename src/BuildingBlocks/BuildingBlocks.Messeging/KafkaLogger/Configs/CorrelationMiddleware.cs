@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,12 +29,20 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Configs
 
             context.Response.Headers[HeaderName] = correlationId;
 
+            var userIdClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = userIdClaim?.Value ?? "Anonymous";
+            var userRoles = context.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+            var userName = context.User.Identity?.Name ?? "Unknown";
+
             var scopeData = new Dictionary<string, object?>
             {
                 ["CorrelationId"] = correlationId,
                 ["RequestId"] = context.TraceIdentifier,
                 ["Method"] = context.Request.Method,
-                ["Path"] = context.Request.Path.Value
+                ["Path"] = context.Request.Path.Value,
+                ["UserId"] = userId,
+                ["UserRoles"] = string.Join(",", userRoles),
+                ["UserName"] = userName
             };
 
             using var scope = logger.BeginScope(scopeData);

@@ -34,11 +34,12 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
         }
 
 
-        private static async Task<IResult> HandleLocalLogin(LocalLoginRequest request, ISender sender, HttpContext httpContext, IValidator<LocalLoginRequest> validator)
+        private static async Task<IResult> HandleLocalLogin(LocalLoginRequest request, ISender sender, HttpContext httpContext, IValidator<LocalLoginRequest> validator, ILogger<LocalLoginEndpoints> logger)
         {
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Validation failed for LocalLoginRequest: {Errors}", validationResult.Errors);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
@@ -65,12 +66,13 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             };
 
             
-            if (response!.RefreshToken is not null)
+            if (response!.RefreshToken is null)
             {
-                httpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, CookieOptions);
+                httpContext.Response.Cookies.Append("refreshToken", response!.RefreshToken, CookieOptions);
             }
             httpContext.Response.Headers.Append("Authorization", $"Bearer {response.AccessToken}");
 
+            logger.LogInformation("User logged in successfully with email: {Email}", request.Email);
             return Results.Ok(response!.AccessToken);
         }
     }

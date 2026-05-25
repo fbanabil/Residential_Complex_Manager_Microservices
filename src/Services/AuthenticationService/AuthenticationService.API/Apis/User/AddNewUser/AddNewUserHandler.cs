@@ -35,8 +35,9 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
         private readonly IImageSaver _imageSaver;
         private readonly IGetHostUrl _getHostUrl;
         private readonly IVerificationTokenGenerator _verificationTokenGenerator;
+        private readonly ILogger<AddNewUserHandler> _logger;
 
-        public AddNewUserHandler(AuthDbContext authDbContext, IEmailHelper emailHelper, IPasswordHasher passwordHasher, IImageSaver imageSaver, IGetHostUrl getHostUrl, IVerificationTokenGenerator verificationTokenGenerator)
+        public AddNewUserHandler(AuthDbContext authDbContext, IEmailHelper emailHelper, IPasswordHasher passwordHasher, IImageSaver imageSaver, IGetHostUrl getHostUrl, IVerificationTokenGenerator verificationTokenGenerator, ILogger<AddNewUserHandler> logger)
         {
             _authDbContext = authDbContext;
             _emailHelper = emailHelper;
@@ -44,6 +45,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
             _imageSaver = imageSaver;
             _getHostUrl = getHostUrl;
             _verificationTokenGenerator = verificationTokenGenerator;
+            _logger = logger;
         }
 
         public async Task<RegisterUserResult> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -55,6 +57,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
 
             if (user != null)
             {
+                _logger.LogWarning("Registration attempt with existing email: {Email}, username: {Username}, or phone: {Phone}", request.Email, request.UserName, request.Phone);
                 return new RegisterUserResult(null, new ErrorCarrier
                 {
                     Title = "USER_ALREADY_EXISTS",
@@ -66,6 +69,10 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
             }
 
             #endregion
+
+
+
+            await using var transaction = await _authDbContext.Database.BeginTransactionAsync(cancellationToken);
 
 
             #region New User Creation and Role Assignment
@@ -91,8 +98,12 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 await _authDbContext.Users.AddAsync(userToAdd, cancellationToken);
                 await _authDbContext.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch 
             {
+                _logger.LogError("An error occurred while saving the new user to the database. Email: {Email}, Username: {Username}, Phone: {Phone}", request.Email, request.UserName, request.Phone);
+
+                await transaction.RollbackAsync(cancellationToken);
+
                 return new RegisterUserResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -106,8 +117,10 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
 
             if (userRoleEntity == null)
             {
-                _authDbContext.Users.Remove(userToAdd);
-                await _authDbContext.SaveChangesAsync(cancellationToken);
+                _logger.LogError("Default user role 'User' not found in the database. User ID: {UserId}", userToAdd.Id);
+                
+                await transaction.RollbackAsync(cancellationToken);
+
                 return new RegisterUserResult(null, new ErrorCarrier
                 {
                     Title = "ROLE_NOT_FOUND",
@@ -132,10 +145,12 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 await _authDbContext.UserRoles.AddAsync(userRole, cancellationToken);
                 await _authDbContext.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch
             {
-                _authDbContext.Users.Remove(userToAdd);
-                await _authDbContext.SaveChangesAsync(cancellationToken);
+                _logger.LogError("An error occurred while assigning the default role to the new user. User ID: {UserId}, Role ID: {RoleId}", userToAdd.Id, userRoleEntity.Id);
+                
+                await transaction.RollbackAsync(cancellationToken);
+
                 return new RegisterUserResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -156,9 +171,10 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 {
                     profileImageResult = await _imageSaver.SaveImageAsync(request.Bas64ProfileImage, "wwwroot/images/profileImages");
                 }
-                catch (Exception ex)
+                catch
                 {
-                    msg= "Failed to save profile image, Update later.";
+                    _logger.LogError("An error occurred while saving the profile image for user ID: {UserId}", userToAdd.Id);
+                    msg = "Failed to save profile image, Update later.";
                     profileImageResult = "wwwroot/images/default.jpg";
                 }
 
@@ -170,8 +186,9 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 {
                     nidImageResult = await _imageSaver.SaveImageAsync(request.Base64NidImage, "wwwroot/images/nidImages");
                 }
-                catch (Exception ex)
+                catch
                 {
+                    _logger.LogError("An error occurred while saving the NID image for user ID: {UserId}", userToAdd.Id);
                     msg = msg + " Failed to save NID image, Update later.";
                     nidImageResult = "wwwroot/images/default.jpg";
                 }
@@ -194,13 +211,30 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 ImagePath = nidImageResult!
             };
 
-            await _authDbContext.Images.AddRangeAsync(new[] { profileImage, nidImage }, cancellationToken);
-            await _authDbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _authDbContext.Images.AddRangeAsync(new[] { profileImage, nidImage }, cancellationToken);
+                await _authDbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch
+            {
+                _logger.LogError("An error occurred while saving images to the database for user ID: {UserId}", userToAdd.Id);
+                msg = msg + " Failed to save images to the database, Update image info later.";
+            }
+
 
             userToAdd.ProfileImageId = profileImage.Id;
             userToAdd.NidImageId = nidImage.Id;
 
-            await _authDbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _authDbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch
+            {
+                _logger.LogError("An error occurred while updating user record with image IDs for user ID: {UserId}", userToAdd.Id);
+                msg = msg + " Failed to update user record with image info, Update later.";
+            }
             #endregion
 
 
@@ -227,14 +261,31 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 await _authDbContext.SecurityTokens.AddAsync(emailVerificationToken, cancellationToken);
                 await _authDbContext.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch
             {
                 msg = msg + " Failed to generate email verification token, Please verify your email later.";
             }
 
 
-            
-             bool mail = await _emailHelper.SendEmail(userToAdd.Email, "Email Verification", $"Please verify your email by clicking on the following link: <a href=\"{verificationLink}\">Verify Email</a>");
+
+            try
+            {
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                _logger.LogError("An error occurred while committing the transaction for user registration. User ID: {UserId}", userToAdd.Id);
+                return new RegisterUserResult(null, new ErrorCarrier
+                {
+                    Title = "INTERNAL_SERVER_ERROR",
+                    StatusCode = 500,
+                    Detail = "An error occurred while finalizing the registration. Please try again later."
+                });
+            }
+
+
+
+                bool mail = await _emailHelper.SendEmail(userToAdd.Email, "Email Verification", $"Please verify your email by clicking on the following link: <a href=\"{verificationLink}\">Verify Email</a>");
             
             if(!mail)
             {

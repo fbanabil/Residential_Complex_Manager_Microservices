@@ -43,7 +43,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.ProducerAndConsumer
                 AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest,
                 EnableAutoCommit = false,
                 AllowAutoCreateTopics = true
-            };
+            };  
 
 
             using var consumer = new Confluent.Kafka.ConsumerBuilder<string, string>(consumerConfig).SetErrorHandler((_, e) =>

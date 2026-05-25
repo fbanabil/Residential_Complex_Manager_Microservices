@@ -16,22 +16,23 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
         private readonly AuthDbContext _authDbContext;
         private readonly IAuthenticationTokenCreator _authenticationService;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly ILogger<LocalLoginHandler> _logger;
 
-        public LocalLoginHandler(AuthDbContext authDbContext, IAuthenticationTokenCreator authenticationService, IVerificationTokenGenerator tokenGenerator, IPasswordHasher passwordHasher)
+        public LocalLoginHandler(AuthDbContext authDbContext, IAuthenticationTokenCreator authenticationService, IVerificationTokenGenerator tokenGenerator, IPasswordHasher passwordHasher, ILogger<LocalLoginHandler> logger)
         {
             _authDbContext = authDbContext;
             _authenticationService = authenticationService;
             _passwordHasher = passwordHasher;
+            _logger = logger;
         }
 
         public async Task<LocalLoginResult> Handle(LocalLoginCommand request, CancellationToken cancellationToken)
         {
-
             // Check if verified user exist
-
             EntityModels.User? user = await _authDbContext.Users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (user == null)
             {
+                _logger.LogWarning("Login attempt failed: No user found with email {Email}", request.Email);
                 return new LocalLoginResult(null, new ErrorCarrier()
                 {
                     Title = "USER_NOT_FOUND",
@@ -44,6 +45,7 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             // Check if email is verified
             if (user.IsEmailVerified == false)
             {
+                _logger.LogWarning("Login attempt failed: Email not verified for user with email {Email}", request.Email);
                 return new LocalLoginResult(null, new ErrorCarrier()
                 {
                     Title = "EMAIL_NOT_VERIFIED",
@@ -57,6 +59,7 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             bool isPasswordValid = await _passwordHasher.VerifyPassword(request.Password, user.PasswordHash!);
             if (!isPasswordValid)
             {
+                _logger.LogWarning("Login attempt failed: Invalid password for user with email {Email}", request.Email);
                 return new LocalLoginResult(null, new ErrorCarrier()
                 {
                     Title = "INVALID_PASSWORD",
@@ -94,6 +97,8 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
                 DeviceInfo = null
             };
 
+            await using var transaction = await _authDbContext.Database.BeginTransactionAsync(cancellationToken);
+
             try
             {
                 await _authDbContext.RefreshTokens.Where(rt => rt.UserId == user.Id && rt.RevokedAt == null).ForEachAsync(rt =>
@@ -106,6 +111,20 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             }
             catch
             {
+                _logger.LogError("Failed to store refresh token for user with email {Email}. User is authenticated but failed to store refresh token.", request.Email);
+                await transaction.RollbackAsync(cancellationToken);
+                // User is authenticated but failed to store refresh token, so continue without refresh token.
+            }
+
+
+            try
+            {
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                _logger.LogError("Failed to commit transaction for storing refresh token for user with email {Email}. User is authenticated but failed to store refresh token.", request.Email); 
+                await transaction.RollbackAsync(cancellationToken);
                 // User is authenticated but failed to store refresh token, so continue without refresh token.
             }
 
