@@ -26,13 +26,30 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Configs
 
             builder.AddFilter("Microsoft", LogLevel.Warning);
             builder.AddFilter("System", LogLevel.Warning);
+            
+
 
             builder.AddFilter<KafkaLoggerProvider>((category, logLevel) =>
             {
-                if (category!.StartsWith("Microsoft") || category.StartsWith("System"))
+                if (category == null)
                 {
-                    return logLevel >= LogLevel.Warning;
+                    return logLevel >= LogLevel.Information;
                 }
+
+                var suppressedPrefixes = new[]
+                {
+                    "Microsoft",
+                    "System",
+                    "MassTransit",
+                    "LuckyPennySoftware",
+                    "RabbitMQ"
+                };
+
+                if (suppressedPrefixes.Any(prefix => category.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return logLevel >= LogLevel.Error;
+                }
+
                 return logLevel >= LogLevel.Information;
             });
 
