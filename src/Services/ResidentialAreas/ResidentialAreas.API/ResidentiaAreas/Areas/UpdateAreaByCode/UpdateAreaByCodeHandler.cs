@@ -33,6 +33,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
             Area? area = await _areaDbContext.Areas.FirstOrDefaultAsync(a => a.Code == request.Code, cancellationToken);
             if (area == null)
             {
+                _logger.LogWarning("Update area by code failed: no area found with code {AreaCode}", request.Code);
                 return new UpdateAreaByCodeResult(null, new ErrorCarrier()
                 {
                     Title = "NOT FOUND",
@@ -48,6 +49,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if(!userRoles.Contains("Admin") && area.ComplexManagerId.HasValue && area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
             {
+                _logger.LogWarning("Update area by code failed: user {UserId} is not authorized for area code {AreaCode}", userIdClaim.Value, request.Code);
                 return new UpdateAreaByCodeResult(null, new ErrorCarrier()
                 {
                     Title = "UNAUTHORIZED",
@@ -129,6 +131,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
             }
             catch
             {
+                _logger.LogError("Image deletion failed while updating area with code {AreaCode}.", request.Code);
 
                 // Rollback if error happens
                 await transaction.RollbackAsync(cancellationToken);
@@ -221,6 +224,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
 
 
 
+            _logger.LogInformation("Area updated successfully with code {AreaCode}", request.Code);
             // Return the updated area details in the response
             return new UpdateAreaByCodeResult(new UpdateAreaByCodeResponse(area.Id, area.Code, area.Name, area.City, area.State, area.Country, area.PostalCode, area.Address, area.GeoBoundary, area.Status.ToString(), allImageUrls), null);
         }

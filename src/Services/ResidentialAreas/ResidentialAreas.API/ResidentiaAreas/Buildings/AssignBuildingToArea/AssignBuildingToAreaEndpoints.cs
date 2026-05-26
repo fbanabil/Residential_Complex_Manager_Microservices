@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
 {
@@ -35,11 +35,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
                 .RequireAuthorization("AdminOrComplexManager");
         }
 
-        private static async Task<IResult> HandleAssignBuildingToArea(AssignBuildingToAreaRequest request, ISender sender, [FromServices] IValidator<AssignBuildingToAreaRequest> validator)
+        private static async Task<IResult> HandleAssignBuildingToArea(AssignBuildingToAreaRequest request, ISender sender, [FromServices] IValidator<AssignBuildingToAreaRequest> validator, ILogger<AssignBuildingToAreaEndpoints> logger)
         {
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Assign building to area failed: validation error for area code {AreaCode}", request.AreaCode);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 

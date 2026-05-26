@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.EntityModels;
 using AuthenticationService.API.Helpers.ErrorCarrier;
 using AuthenticationService.API.Helpers.VerificationToken;
@@ -16,11 +16,13 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
     {
         private readonly AuthDbContext _authDbContext;
         private readonly IVerificationTokenGenerator _verificationTokenGenerator;
+        private readonly ILogger<VerifyUserEmailHandler> _logger;
 
-        public VerifyUserEmailHandler(AuthDbContext authDbContext, IVerificationTokenGenerator verificationTokenGenerator)
+        public VerifyUserEmailHandler(AuthDbContext authDbContext, IVerificationTokenGenerator verificationTokenGenerator, ILogger<VerifyUserEmailHandler> logger)
         {
             _authDbContext = authDbContext;
             _verificationTokenGenerator = verificationTokenGenerator;
+            _logger = logger;
         }
 
         public async Task<VerifyUserEmailResult> Handle(VerifyUserEmailCommand request, CancellationToken cancellationToken)
@@ -32,6 +34,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             if(user is not null && user.IsEmailVerified is true)
             {
+                _logger.LogWarning("Verify email failed: email already verified for user ID {UserId}", request.UserId);
                 return new VerifyUserEmailResult(null,
                     new ErrorCarrier()
                     {
@@ -49,6 +52,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             if (usersTokens == null || !usersTokens.Any())
             {
+                _logger.LogWarning("Verify email failed: No verification token found for user ID {UserId}", request.UserId);
                 return new VerifyUserEmailResult(null,
                     new ErrorCarrier()
                     {
@@ -69,6 +73,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             if (actualToken.IsUsed)
             {
+                _logger.LogWarning("Verify email failed: Token already used for user ID {UserId}", request.UserId);
                 return new VerifyUserEmailResult(null,
                     new ErrorCarrier()
                     {
@@ -84,6 +89,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             if (actualToken.ExpiresAt < DateTime.UtcNow)
             {
+                _logger.LogWarning("Verify email failed: Token expired for user ID {UserId}", request.UserId);
                 return new VerifyUserEmailResult(null,
                     new ErrorCarrier()
                     {
@@ -99,6 +105,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             if (await _verificationTokenGenerator.VerifyTokenAsync(request.VerificationToken, actualToken.Token) is false)
             {
+                _logger.LogWarning("Verify email failed: Invalid token provided for user ID {UserId}", request.UserId);
                 return new VerifyUserEmailResult(null,
                     new ErrorCarrier()
                     {
@@ -119,6 +126,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
             }
             catch
             {
+                _logger.LogError("Verify email failed: Database error while updating verification status for user ID {UserId}", request.UserId);
                 return new VerifyUserEmailResult(null, new ErrorCarrier()
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -127,7 +135,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
                 });
             }
 
-
+            _logger.LogInformation("Email verified successfully for user ID {UserId}", request.UserId);
             return new VerifyUserEmailResult(new VerifyUserEmailResponse(Success : true,Message : "Email verified Successfully"), null);
 
         }

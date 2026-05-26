@@ -263,6 +263,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
             }
             catch
             {
+                _logger.LogError("Failed to generate email verification token for user ID: {UserId}", userToAdd.Id);
                 msg = msg + " Failed to generate email verification token, Please verify your email later.";
             }
 
@@ -289,6 +290,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
             
             if(!mail)
             {
+                _logger.LogError("Failed to send verification email to {Email} for user ID: {UserId}", userToAdd.Email, userToAdd.Id);
                 msg = msg+ " Failed to send verification email, Please verify your email later.";
             }
 
@@ -303,6 +305,7 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 Message: "User registered successfully. Please verify your email within 24 hours to activate your account." + msg
             );
 
+            _logger.LogInformation("User registered successfully with ID {UserId}, email {Email}", userToAdd.Id, userToAdd.Email);
             return new RegisterUserResult(response, null);
         }
     }

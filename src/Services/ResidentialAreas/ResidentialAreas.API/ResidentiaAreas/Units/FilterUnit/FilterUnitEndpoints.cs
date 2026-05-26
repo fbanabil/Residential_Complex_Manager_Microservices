@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Units.FilterUnit
 {
@@ -43,11 +43,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.FilterUnit
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/units/filter", async (HttpContext httpContext, [AsParameters] FilterUnitRequest request, ISender sender, [FromServices] IValidator<FilterUnitRequest> validator) =>
+            app.MapGet("/units/filter", async (HttpContext httpContext, [AsParameters] FilterUnitRequest request, ISender sender, [FromServices] IValidator<FilterUnitRequest> validator, ILogger<FilterUnitEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Filter units failed: validation error");
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

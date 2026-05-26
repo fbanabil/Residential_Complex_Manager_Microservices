@@ -34,6 +34,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
             Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
             if (area == null)
             {
+                _logger.LogWarning("Add new building failed: no area found with code {AreaCode}", request.AreaCode);
                 return new AddNewBuildingResult(null, new ErrorCarrier()
                 {
                     Title = "NOT FOUND",
@@ -49,6 +50,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if(!userRoles.Contains("Admin") && area.ComplexManagerId != null && area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
             {
+                _logger.LogWarning("Add new building failed: user {UserId} is not authorized for area code {AreaCode}", userIdClaim.Value, request.AreaCode);
                 return new AddNewBuildingResult(null, new ErrorCarrier()
                 {
                     Title = "FORBIDDEN",
@@ -156,6 +158,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
 
 
             // Map to response
+            _logger.LogInformation("Building '{BuildingName}' created successfully with code {BuildingCode} in area code {AreaCode}", building.Name, building.Code, area.Code);
             return new AddNewBuildingResult(new AddNewBuildingResponse(building.Id.Value, building.Code, building.Name!, area.Name, area.Code), null);
         }
     }

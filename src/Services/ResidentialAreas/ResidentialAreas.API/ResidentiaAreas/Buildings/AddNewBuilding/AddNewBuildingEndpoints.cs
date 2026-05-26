@@ -1,4 +1,4 @@
-﻿using ResidentialAreas.API.EntityModels;
+using ResidentialAreas.API.EntityModels;
 using ResidentialAreas.API.Helpers.Image;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
@@ -31,11 +31,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/add", async (AddNewBuildingRequest request, ISender sender, IValidator<AddNewBuildingRequest> validator) =>
+            app.MapPost("/buildings/add", async (AddNewBuildingRequest request, ISender sender, IValidator<AddNewBuildingRequest> validator, ILogger<AddNewBuildingEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Add new building failed: validation error for building '{BuildingName}' in area code {AreaCode}", request.Name, request.AreaCode);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

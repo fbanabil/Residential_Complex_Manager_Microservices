@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
@@ -21,11 +21,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator) =>
+            app.MapGet("/areas/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetAreaByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(id);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Get area by ID failed: invalid ID {AreaId}", id);
                     return Results.BadRequest(validationResult.ToDictionary());
                 }
 

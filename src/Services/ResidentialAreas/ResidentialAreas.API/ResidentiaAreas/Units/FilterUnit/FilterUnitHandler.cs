@@ -85,6 +85,7 @@
                     u.Images != null ? u.Images.Select(i => i.Url).ToList() : new List<string?>()))
                 .ToListAsync(cancellationToken);
 
+            _logger.LogInformation("Filter units query returned {Count} result(s)", units.Count);
             return new FilterUnitResult(units);
         }
     }

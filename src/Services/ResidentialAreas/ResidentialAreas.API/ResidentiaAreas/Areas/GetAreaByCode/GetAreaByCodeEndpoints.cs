@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
@@ -20,11 +20,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/code/{code:long}", async (HttpContext httpContext, long code, ISender sender, [FromServices] IValidator<long> validator) =>
+            app.MapGet("/areas/code/{code:long}", async (HttpContext httpContext, long code, ISender sender, [FromServices] IValidator<long> validator, ILogger<GetAreaByCodeEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(code);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Get area by code failed: invalid code {AreaCode}", code);
                     return Results.BadRequest(validationResult.ToDictionary());
                 }
 
@@ -44,7 +45,6 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaByCode
                 {
                     ImageUrls = response.ImageUrls?.Select(url => $"{baseUrl}/{url}").ToList()
                 };
-
 
                 return Results.Ok(response);
             })

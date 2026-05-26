@@ -69,6 +69,7 @@
                     ps.AssignedUnit != null ? ps.AssignedUnit.UnitNo : null))
                 .ToListAsync(cancellationToken);
 
+            _logger.LogInformation("Filter parking slots query returned {Count} result(s)", parkingSlots.Count);
             return new FilterParkingSlotResult(parkingSlots);
         }
     }

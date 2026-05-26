@@ -184,6 +184,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AddNewParkingSpace
 
 
 
+            _logger.LogInformation("Parking space '{Name}' created successfully with code {ParkingSpaceCode} in area code {AreaCode}", parkingSpace.Name, parkingSpace.ParkingSpaceCode, area.Code);
             return new AddNewParkingSpaceResult(new AddNewParkingSpaceResponse
                 (
                 parkingSpace.Id,

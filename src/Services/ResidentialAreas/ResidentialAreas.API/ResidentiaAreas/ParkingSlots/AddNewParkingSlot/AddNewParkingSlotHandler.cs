@@ -147,6 +147,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AddNewParkingSlot
 
 
 
+            _logger.LogInformation("Parking slot created successfully with code {SlotCode} in parking space code {ParkingSpaceCode}", parkingSlot.SlotCode, parkingSpace.ParkingSpaceCode);
             return new AddNewParkingSlotResult(new AddNewParkingSlotResponse
                 (
                 parkingSlot.Id ?? Guid.Empty,

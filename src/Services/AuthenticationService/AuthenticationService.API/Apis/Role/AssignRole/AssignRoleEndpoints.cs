@@ -1,4 +1,4 @@
-﻿using Mapster;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Apis.Role.AssignRole
@@ -18,6 +18,13 @@ namespace AuthenticationService.API.Apis.Role.AssignRole
 
     public class AssignRoleEndpoints : ICarterModule
     {
+        private readonly ILogger<AssignRoleEndpoints> _logger;
+
+        public AssignRoleEndpoints(ILogger<AssignRoleEndpoints> logger)
+        {
+            _logger = logger;
+        }
+
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/roles/assign", HandleRoleAssign)
@@ -35,11 +42,12 @@ namespace AuthenticationService.API.Apis.Role.AssignRole
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
+                _logger.LogWarning("Assign role failed: validation error for email {Email} and role {RoleName}", request.UserEmail, request.RoleName);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
             var command = request.Adapt<AssignRoleCommand>();
             var result = await sender.Send(command);
-            
+
             if (result.Error != null)
             {
                 return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);

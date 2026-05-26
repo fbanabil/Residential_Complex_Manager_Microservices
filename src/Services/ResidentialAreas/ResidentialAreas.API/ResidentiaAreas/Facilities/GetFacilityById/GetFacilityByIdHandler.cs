@@ -45,6 +45,7 @@
                 return null;
             }
 
+            _logger.LogInformation("Facility retrieved successfully with ID {Id}", request.Id);
             return new GetFacilityByIdResult(
                 facility.Id ?? Guid.Empty,
                 facility.FacilityCode ?? 0,

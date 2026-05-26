@@ -151,8 +151,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
             {
                 imagePaths = await _imageSaver.SaveImageAsync(request.ImageBase64, "wwwroot/images/Facilities");
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to save facility images for facility '{FacilityName}'", request.Name);
                 await transaction.RollbackAsync(cancellationToken);
                 return new AddNewFacilityResult(null, new ErrorCarrier
                 {
@@ -189,8 +190,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
                 await _areaDbContext.Facilities.AddAsync(facility, cancellationToken);
                 await _areaDbContext.SaveChangesAsync(cancellationToken);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to save new facility '{FacilityName}' to the database", request.Name);
                 await transaction.RollbackAsync(cancellationToken);
                 return new AddNewFacilityResult(null, new ErrorCarrier
                 {
@@ -221,8 +223,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
                     await _areaDbContext.Images.AddRangeAsync(images, cancellationToken);
                     await _areaDbContext.SaveChangesAsync(cancellationToken);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Failed to save image records for facility code {FacilityCode}", facility.FacilityCode);
                     await transaction.RollbackAsync(cancellationToken);
                     return new AddNewFacilityResult(null, new ErrorCarrier
                     {
@@ -241,8 +244,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
             {
                 await transaction.CommitAsync(cancellationToken);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to commit transaction for new facility '{FacilityName}'", request.Name);
                 await transaction.RollbackAsync(cancellationToken);
                 return new AddNewFacilityResult(null, new ErrorCarrier
                 {
@@ -258,6 +262,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
             imagePaths = imagePaths?.Select(path => $"{httpContext?.Request.Scheme}://{httpContext?.Request.Host}/{path}").ToList()!;
 
 
+            _logger.LogInformation("Facility '{FacilityName}' created successfully with code {FacilityCode}", request.Name, facility.FacilityCode);
             // Return the details of the newly created Facility in the response, along with any associated Area or Building information and the image URLs.
             return new AddNewFacilityResult(new AddNewFacilityResponse
                 (

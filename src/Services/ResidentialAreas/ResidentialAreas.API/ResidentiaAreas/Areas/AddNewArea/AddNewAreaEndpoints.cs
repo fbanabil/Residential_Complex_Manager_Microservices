@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.Helpers.Image;
@@ -35,25 +35,26 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 .WithMessage("The image must be a valid Base64 string.");
         }
 
-     
+
     }
 
     public class AddNewAreaEndpoints : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas", async (AddNewAreaRequest request, ISender sender,[FromServices] IValidator<AddNewAreaRequest> validator) =>
+            app.MapPost("/areas", async (AddNewAreaRequest request, ISender sender, [FromServices] IValidator<AddNewAreaRequest> validator, ILogger<AddNewAreaEndpoints> logger) =>
             {
                var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Add new area failed: validation error for area name '{AreaName}'", request.Name);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<AddNewAreaCommand>();
                 var result = await sender.Send(command);
 
-                if(result .ErrorMessage != null)
+                if(result.ErrorMessage != null)
                 {
                     return Results.Problem(result.ErrorMessage);
                 }
@@ -64,7 +65,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 {
                     return Results.Problem("An error occurred while creating the area.", statusCode: StatusCodes.Status500InternalServerError);
                 }
-                
+
                 if(response.Id == Guid.Empty)
                 {
                     return Results.Problem("Failed to create the area. Please check the provided data and try again.", statusCode: StatusCodes.Status400BadRequest);

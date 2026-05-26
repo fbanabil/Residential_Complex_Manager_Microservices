@@ -1,4 +1,4 @@
-﻿using ResidentialAreas.API.Grpc;
+using ResidentialAreas.API.Grpc;
 using ResidentialAreas.API.Helpers.ErrorCarrier;
 using System.Security.Claims;
 
@@ -14,12 +14,14 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
         private readonly UserValidations.UserValidationsClient _userValidationsClient;
         private readonly AreaDbContext _areaDbContest;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<AssignTenantToBuildingsHandler> _logger;
 
-        public AssignTenantToBuildingsHandler(UserValidations.UserValidationsClient userValidationsClient, AreaDbContext areaDbContest, IHttpContextAccessor httpContextAccessor)
+        public AssignTenantToBuildingsHandler(UserValidations.UserValidationsClient userValidationsClient, AreaDbContext areaDbContest, IHttpContextAccessor httpContextAccessor, ILogger<AssignTenantToBuildingsHandler> logger)
         {
             _userValidationsClient = userValidationsClient;
             _areaDbContest = areaDbContest;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
 
@@ -38,6 +40,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
                 // If the user does not have the "Admin" role, check if they have the "ComplexManager" role
                 if (!userRoles.Contains("ComplexManager"))
                 {
+                    _logger.LogWarning("Assign tenant to building failed: user {UserId} does not have Admin or ComplexManager role", userIdClaim.Value);
                     return new AssignTenantToBuildingResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -54,6 +57,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
                 // If the complex manager ID of the area of the building is null or does not match the user ID, return a forbidden error
                 if (complexManagerIdOfTheAreaOfBuilding == null || complexManagerIdOfTheAreaOfBuilding != Guid.Parse(userIdClaim.Value))
                 {
+                    _logger.LogWarning("Assign tenant to building failed: user {UserId} is not the complex manager of building code {BuildingCode}", userIdClaim.Value, request.BuildingCode);
                     return new AssignTenantToBuildingResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -71,6 +75,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
             int statusCode = int.TryParse(user.Error?.StatusCode, out int code) ? code : 500;
             if (statusCode != 200)
             {
+                _logger.LogWarning("Assign tenant to building failed: gRPC error {StatusCode} for tenant email {Email}", statusCode, request.Email);
                 return new AssignTenantToBuildingResult(null, new ErrorCarrier
                 {
                     Title = user.Error?.Title,
@@ -84,6 +89,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
             // Check if the user is verified
             if (user.UserByRpc.IsUserVerified == false)
             {
+                _logger.LogWarning("Assign tenant to building failed: tenant {Email} is not verified", request.Email);
                 return new AssignTenantToBuildingResult(null, new ErrorCarrier
                 {
                     Title = "USER_NOT_VERIFIED",
@@ -97,6 +103,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
             Building? building = await _areaDbContest.Buildings.AsNoTracking().FirstOrDefaultAsync(b => b.Code == request.BuildingCode, cancellationToken);
             if (building == null)
             {
+                _logger.LogWarning("Assign tenant to building failed: no building found with code {BuildingCode}", request.BuildingCode);
                 return new AssignTenantToBuildingResult(null, new ErrorCarrier
                 {
                     Title = "BUILDING_NOT_FOUND",
@@ -113,8 +120,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
                 await _areaDbContest.Buildings.Where(b => b.Id == building.Id)
                     .ExecuteUpdateAsync(b => b.SetProperty(p => p.TenantId, Guid.Parse(user.UserByRpc.Id)), cancellationToken);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Assign tenant to building failed: database error for building code {BuildingCode} and tenant {Email}", request.BuildingCode, request.Email);
                 return new AssignTenantToBuildingResult(null, new ErrorCarrier
                 {
                     Title = "DATABASE_ERROR",
@@ -123,7 +131,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
                 });
             }
 
-
+            _logger.LogInformation("Tenant {Email} assigned successfully to building code {BuildingCode}", request.Email, request.BuildingCode);
             return new AssignTenantToBuildingResult(new AssignTenantToBuildingResponse(Success : true, Message : "Tenant successfully assigned to the building"), null);
 
         }

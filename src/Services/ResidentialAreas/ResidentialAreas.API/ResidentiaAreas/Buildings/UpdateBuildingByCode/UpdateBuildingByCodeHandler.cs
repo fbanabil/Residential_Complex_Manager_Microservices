@@ -49,6 +49,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
                 // If the user is a tenant, check if they are the tenant of the building
                 if (isTenant && (building.TenantId != null) && (building.TenantId != Guid.Parse(userIdClaim.Value)))
                 {
+                    _logger.LogWarning("Update building by code failed: tenant {UserId} is not authorized for building code {BuildingCode}", userIdClaim.Value, request.Code);
                     return new UpdateBuildingByCodeResult(null, new ErrorCarrier {
                         Title = "FORBIDDEN",
                         StatusCode = 403,
@@ -59,6 +60,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
                 // If the user is a complex manager, check if they are the complex manager of the area
                 if (isComplexManager && (building.Area != null) && (building.Area.ComplexManagerId != null) && (building.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value)))
                 {
+                    _logger.LogWarning("Update building by code failed: complex manager {UserId} is not authorized for building code {BuildingCode}", userIdClaim.Value, request.Code);
                     return new UpdateBuildingByCodeResult(null, new ErrorCarrier {
                         Title = "FORBIDDEN",
                         StatusCode = 403,
@@ -89,6 +91,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
             }
             catch
             {
+                _logger.LogError("Failed to update building properties for building with code {BuildingCode}", request.Code);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateBuildingByCodeResult(null, new ErrorCarrier {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -157,6 +160,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
             }
             catch
             {
+                _logger.LogError("Failed to save new images for building with code {BuildingCode}", building.Code);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateBuildingByCodeResult(null, new ErrorCarrier {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -233,6 +237,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
                 .FirstOrDefaultAsync(cancellationToken);
 
 
+            _logger.LogInformation("Building updated successfully with code {BuildingCode}", request.Code);
             // Return the updated building information along with the new list of image URLs
             return new UpdateBuildingByCodeResult(new UpdateBuildingByCodeResponse( building.Id!.Value, building.Code, building.Name ?? string.Empty, building.BlockNo ?? string.Empty, building.TotalFloors, building.Address ?? string.Empty, building.Status.ToString(), areaInfo?.Code ?? 0, areaInfo?.Name ?? string.Empty, allImageUrls!), null);
         }

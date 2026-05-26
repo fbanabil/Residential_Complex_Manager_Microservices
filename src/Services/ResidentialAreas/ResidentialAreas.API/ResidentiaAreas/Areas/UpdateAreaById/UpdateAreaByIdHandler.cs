@@ -30,6 +30,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
             Area? area = await _areaDbContext.Areas.FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
             if (area == null)
             {
+                _logger.LogWarning("Update area by ID failed: no area found with ID {AreaId}", request.Id);
                 return new UpdateAreaByIdResult(null, new ErrorCarrier()
                 {
                     Title = "NOT FOUND",
@@ -45,6 +46,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if (!userRoles.Contains("Admin") && area.ComplexManagerId.HasValue && area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
             {
+                _logger.LogWarning("Update area by ID failed: user {UserId} is not authorized for area ID {AreaId}", userIdClaim.Value, request.Id);
                 return new UpdateAreaByIdResult(null, new ErrorCarrier()
                 {
                     Title = "UNAUTHORIZED",
@@ -116,6 +118,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
             }
             catch
             {
+                _logger.LogError("Image deletion failed while updating area with id {AreaId}.", request.Id);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateAreaByIdResult(null, new ErrorCarrier()
                 {
@@ -188,6 +191,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaById
             List<string?>? allImageUrls = await _areaDbContext.Images.AsNoTracking().Where(ai => ai.AreaCode == area.Code && ai.ImageType == ImageType.Area).Select(ai => $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{ai.Url}").ToListAsync(cancellationToken);
 
 
+            _logger.LogInformation("Area updated successfully with ID {AreaId}", request.Id);
             // Return the updated area details along with the image URLs in the response
             return new UpdateAreaByIdResult(new UpdateAreaByIdResponse(area.Id, area.Code, area.Name, area.City, area.State, area.Country, area.PostalCode, area.Address, area.GeoBoundary, area.Status.ToString(), allImageUrls), null);
         }

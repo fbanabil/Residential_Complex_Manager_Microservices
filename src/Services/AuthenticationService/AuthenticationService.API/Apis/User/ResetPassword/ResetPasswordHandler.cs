@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.EntityModels;
 using AuthenticationService.API.Enum;
 using AuthenticationService.API.Helpers.Email;
@@ -23,22 +23,25 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
         private readonly IVerificationTokenGenerator _verificationTokenGenerator;
         private readonly IGetHostUrl _getHostUrl;
         private readonly IEmailHelper _emailHelper;
-        public ResetPasswordHandler(AuthDbContext authDbContext, IPasswordHasher passwordHasher, IVerificationTokenGenerator verificationTokenGenerator, IGetHostUrl getHostUrl, IEmailHelper emailHelper)
+        private readonly ILogger<ResetPasswordHandler> _logger;
+
+        public ResetPasswordHandler(AuthDbContext authDbContext, IPasswordHasher passwordHasher, IVerificationTokenGenerator verificationTokenGenerator, IGetHostUrl getHostUrl, IEmailHelper emailHelper, ILogger<ResetPasswordHandler> logger)
         {
             _authDbContext = authDbContext;
             _passwordHasher = passwordHasher;
             _verificationTokenGenerator = verificationTokenGenerator;
             _getHostUrl = getHostUrl;
             _emailHelper = emailHelper;
+            _logger = logger;
         }
 
         public async Task<ResetPasswordResult> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             EntityModels.User? user = await _authDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
 
-
             if (user == null)
             {
+                _logger.LogWarning("Reset password failed: No user found with email {Email}", request.Email);
                 return new ResetPasswordResult(null, new ErrorCarrier()
                 {
                     Title = "User Not Found",
@@ -72,6 +75,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             }
             catch
             {
+                _logger.LogError("Reset password failed: Database error while saving reset token for user with email {Email}", request.Email);
                 return new ResetPasswordResult(null, new ErrorCarrier()
                 {
                     Title = "Database Error",
@@ -84,6 +88,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
 
             if (!emailSent)
             {
+                _logger.LogError("Reset password failed: Unable to send reset email to {Email}", request.Email);
                 return new ResetPasswordResult(null, new ErrorCarrier()
                 {
                     Title = "Email Error",
@@ -92,11 +97,10 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
                 });
             }
 
+            _logger.LogInformation("Password reset email sent successfully to {Email}", request.Email);
             return new ResetPasswordResult(new ResetPasswordResponse(true, "Password reset email sent successfully."), null);
         }
     }
-
-
 
 
 
@@ -109,11 +113,14 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
         private readonly AuthDbContext _authDbContext;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IVerificationTokenGenerator _verificationTokenGenerator;
-        public ResetPasswordConfirmHandler(AuthDbContext authDbContext, IPasswordHasher passwordHasher, IVerificationTokenGenerator verificationTokenGenerator)
+        private readonly ILogger<ResetPasswordConfirmHandler> _logger;
+
+        public ResetPasswordConfirmHandler(AuthDbContext authDbContext, IPasswordHasher passwordHasher, IVerificationTokenGenerator verificationTokenGenerator, ILogger<ResetPasswordConfirmHandler> logger)
         {
             _authDbContext = authDbContext;
             _passwordHasher = passwordHasher;
             _verificationTokenGenerator = verificationTokenGenerator;
+            _logger = logger;
         }
 
         public async Task<ResetPasswordConfirmResult> Handle(ResetPasswordConfirmCommand request, CancellationToken cancellationToken)
@@ -123,6 +130,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
                 .FirstOrDefaultAsync(t => t.UserId == request.UserId && t.Type == TokenType.PasswordReset && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow, cancellationToken);
             if (tokenRecord == null)
             {
+                _logger.LogWarning("Reset password confirm failed: Invalid or expired token for user ID {UserId}", request.UserId);
                 return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                 {
                     Title = "INVALID_OR_EXPIRED_TOKEN",
@@ -135,6 +143,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             bool isValidToken = await _verificationTokenGenerator.VerifyTokenAsync(request.Token, tokenRecord.Token);
             if (!isValidToken)
             {
+                _logger.LogWarning("Reset password confirm failed: Token verification failed for user ID {UserId}", request.UserId);
                 return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                 {
                     Title = "INVALID_TOKEN",
@@ -154,6 +163,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
                 EntityModels.User? user = await _authDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
                 if (user == null)
                 {
+                    _logger.LogWarning("Reset password confirm failed: No user found with ID {UserId}", request.UserId);
                     return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                     {
                         Title = "USER_NOT_FOUND",
@@ -165,15 +175,17 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
 
                 // Update password and token status
                 user.PasswordHash = hashedNewPassword;
-                
+
                 await _authDbContext.Users.Where(u => u.Id == request.UserId).ExecuteUpdateAsync(u => u.SetProperty(p => p.PasswordHash, hashedNewPassword), cancellationToken);
 
                 await _authDbContext.SecurityTokens.Where(t => t.UserId == request.UserId && t.Type == TokenType.PasswordReset && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow).ExecuteUpdateAsync(t => t.SetProperty(p => p.IsUsed, true), cancellationToken);
 
+                _logger.LogInformation("Password reset confirmed successfully for user ID {UserId}", request.UserId);
                 return new ResetPasswordConfirmResult(newRandomPassword, null);
             }
-            catch 
-            { 
+            catch
+            {
+                _logger.LogError("Reset password confirm failed: Database error while updating password for user ID {UserId}", request.UserId);
                 return new ResetPasswordConfirmResult(null, new ErrorCarrier()
                 {
                     Title = "INTERNAL_SERVER_ERROR",

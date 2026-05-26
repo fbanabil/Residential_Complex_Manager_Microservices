@@ -1,4 +1,4 @@
-﻿
+
 using Mapster;
 
 namespace AuthenticationService.API.Apis.User.VerifyUser
@@ -29,11 +29,12 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
         }
 
 
-        private static async Task<IResult> HandleVerifyUser(VerifyUserRequest request, ISender sender, IValidator<VerifyUserRequest> validator)
+        private static async Task<IResult> HandleVerifyUser(VerifyUserRequest request, ISender sender, IValidator<VerifyUserRequest> validator, ILogger<VerifyUserEndpoints> logger)
         {
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Verify user failed: validation error for email {Email}", request.Email);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
             var command = request.Adapt<VerifyUserCommand>();
@@ -43,6 +44,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
             {
                 return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);
             }
+
             var response = result.Result.Adapt<VerifyUserResponse>();
             return Results.Ok(response);
         }

@@ -45,6 +45,7 @@
                 return null;
             }
 
+            _logger.LogInformation("Unit retrieved successfully with ID {Id}", request.Id);
             return new GetUnitByIdResult(
                 unit.Id,
                 unit.Code,

@@ -41,6 +41,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.GetBuildingByCode
                 return null;
             }
 
+            _logger.LogInformation("Building retrieved successfully with code {Code}", request.Code);
             return building.Adapt<GetBuildingByCodeResult>();
         }
     }

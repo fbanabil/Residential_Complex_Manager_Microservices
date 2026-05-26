@@ -33,6 +33,7 @@
 
                 var areas = await query.ToListAsync(cancellationToken);
 
+                _logger.LogInformation("Filter areas query returned {Count} result(s)", areas.Count);
                 return new FilterAreaResult(areas.Select(area => area.Adapt<FilterAreaResponseInstance>() with { ImageUrls = area.Images?.Select(i => i.Url).ToList() }).ToList(), null);
             }
             catch (Exception ex)

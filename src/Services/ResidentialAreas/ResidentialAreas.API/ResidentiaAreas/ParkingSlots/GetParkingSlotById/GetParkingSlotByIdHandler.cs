@@ -41,6 +41,7 @@
                 return null;
             }
 
+            _logger.LogInformation("Parking slot retrieved successfully with ID {Id}", request.Id);
             return new GetParkingSlotByIdResult(
                 parkingSlot.Id ?? Guid.Empty,
                 parkingSlot.SlotCode,

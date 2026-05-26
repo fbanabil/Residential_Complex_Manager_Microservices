@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Facilities.GetFacilityById
 {
@@ -16,11 +16,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.GetFacilityById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/facilities/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator) =>
+            app.MapGet("/facilities/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetFacilityByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(id);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Get facility by ID failed: invalid ID {FacilityId}", id);
                     return Results.BadRequest(validationResult.ToDictionary());
                 }
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceToArea
 {
@@ -31,11 +31,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
                 .RequireAuthorization("AdminOrComplexManager");
         }
 
-        private static async Task<IResult> HandleAssignParkingSpaceToArea(AssignParkingSpaceToAreaRequest request, ISender sender, [FromServices] IValidator<AssignParkingSpaceToAreaRequest> validator, CancellationToken cancellationToken)
+        private static async Task<IResult> HandleAssignParkingSpaceToArea(AssignParkingSpaceToAreaRequest request, ISender sender, [FromServices] IValidator<AssignParkingSpaceToAreaRequest> validator, CancellationToken cancellationToken, ILogger<AssignParkingSpaceToAreaEndpoints> logger)
         {
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Assign parking space to area failed: validation error for area code {AreaCode} and parking space code {ParkingSpaceCode}", request.AreaCode, request.ParkingSpaceCode);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 

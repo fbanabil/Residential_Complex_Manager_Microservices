@@ -51,6 +51,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
                 // If the user is a tenant, they can only update the building if they are the tenant of that building
                 if (isTenant && (building.TenantId != null) && (building.TenantId != Guid.Parse(userIdClaim.Value)))
                 {
+                    _logger.LogWarning("Update building by ID failed: tenant {UserId} is not authorized for building ID {BuildingId}", userIdClaim.Value, request.Id);
                     return new UpdateBuildingByIdResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -63,6 +64,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
                 // If the user is a complex manager, they can only update the building if they are the complex manager of the area that the building belongs to
                 if (isComplexManager && (building.Area != null) && (building.Area.ComplexManagerId != null) && (building.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value)))
                 {
+                    _logger.LogWarning("Update building by ID failed: complex manager {UserId} is not authorized for building ID {BuildingId}", userIdClaim.Value, request.Id);
                     return new UpdateBuildingByIdResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -91,6 +93,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
             }
             catch
             {
+                _logger.LogError("Failed to update building properties for building with id {BuildingId}", request.Id);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateBuildingByIdResult(null, new ErrorCarrier
                 {
@@ -158,6 +161,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
             }
             catch
             {
+                _logger.LogError("Failed to save new images for building with id {BuildingId}", building.Id);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateBuildingByIdResult(null, new ErrorCarrier
                 {
@@ -239,6 +243,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
                 .FirstOrDefaultAsync(cancellationToken);
 
 
+            _logger.LogInformation("Building updated successfully with ID {BuildingId}", request.Id);
             // Return the updated building information in the response
             return new UpdateBuildingByIdResult(new UpdateBuildingByIdResponse(building.Id!.Value, building.Code, building.Name ?? string.Empty, building.BlockNo ?? string.Empty, building.TotalFloors, building.Address ?? string.Empty, building.Status.ToString(), areaInfo?.Code ?? 0, areaInfo?.Name ?? string.Empty, allImageUrls!), null);
         }

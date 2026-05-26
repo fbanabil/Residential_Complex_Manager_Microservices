@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Messaging.KafkaLogger.Configs;
 using BuildingBlocks.Messaging.KafkaLogger.Repository;
 using DnsClient.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,16 +19,18 @@ namespace BuildingBlocks.Messaging.KafkaLogger.ProducerAndConsumer
         private readonly KafkaSettingsConsumer _options;
         private MongoLogRepository _repository;
         private readonly ILogger<KafkaLogConsumer> _logger;
+        private readonly IConfiguration _config;
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
         };
-        public KafkaLogConsumer(IOptions<KafkaSettingsConsumer> options, MongoLogRepository mongoLogRepository, ILogger<KafkaLogConsumer> logger)
+        public KafkaLogConsumer(IOptions<KafkaSettingsConsumer> options, MongoLogRepository mongoLogRepository, ILogger<KafkaLogConsumer> logger, IConfiguration config)
         {
             _options = options.Value;
             _repository = mongoLogRepository;
             _logger = logger;
+            _config = config;
         }
 
 
@@ -53,7 +56,7 @@ namespace BuildingBlocks.Messaging.KafkaLogger.ProducerAndConsumer
 
             consumer.Subscribe(_options.Topic);
 
-            _logger.LogInformation("Kafka Log Consumer started, listening to topic: {Topic}", _options.Topic);
+            _logger.LogInformation("Kafka Log Consumer started, listening to topic: {Topic} for service: {Service}", _options.Topic, _config.GetValue<string>("Service:Name"));
 
 
 

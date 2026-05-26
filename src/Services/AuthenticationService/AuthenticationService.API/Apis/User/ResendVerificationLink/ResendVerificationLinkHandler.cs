@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.EntityModels;
 using AuthenticationService.API.Helpers.Email;
 using AuthenticationService.API.Helpers.ErrorCarrier;
@@ -21,13 +21,15 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
         private readonly AuthDbContext _authDbContext;
         private readonly IEmailHelper _emailHelper;
         private readonly IGetHostUrl _getHostUrl;
+        private readonly ILogger<ResendVerificationLinkHandler> _logger;
 
-        public ResendVerificationLinkHandler(IVerificationTokenGenerator verificationTokenGenerator, AuthDbContext authDbContext, IEmailHelper emailHelper, IGetHostUrl getHostUrl)
+        public ResendVerificationLinkHandler(IVerificationTokenGenerator verificationTokenGenerator, AuthDbContext authDbContext, IEmailHelper emailHelper, IGetHostUrl getHostUrl, ILogger<ResendVerificationLinkHandler> logger)
         {
             _verificationTokenGenerator = verificationTokenGenerator;
             _authDbContext = authDbContext;
             _emailHelper = emailHelper;
             _getHostUrl = getHostUrl;
+            _logger = logger;
         }
 
         public async Task<ResendVerificationLinkResult> Handle(ResendVerificationLinkCommand request, CancellationToken cancellationToken)
@@ -38,6 +40,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
 
             if (user == null)
             {
+                _logger.LogWarning("Resend verification link failed: No user found with email {Email}", request.Email);
                 return new ResendVerificationLinkResult(null, new ErrorCarrier
                 {
                     Title = "USER_NOT_FOUND",
@@ -48,6 +51,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
 
             if (user.IsEmailVerified)
             {
+                _logger.LogWarning("Resend verification link failed: Email already verified for user with email {Email}", request.Email);
                 return new ResendVerificationLinkResult(null, new ErrorCarrier
                 {
                     Title = "EMAIL_ALREADY_VERIFIED",
@@ -64,6 +68,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
             if (existingToken != null)
             {
                 var expiresIn = existingToken.ExpiresAt - DateTime.UtcNow;
+                _logger.LogWarning("Resend verification link: active token already exists for user with email {Email}, expires in {Minutes} minutes", request.Email, (int)expiresIn.TotalMinutes);
                 return new ResendVerificationLinkResult(null, new ErrorCarrier
                 {
                     Title = "VERIFICATION_LINK_ALREADY_SENT",
@@ -100,6 +105,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
             }
             catch
             {
+                _logger.LogError("Resend verification link failed: Database error while saving verification token for user with email {Email}", request.Email);
                 return new ResendVerificationLinkResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -112,6 +118,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
 
             if (!emailSent)
             {
+                _logger.LogError("Resend verification link failed: Unable to send verification email to {Email}", request.Email);
                 return new ResendVerificationLinkResult(null, new ErrorCarrier
                 {
                     Title = "EMAIL_SENDING_FAILED",
@@ -120,6 +127,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
                 });
             }
 
+            _logger.LogInformation("Verification email resent successfully to {Email}", request.Email);
             return new ResendVerificationLinkResult(new ResendVerificationLinkResponse(Success : true, Message : "Verification email sent successfully."), null);
         }
     }

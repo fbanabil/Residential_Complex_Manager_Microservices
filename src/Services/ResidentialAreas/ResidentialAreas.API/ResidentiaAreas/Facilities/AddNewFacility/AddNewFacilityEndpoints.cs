@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.Helpers.Image;
 
@@ -95,11 +95,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/facilities/add", async (AddNewFacilityRequest request, ISender sender, [FromServices] IValidator<AddNewFacilityRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/facilities/add", async (AddNewFacilityRequest request, ISender sender, [FromServices] IValidator<AddNewFacilityRequest> validator, CancellationToken cancellationToken, ILogger<AddNewFacilityEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Add new facility failed: validation error for facility '{FacilityName}'", request.Name);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
@@ -112,7 +113,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
                 }
 
                 var response = result.Result.Adapt<AddNewFacilityResponse>();
-                
+
                 return Results.Created($"/facilities/{response!.Id}", response);
             })
                 .WithName("AddNewFacility")

@@ -1,4 +1,4 @@
-﻿
+
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
 {
     public record AssignTenantToBuildingRequest(long BuildingCode, string Email);
@@ -27,26 +27,26 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
                 .RequireAuthorization("AdminOrComplexManager");
         }
 
-        private static async Task<IResult> HandleAssignTenantToBuilding(AssignTenantToBuildingRequest request, ISender sender, IValidator<AssignTenantToBuildingRequest> validator)
+        private static async Task<IResult> HandleAssignTenantToBuilding(AssignTenantToBuildingRequest request, ISender sender, IValidator<AssignTenantToBuildingRequest> validator, ILogger<AssignTenantToBuildingsEndpoints> logger)
         {
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Assign tenant to building failed: validation error for building code {BuildingCode} and email {Email}", request.BuildingCode, request.Email);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
 
             var command = request.Adapt<AssignTenantToBuildingCommand>();
-            
-            
+
+
             var result = await sender.Send(command);
             if (result.Error is not null)
             {
                 return Results.Problem(detail: result.Error.Detail, statusCode: result.Error.StatusCode, title: result.Error.Title);
             }
             var response = result.Result.Adapt<AssignTenantToBuildingResponse>();
-            
-            
+
             return Results.Ok(response);
         }
     }

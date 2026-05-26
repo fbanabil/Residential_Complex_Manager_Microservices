@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.Helpers.Image;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
@@ -42,17 +42,18 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas/update-by-code", async (HttpContext httpContext, UpdateAreaByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByCodeRequest> validator) =>
+            app.MapPost("/areas/update-by-code", async (HttpContext httpContext, UpdateAreaByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByCodeRequest> validator, ILogger<UpdateAreaByCodeEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Update area by code failed: validation error for area code {AreaCode}", request.Code);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
                 var command = request.Adapt<UpdateAreaByCodeCommand>();
                 var result = await sender.Send(command);
-                
+
                 if(result.Error is not null)
                 {
                     return Results.Problem(result.Error.Detail, statusCode: result.Error.StatusCode);

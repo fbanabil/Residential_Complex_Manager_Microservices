@@ -1,4 +1,4 @@
-﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
+using ResidentialAreas.API.Helpers.ErrorCarrier;
 using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
@@ -10,11 +10,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
     {
         private readonly AreaDbContext _areaDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<AssignBuildingToAreaHandler> _logger;
 
-        public AssignBuildingToAreaHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor)
+        public AssignBuildingToAreaHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor, ILogger<AssignBuildingToAreaHandler> logger)
         {
             _areaDbContext = areaDbContext;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         public async Task<AssignBuildingToAreaResult> Handle(AssignBuildingToAreaCommand request, CancellationToken cancellationToken)
@@ -24,6 +26,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
                 .FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
             if (area == null)
             {
+                _logger.LogWarning("Assign building to area failed: no area found with code {AreaCode}", request.AreaCode);
                 return new AssignBuildingToAreaResult(null, new ErrorCarrier
                 {
                     Title = "AREA_NOT_FOUND",
@@ -42,6 +45,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
             // Only allow Admins or the Complex Manager of the area to assign buildings
             if ((!userRoles.Contains("Admin")) && userIdClaim != null && userIdClaim.Value != area.ComplexManagerId.ToString())
             {
+                _logger.LogWarning("Assign building to area failed: user {UserId} is not authorized for area code {AreaCode}", userIdClaim.Value, request.AreaCode);
                 return new AssignBuildingToAreaResult(null, new ErrorCarrier
                 {
                     Title = "UNAUTHORIZED",
@@ -58,6 +62,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
             if (buildings.Count != buildingCodes.Count)
             {
                 List<long> missingCodes = buildingCodes.Except(buildings.Select(b => b.Code)).ToList();
+                _logger.LogWarning("Assign building to area failed: missing building codes {MissingCodes} for area code {AreaCode}", string.Join(", ", missingCodes), request.AreaCode);
                 return new AssignBuildingToAreaResult(null, new ErrorCarrier
                 {
                     Title = "BUILDINGS_NOT_FOUND",
@@ -72,6 +77,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
             int conflicts = buildings.Count(b => b.AreaId != null && b.AreaId != area.Id);
             if(conflicts > 0)
             {
+                _logger.LogWarning("Assign building to area failed: {ConflictCount} building(s) already assigned to a different area (area code {AreaCode})", conflicts, request.AreaCode);
                 return new AssignBuildingToAreaResult(null, new ErrorCarrier
                 {
                     Title = "BUILDING_ASSIGNMENT_CONFLICT",
@@ -94,6 +100,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
 
                 if (updated == 0)
                 {
+                    _logger.LogError("Assign building to area failed: update returned 0 rows for area code {AreaCode}", request.AreaCode);
                     return new AssignBuildingToAreaResult(null, new ErrorCarrier
                     {
                         Title = "UPDATE_FAILED",
@@ -102,8 +109,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Assign building to area failed: database error for area code {AreaCode}", request.AreaCode);
                 return new AssignBuildingToAreaResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -113,7 +121,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
             }
 
 
-
+            _logger.LogInformation("{Count} building(s) assigned successfully to area code {AreaCode}", buildingCodes.Count, request.AreaCode);
             return new AssignBuildingToAreaResult(new AssignBuildingToAreaResponse(true, $"{buildingCodes.Count} building(s) assigned to area {request.AreaCode}."), null);
         }
     }

@@ -33,11 +33,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.UpdateParkingSpaceB
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-spaces/update-by-id", async (UpdateParkingSpaceByIdRequest request, ISender sender, [FromServices] IValidator<UpdateParkingSpaceByIdRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/parking-spaces/update-by-id", async (UpdateParkingSpaceByIdRequest request, ISender sender, [FromServices] IValidator<UpdateParkingSpaceByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateParkingSpaceByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Update parking space by ID failed: validation error for parking space ID {ParkingSpaceId}", request.Id);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.GetParkingSlotById
 {
@@ -16,11 +16,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.GetParkingSlotById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/parking-slots/{id:guid}", async (Guid id, ISender sender, [FromServices] IValidator<Guid> validator) =>
+            app.MapGet("/parking-slots/{id:guid}", async (Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetParkingSlotByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(id);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Get parking slot by ID failed: invalid ID {ParkingSlotId}", id);
                     return Results.BadRequest(validationResult.ToDictionary());
                 }
 

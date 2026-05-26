@@ -40,6 +40,7 @@
                 return null;
             }
 
+            _logger.LogInformation("Parking space retrieved successfully with ID {Id}", request.Id);
             return new GetParkingSpaceByIdResult(
                 parkingSpace.Id,
                 parkingSpace.ParkingSpaceCode,

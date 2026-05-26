@@ -41,6 +41,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
             }
 
             var result = area.Adapt<GetAreaByIdResult>();
+            _logger.LogInformation("Area retrieved successfully with ID {Id}", request.Id);
             return result;
         }
     }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.Helpers.Image;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Units.AddNewUnit
@@ -57,11 +57,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.AddNewUnit
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/units/add", async (AddNewUnitRequest request, ISender sender, [FromServices] IValidator<AddNewUnitRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/units/add", async (AddNewUnitRequest request, ISender sender, [FromServices] IValidator<AddNewUnitRequest> validator, CancellationToken cancellationToken, ILogger<AddNewUnitEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Add new unit failed: validation error for unit '{UnitNo}' in building code {BuildingCode}", request.UnitNo, request.BuildingCode);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

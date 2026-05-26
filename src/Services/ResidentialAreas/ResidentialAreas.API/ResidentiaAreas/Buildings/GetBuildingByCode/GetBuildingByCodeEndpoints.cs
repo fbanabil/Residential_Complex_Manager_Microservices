@@ -18,11 +18,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.GetBuildingByCode
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/buildings/code/{code:long}", async (HttpContext httpContext, long code, ISender sender, [FromServices] IValidator<long> validator) =>
+            app.MapGet("/buildings/code/{code:long}", async (HttpContext httpContext, long code, ISender sender, [FromServices] IValidator<long> validator, ILogger<GetBuildingByCodeEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(code);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Get building by code failed: invalid code {BuildingCode}", code);
                     return Results.BadRequest(validationResult.ToDictionary());
                 }
 

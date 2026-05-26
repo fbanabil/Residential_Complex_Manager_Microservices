@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Apis.User.ResetPassword
@@ -51,11 +51,12 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
 
 
 
-        private async static Task<IResult> HandleResetPassword([FromBody] ResetPasswordRequest request, ISender sender, IValidator<string> emailValidator)
+        private async static Task<IResult> HandleResetPassword([FromBody] ResetPasswordRequest request, ISender sender, IValidator<string> emailValidator, ILogger<ResetPasswordEndpoints> logger)
         {
             var validationResult = emailValidator.Validate(request.Email);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Reset password failed: invalid email format for email {Email}", request.Email);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
@@ -79,7 +80,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
 
 
 
-        private async static Task<IResult> HandleResetPasswordConfirmation([FromQuery] Guid userId, [FromQuery] string token, ISender sender)
+        private async static Task<IResult> HandleResetPasswordConfirmation([FromQuery] Guid userId, [FromQuery] string token, ISender sender, ILogger<ResetPasswordEndpoints> logger)
         {
             var command = new ResetPasswordConfirmCommand(userId, token);
 

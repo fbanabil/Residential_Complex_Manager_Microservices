@@ -1,4 +1,4 @@
-﻿using Mapster;
+using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,17 +15,18 @@ namespace AuthenticationService.API.Apis.Role.NewRole
             RuleFor(x => x.Name).NotEmpty().WithMessage("The role name is required.");
             RuleFor(x => x.Description).NotEmpty().WithMessage("The role description is required.");
         }
-    }   
+    }
 
     public class AddNewRoleEndpoints : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/roles/add-new", async (AddNewRoleRequest request, ISender sender, [FromServices] IValidator<AddNewRoleRequest> validator) =>
+            app.MapPost("/roles/add-new", async (AddNewRoleRequest request, ISender sender, [FromServices] IValidator<AddNewRoleRequest> validator, ILogger<AddNewRoleEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Add new role failed: validation error for role name {RoleName}", request.Name);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
                 var command = request.Adapt<AddNewRoleCommand>();

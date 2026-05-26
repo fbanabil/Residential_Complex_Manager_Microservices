@@ -24,13 +24,15 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
         private readonly IAuthenticationTokenCreator _authTokenCreator;
         private readonly IPasswordHasher _passworHasher;
         private readonly IEmailHelper _emailHelper;
+        private readonly ILogger<OAuthLoginsHandler> _logger;
 
-        public OAuthLoginsHandler(AuthDbContext authDbContext, IAuthenticationTokenCreator authTokenCreator, IPasswordHasher passwordHasher, IEmailHelper emailHelper)
+        public OAuthLoginsHandler(AuthDbContext authDbContext, IAuthenticationTokenCreator authTokenCreator, IPasswordHasher passwordHasher, IEmailHelper emailHelper, ILogger<OAuthLoginsHandler> logger)
         {
             _authDbContext = authDbContext;
             _authTokenCreator = authTokenCreator;
             _passworHasher = passwordHasher;
             _emailHelper = emailHelper;
+            _logger = logger;
         }
         public async Task<OAuthLoginResult> Handle(OAuthLoginsCommand request, CancellationToken cancellationToken)
         {
@@ -45,6 +47,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             // Check if a user with the provided email already exists in the database
             if (user is not null)
             {
+                _logger.LogInformation("OAuth login: existing user found with email {Email}", request.Email);
                 if (user.IsEmailVerified is false)
                 {
                     try
@@ -53,6 +56,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                     }
                     catch
                     {
+                        _logger.LogError("OAuth login: failed to update email verification status for user with email {Email}", request.Email);
                         return new OAuthLoginResult(null, new ErrorCarrier()
                         {
                             Title = "INTERNAL_SERVER_ERROR",
@@ -112,6 +116,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
 
 
             // Save the new user to the database
+            _logger.LogInformation("OAuth login: creating new user account for email {Email}", request.Email);
             try
             {
                 await _authDbContext.Users.AddAsync(newUser, cancellationToken);
@@ -119,6 +124,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             }
             catch
             {
+                _logger.LogError("OAuth login: failed to create new user account for email {Email}", request.Email);
                 return new OAuthLoginResult(null, new ErrorCarrier()
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -135,6 +141,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             // If the "User" role does not exist, create it
             if (userRoleEntity == null)
             {
+                _logger.LogWarning("OAuth login: default 'User' role not found, creating it");
                 try
                 {
                     await _authDbContext.Roles.AddAsync(new EntityModels.Role
@@ -148,6 +155,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 }
                 catch
                 {
+                    _logger.LogError("OAuth login: failed to create default 'User' role for new OAuth user with email {Email}", request.Email);
                     _authDbContext.Users.Remove(newUser);
                     await _authDbContext.SaveChangesAsync(cancellationToken);
                     return new OAuthLoginResult(null, new ErrorCarrier()
@@ -177,6 +185,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             }
             catch
             {
+                _logger.LogError("OAuth login: failed to assign 'User' role to new OAuth user with email {Email}", request.Email);
                 _authDbContext.Users.Remove(newUser);
                 await _authDbContext.SaveChangesAsync(cancellationToken);
                 return new OAuthLoginResult(null, new ErrorCarrier()
@@ -198,6 +207,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
 
             if(!passwordMail)
             {
+                _logger.LogWarning("OAuth login: failed to send temporary password email to new user with email {Email}", request.Email);
                 msg = msg + " However, we were unable to send you an email with the temporary password. Please try to reset your password manually.";
             }
 
@@ -247,6 +257,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
             #endregion
 
 
+            _logger.LogInformation("OAuth login successful for user with email {Email}", request.Email);
             return new OAuthLoginResult(new OAuthLoginResponse(newAccessToken, newRefreshToken, msg), null);
         }
     }

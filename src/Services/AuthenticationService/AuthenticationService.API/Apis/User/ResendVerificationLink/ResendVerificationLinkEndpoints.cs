@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Apis.User.GetVerificationLink
@@ -14,7 +14,7 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
             RuleFor(x => x).NotEmpty().WithMessage("The email must not be empty.")
                 .EmailAddress().WithMessage("The email must be a valid email address.");
         }
-    }  
+    }
 
 
     public class ResendVerificationLinkEndpoints : ICarterModule
@@ -34,13 +34,14 @@ namespace AuthenticationService.API.Apis.User.GetVerificationLink
                 .AllowAnonymous();
         }
 
-        private static async Task<IResult> HandleResendVerifyEmailLink([FromQuery] string email, ISender sender)
+        private static async Task<IResult> HandleResendVerifyEmailLink([FromQuery] string email, ISender sender, ILogger<ResendVerificationLinkEndpoints> logger)
         {
 
             var validator = new ResendVerificationLinkValidator();
             var validationResult = await validator.ValidateAsync(email);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Resend verification link failed: invalid email format for email {Email}", email);
                 return Results.Problem(detail: validationResult.Errors.First().ErrorMessage, statusCode: 400, title: "INVALID_REQUEST");
             }
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
 {
@@ -22,11 +22,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/filter", async (HttpContext httpContext, [AsParameters] FilterAreaRequest request, ISender sender, [FromServices] IValidator<FilterAreaRequest> validator) =>
+            app.MapGet("/areas/filter", async (HttpContext httpContext, [AsParameters] FilterAreaRequest request, ISender sender, [FromServices] IValidator<FilterAreaRequest> validator, ILogger<FilterAreaEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Filter areas failed: validation error");
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

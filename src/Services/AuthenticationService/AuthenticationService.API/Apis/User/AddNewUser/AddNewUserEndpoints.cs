@@ -86,8 +86,6 @@ namespace AuthenticationService.API.Apis.User.AddNewUser
                 var response = result.Response.Adapt<RegisterUserResponse>();
 
 
-                logger.LogInformation("User registered successfully with ID: {UserId}", response!.UserId);
-
                 return Results.Ok(response);
             })
             .WithName("RegisterUser")

@@ -59,6 +59,7 @@
                     p.Images != null ? p.Images.Select(i => i.Url).ToList() : new List<string?>()))
                 .ToListAsync(cancellationToken);
 
+            _logger.LogInformation("Filter parking spaces query returned {Count} result(s)", parkingSpaces.Count);
             return new FilterParkingSpaceResult(parkingSpaces);
         }
     }

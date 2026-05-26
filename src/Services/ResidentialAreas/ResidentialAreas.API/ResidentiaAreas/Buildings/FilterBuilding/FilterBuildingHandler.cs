@@ -46,6 +46,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.FilterBuilding
                             (!request.AreaCode.HasValue || b.Area!.Code == request.AreaCode.Value)).ToListAsync(cancellationToken);
 
 
+            _logger.LogInformation("Filter buildings query returned {Count} result(s)", query.Count);
             return new FilterBuildingResult(query.Select(b=> b.Adapt<FilterBuildingResponseInstance>() with {ImageUrls = b.Images?.Select(i => i.Url).ToList(), AreaName = b.Area?.Name ?? string.Empty, AreaCode = b.Area?.Code ?? 0 }).ToList());
         }
     }

@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.Helpers.ErrorCarrier;
 using AuthenticationService.API.Helpers.PasswordHelper.Hasher;
 using CQRSPattern.CQRS;
@@ -15,11 +15,13 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
     {
         private readonly AuthDbContext _authDbContext;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly ILogger<ChangePasswordHandler> _logger;
 
-        public ChangePasswordHandler(AuthDbContext authDbContext, IPasswordHasher passwordHasher)
+        public ChangePasswordHandler(AuthDbContext authDbContext, IPasswordHasher passwordHasher, ILogger<ChangePasswordHandler> logger)
         {
             _authDbContext = authDbContext;
             _passwordHasher = passwordHasher;
+            _logger = logger;
         }
 
         public async Task<ChangePasswordResult> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
@@ -29,6 +31,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
             // Validate new password and confirmation match
             if (user == null)
             {
+                _logger.LogWarning("Change password failed: No user found with email {Email}", request.UserEmail);
                 return new ChangePasswordResult(null, new ErrorCarrier()
                         {
                             Title = "USER_NOT_FOUND",
@@ -41,6 +44,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
             // Check if the user has a password set
             if (user.PasswordHash is null)
             {
+                _logger.LogWarning("Change password failed: User with email {Email} has no password set", request.UserEmail);
                 return new ChangePasswordResult(null, new ErrorCarrier()
                 {
                     Title = "PASSWORD_NOT_SET",
@@ -55,6 +59,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
             bool isCurrentPasswordValid = await _passwordHasher.VerifyPassword(request.CurrentPassword, user!.PasswordHash!);
             if (!isCurrentPasswordValid)
             {
+                _logger.LogWarning("Change password failed: Invalid current password for user with email {Email}", request.UserEmail);
                 return new ChangePasswordResult(null, new ErrorCarrier()
                 {
                     Title = "INVALID_CURRENT_PASSWORD",
@@ -73,6 +78,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
             }
             catch
             {
+                _logger.LogError("Change password failed: Database error while updating password for user with email {Email}", request.UserEmail);
                 return new ChangePasswordResult(null, new ErrorCarrier()
                 {
                     Title = "PASSWORD_UPDATE_FAILED",
@@ -81,8 +87,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
                 });
             }
 
-            
-
+            _logger.LogInformation("Password changed successfully for user with email {Email}", request.UserEmail);
             return new ChangePasswordResult(new ChangePasswordResponse(true,"Password updated successfully."), null);
         }
     }

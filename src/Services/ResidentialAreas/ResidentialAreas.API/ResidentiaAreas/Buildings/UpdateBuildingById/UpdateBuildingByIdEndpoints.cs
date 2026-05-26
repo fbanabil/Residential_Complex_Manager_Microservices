@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.Helpers.Image;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
@@ -32,11 +32,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/update-by-id", async (UpdateBuildingByIdRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByIdRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/buildings/update-by-id", async (UpdateBuildingByIdRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateBuildingByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Update building by ID failed: validation error for building ID {BuildingId}", request.Id);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

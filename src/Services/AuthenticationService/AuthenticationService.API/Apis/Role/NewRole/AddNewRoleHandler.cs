@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.Helpers.ErrorCarrier;
 using CQRSPattern.CQRS;
 using Mapster;
@@ -11,17 +11,21 @@ namespace AuthenticationService.API.Apis.Role.NewRole
     public class AddNewRoleHandler : ICommandHandler<AddNewRoleCommand, AddNewRoleResult>
     {
         private readonly AuthDbContext _authDbContext;
-        public AddNewRoleHandler(AuthDbContext authDbContext)
+        private readonly ILogger<AddNewRoleHandler> _logger;
+
+        public AddNewRoleHandler(AuthDbContext authDbContext, ILogger<AddNewRoleHandler> logger)
         {
             _authDbContext = authDbContext;
+            _logger = logger;
         }
+
         public async Task<AddNewRoleResult> Handle(AddNewRoleCommand request, CancellationToken cancellationToken)
         {
             EntityModels.Role? existingRole = await _authDbContext.Roles.AsNoTracking().FirstOrDefaultAsync(r => r.Name == request.Name, cancellationToken);
 
-
             if (existingRole!=null)
             {
+                _logger.LogWarning("Add role failed: Role with name '{RoleName}' already exists", request.Name);
                 ErrorCarrier errorCarrier = new ErrorCarrier
                 {
                     Title = "ROLE_ALREADY_EXISTS",
@@ -46,6 +50,7 @@ namespace AuthenticationService.API.Apis.Role.NewRole
             }
             catch
             {
+                _logger.LogError("Add role failed: Database error while saving role with name '{RoleName}'", request.Name);
                 ErrorCarrier errorCarrier = new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -55,6 +60,7 @@ namespace AuthenticationService.API.Apis.Role.NewRole
                 return new AddNewRoleResult(null, errorCarrier);
             }
 
+            _logger.LogInformation("Role '{RoleName}' created successfully with ID {RoleId}", newRole.Name, newRole.Id);
             var response = newRole.Adapt<AddNewRoleResponse>();
 
             return new AddNewRoleResult(response, null);

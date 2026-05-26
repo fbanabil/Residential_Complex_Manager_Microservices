@@ -41,6 +41,7 @@
                 return null;
             }
 
+            _logger.LogInformation("Building retrieved successfully with ID {Id}", request.Id);
             return building.Adapt<GetBuildingByIdResult>();
         }
     }

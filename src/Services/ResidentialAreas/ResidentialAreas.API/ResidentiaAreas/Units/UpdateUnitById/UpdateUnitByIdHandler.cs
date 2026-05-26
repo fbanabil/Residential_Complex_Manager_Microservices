@@ -265,6 +265,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.UpdateUnitById
 
 
 
+            _logger.LogInformation("Unit updated successfully with ID {Id}", request.Id);
             return new UpdateUnitByIdResult(new UpdateUnitByIdResponse(
                 unit.Id,
                 unit.Code,

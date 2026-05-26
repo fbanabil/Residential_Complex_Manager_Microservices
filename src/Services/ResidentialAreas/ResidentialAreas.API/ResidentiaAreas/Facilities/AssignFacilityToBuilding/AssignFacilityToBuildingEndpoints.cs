@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuilding
 {
@@ -31,11 +31,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
                 .RequireAuthorization("AdminOrComplexManager");
         }
 
-        private static async Task<IResult> HandleAssignFacilityToBuilding(AssignFacilityToBuildingRequest request, ISender sender, [FromServices] IValidator<AssignFacilityToBuildingRequest> validator, CancellationToken cancellationToken)
+        private static async Task<IResult> HandleAssignFacilityToBuilding(AssignFacilityToBuildingRequest request, ISender sender, [FromServices] IValidator<AssignFacilityToBuildingRequest> validator, CancellationToken cancellationToken, ILogger<AssignFacilityToBuildingEndpoints> logger)
         {
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
+                logger.LogWarning("Assign facility to building failed: validation error for facility code {FacilityCode} and building code {BuildingCode}", request.FacilityCode, request.BuildingCode);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 

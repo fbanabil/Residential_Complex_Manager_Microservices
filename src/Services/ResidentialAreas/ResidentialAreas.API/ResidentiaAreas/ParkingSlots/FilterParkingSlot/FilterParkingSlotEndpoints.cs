@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -54,11 +54,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.FilterParkingSlot
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/parking-slots/filter", async ([AsParameters] FilterParkingSlotRequest request, ISender sender, [FromServices] IValidator<FilterParkingSlotRequest> validator) =>
+            app.MapGet("/parking-slots/filter", async ([AsParameters] FilterParkingSlotRequest request, ISender sender, [FromServices] IValidator<FilterParkingSlotRequest> validator, ILogger<FilterParkingSlotEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Filter parking slots failed: validation error");
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

@@ -1,4 +1,4 @@
-﻿using ResidentialAreas.API.Helpers.ImageSaver;
+using ResidentialAreas.API.Helpers.ImageSaver;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
 {
@@ -9,11 +9,15 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
     {
         private readonly AreaDbContext _areaDbContext;
         private readonly IImageSaver _imageSaver;
-        public AddNewAreaHandler(AreaDbContext areaDbContext, IImageSaver imageSaver)
+        private readonly ILogger<AddNewAreaHandler> _logger;
+
+        public AddNewAreaHandler(AreaDbContext areaDbContext, IImageSaver imageSaver, ILogger<AddNewAreaHandler> logger)
         {
             _areaDbContext = areaDbContext;
             _imageSaver = imageSaver;
+            _logger = logger;
         }
+
         public async Task<AddNewAreaResult> Handle(AddNewAreaCommand request, CancellationToken cancellationToken)
         {
             List<string?>? imageBase64List = request.ImageBase64;
@@ -27,7 +31,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 {
                     if (string.IsNullOrEmpty(imageBase64))
                     {
-                        continue; 
+                        continue;
                     }
 
                     try
@@ -37,7 +41,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                     catch (Exception ex)
                     {
                         imagePath = "images/default.jpg";
-                        Console.WriteLine($"Error saving image: {ex.Message}");
+                        _logger.LogError(ex, "Error saving image for area '{AreaName}', using default image", request.Name);
                     }
 
                     imagePathToAdd.Add(imagePath);
@@ -45,7 +49,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
                 }
             }
 
-            
+
 
             Area newArea = new Area
             {
@@ -70,6 +74,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Add new area failed: database error while saving area '{AreaName}'", request.Name);
                 return new AddNewAreaResult(null, null, null, $"Error saving area: Please try again later");
             }
 
@@ -93,10 +98,11 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Add new area failed: database error while saving images for area '{AreaName}' with ID {AreaId}", request.Name, newArea.Id);
                 return new AddNewAreaResult(newArea.Id, newArea.Name, newArea.Code, $"Error saving images: Please try again later");
             }
 
-
+            _logger.LogInformation("Area '{AreaName}' created successfully with ID {AreaId} and code {AreaCode}", newArea.Name, newArea.Id, newArea.Code);
             return new AddNewAreaResult(newArea.Id, newArea.Name, newArea.Code, null);
         }
     }

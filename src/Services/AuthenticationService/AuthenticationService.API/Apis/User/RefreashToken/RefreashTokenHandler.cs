@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.EntityModels;
 using AuthenticationService.API.Helpers.Authenticate;
 using AuthenticationService.API.Helpers.ErrorCarrier;
@@ -16,11 +16,13 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
     {
         private readonly AuthDbContext _authDbContext;
         private readonly IAuthenticationTokenCreator _authenticationTokenCreator;
+        private readonly ILogger<RefreashTokenHandler> _logger;
 
-        public RefreashTokenHandler(AuthDbContext authDbContext, IAuthenticationTokenCreator authenticationTokenCreator)
+        public RefreashTokenHandler(AuthDbContext authDbContext, IAuthenticationTokenCreator authenticationTokenCreator, ILogger<RefreashTokenHandler> logger)
         {
             _authDbContext = authDbContext;
             _authenticationTokenCreator = authenticationTokenCreator;
+            _logger = logger;
         }
 
         public async Task<RefreashTokenResult> Handle(RefreashTokenCommand request, CancellationToken cancellationToken)
@@ -29,6 +31,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
             EntityModels.User? userExist = await _authDbContext.Users.AsNoTracking().Include(u => u.UserRoles).ThenInclude(ur => ur.Role).FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (userExist == null)
             {
+                _logger.LogWarning("Refresh token failed: No user found with email {Email}", request.Email);
                 return new RefreashTokenResult(null, new ErrorCarrier()
                 {
                     Title = "USER_NOT_FOUND",
@@ -43,6 +46,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
                 .FirstOrDefaultAsync(rt => rt.UserId == userExist.Id && rt.RevokedAt==null && rt.ExpiresAt > DateTime.UtcNow, cancellationToken);
             if (refreashToken == null)
             {
+                _logger.LogWarning("Refresh token failed: No valid refresh token found for user with email {Email}", request.Email);
                 return new RefreashTokenResult(null, new ErrorCarrier()
                 {
                     Title = "REFRESH_TOKEN_NOT_FOUND",
@@ -55,6 +59,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
 
             if (!isVaidToken)
             {
+                _logger.LogWarning("Refresh token failed: Invalid refresh token provided for user with email {Email}", request.Email);
                 return new RefreashTokenResult(null, new ErrorCarrier()
                 {
                     Title = "INVALID_REFRESH_TOKEN",
@@ -68,7 +73,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
             UserPayload userPayload = new UserPayload(UserId: userExist.Id.ToString(), Username: userExist.Username, Email: userExist.Email, Roles: userExist.UserRoles.Select(ur => ur.Role!.Name).ToList());
             string accessToken = await _authenticationTokenCreator.CreateToken(userPayload);
 
-
+            _logger.LogInformation("Refresh token successful for user with email {Email}", request.Email);
             return new RefreashTokenResult(new RefreashTokenResponse(accessToken), null);
         }
     }

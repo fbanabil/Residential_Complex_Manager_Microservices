@@ -72,7 +72,6 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             }
             httpContext.Response.Headers.Append("Authorization", $"Bearer {response.AccessToken}");
 
-            logger.LogInformation("User logged in successfully with email: {Email}", request.Email);
             return Results.Ok(response!.AccessToken);
         }
     }

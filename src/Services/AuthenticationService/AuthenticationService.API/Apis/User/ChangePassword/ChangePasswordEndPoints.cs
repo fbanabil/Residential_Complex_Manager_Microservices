@@ -1,4 +1,4 @@
-﻿using Mapster;
+using Mapster;
 using MimeKit.Encodings;
 using System.Security.Claims;
 
@@ -11,7 +11,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
 
     public class ChangePasswordValidator : AbstractValidator<ChangePasswordRequest>
     {
-        public ChangePasswordValidator() 
+        public ChangePasswordValidator()
         {
             RuleFor(x => x.CurrentPassword)
                 .NotEmpty()
@@ -41,12 +41,13 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/user/change-password", async (HttpContext httpContext, ChangePasswordRequest request, ISender sender, IValidator<ChangePasswordRequest> validator) =>
+            app.MapPost("/user/change-password", async (HttpContext httpContext, ChangePasswordRequest request, ISender sender, IValidator<ChangePasswordRequest> validator, ILogger<ChangePasswordEndPoints> logger) =>
             {
                 // Validate the request
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Validation failed for ChangePasswordRequest: {Errors}", validationResult.Errors);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
@@ -56,6 +57,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
                 var userEmail = httpContext.User.FindFirst(ClaimTypes.Email)?.Value ?? httpContext.User.FindFirst("emailaddress")?.Value ;
                 if (userEmail == null)
                 {
+                    logger.LogWarning("Change password attempt with missing email claim");
                     return Results.Problem(statusCode: StatusCodes.Status401Unauthorized, detail: "Unauthorized: User email claim is missing");
                 }
 
@@ -74,8 +76,6 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
                 {
                     return Results.Problem(statusCode: result.Error.StatusCode, detail: result.Error.Detail);
                 }
-
-
 
                 return Results.Ok(new ChangePasswordResponse(true, "Password changed successfully"));
             })

@@ -254,6 +254,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.UpdateParkingSpaceB
                 .Select(i =>  $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/{i.Url}")
                 .ToListAsync(cancellationToken);
 
+            _logger.LogInformation("Parking space updated successfully with ID {Id}", parkingSpace.Id);
             return new UpdateParkingSpaceByIdResult(new UpdateParkingSpaceByIdResponse(
                 parkingSpace.Id,
                 parkingSpace.ParkingSpaceCode,

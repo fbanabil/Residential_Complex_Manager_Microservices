@@ -4,6 +4,7 @@ using ResidentialAreas.API.Helpers.ImageSaver;
 using ResidentialAreas.API.Helpers.LocationValidator;
 using System.Security.Cryptography;
 using ResidentialAreas.API.Grpc;
+using BuildingBlocks.Messaging.KafkaLogger.Configs;
 
 namespace ResidentialAreas.API.ConfigurationExtension
 {
@@ -17,6 +18,11 @@ namespace ResidentialAreas.API.ConfigurationExtension
             {
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
 
+            });
+
+            builder.Logging.AddKafka(options =>
+            {
+                //builder.Configuration.GetSection("KafkaLogging").Bind(options);
             });
 
             builder.Services.AddDbContext<AreaDbContext>(options =>

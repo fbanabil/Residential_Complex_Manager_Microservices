@@ -93,6 +93,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
             {
                 if (parkingSpace.Area?.ComplexManagerId == null || parkingSpace.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
                 {
+                    _logger.LogWarning("Update parking slot failed: user {UserId} is not authorized for parking slot ID {Id}", userIdClaim.Value, request.Id);
                     return new UpdateParkingSlotByIdResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -117,6 +118,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
             }
             catch
             {
+                _logger.LogError("Failed to update parking slot with ID {Id}", request.Id);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateParkingSlotByIdResult(null, new ErrorCarrier
                 {
@@ -134,6 +136,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
             }
             catch
             {
+                _logger.LogError("Failed to commit transaction for parking slot update with ID {Id}", request.Id);
                 return new UpdateParkingSlotByIdResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -144,6 +147,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
 
 
 
+            _logger.LogInformation("Parking slot updated successfully with ID {Id}", request.Id);
             return new UpdateParkingSlotByIdResult( new UpdateParkingSlotByIdResponse(
                 parkingSlot.Id ?? Guid.Empty,
                 parkingSlot.SlotCode,

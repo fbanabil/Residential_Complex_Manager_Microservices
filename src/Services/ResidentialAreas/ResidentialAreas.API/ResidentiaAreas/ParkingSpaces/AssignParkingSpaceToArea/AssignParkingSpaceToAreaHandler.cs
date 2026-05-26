@@ -1,4 +1,4 @@
-﻿using ResidentialAreas.API.Helpers.ErrorCarrier;
+using ResidentialAreas.API.Helpers.ErrorCarrier;
 using System.Security.Claims;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceToArea
@@ -10,11 +10,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
     {
         private readonly AreaDbContext _areaDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<AssignParkingSpaceToAreaHandler> _logger;
 
-        public AssignParkingSpaceToAreaHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor)
+        public AssignParkingSpaceToAreaHandler(AreaDbContext areaDbContext, IHttpContextAccessor httpContextAccessor, ILogger<AssignParkingSpaceToAreaHandler> logger)
         {
             _areaDbContext = areaDbContext;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         public async Task<AssignParkingSpaceToAreaResult> Handle(AssignParkingSpaceToAreaCommand request, CancellationToken cancellationToken)
@@ -23,6 +25,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
             Area? area = await _areaDbContext.Areas.AsNoTracking().FirstOrDefaultAsync(a => a.Code == request.AreaCode, cancellationToken);
             if (area == null)
             {
+                _logger.LogWarning("Assign parking space to area failed: no area found with code {AreaCode}", request.AreaCode);
                 return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                 {
                     Title = "AREA_NOT_FOUND",
@@ -38,6 +41,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
             ParkingSpace? parkingSpace = await _areaDbContext.ParkingSpaces.AsNoTracking().Include(ps => ps.Area).FirstOrDefaultAsync(p => p.ParkingSpaceCode == request.ParkingSpaceCode, cancellationToken);
             if (parkingSpace == null)
             {
+                _logger.LogWarning("Assign parking space to area failed: no parking space found with code {ParkingSpaceCode}", request.ParkingSpaceCode);
                 return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                 {
                     Title = "PARKING_SPACE_NOT_FOUND",
@@ -49,6 +53,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
 
             if (parkingSpace.AreaId == area.Id)
             {
+                _logger.LogWarning("Assign parking space to area failed: parking space code {ParkingSpaceCode} already assigned to area code {AreaCode}", request.ParkingSpaceCode, request.AreaCode);
                 return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                 {
                     Title = "ALREADY_ASSIGNED",
@@ -66,6 +71,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
             {
                 if(area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
                 {
+                    _logger.LogWarning("Assign parking space to area failed: user {UserId} is not the complex manager of area code {AreaCode}", userIdClaim.Value, request.AreaCode);
                     return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -76,6 +82,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
 
                 if(parkingSpace.Area!=null && parkingSpace.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value))
                 {
+                    _logger.LogWarning("Assign parking space to area failed: user {UserId} is not the complex manager of the parking space's current area", userIdClaim.Value);
                     return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
@@ -92,6 +99,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
             bool duplicateName = await _areaDbContext.ParkingSpaces.AsNoTracking().AnyAsync(p => p.AreaId == area.Id && p.Name == parkingSpace.Name && p.Id != parkingSpace.Id, cancellationToken);
             if (duplicateName)
             {
+                _logger.LogWarning("Assign parking space to area failed: duplicate parking space name '{Name}' in area code {AreaCode}", parkingSpace.Name, request.AreaCode);
                 return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                 {
                     Title = "DUPLICATE_PARKING_SPACE",
@@ -109,6 +117,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
 
                 if (updated == 0)
                 {
+                    _logger.LogError("Assign parking space to area failed: update returned 0 rows for parking space code {ParkingSpaceCode} and area code {AreaCode}", request.ParkingSpaceCode, request.AreaCode);
                     return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                     {
                         Title = "UPDATE_FAILED",
@@ -117,8 +126,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Assign parking space to area failed: database error for parking space code {ParkingSpaceCode} and area code {AreaCode}", request.ParkingSpaceCode, request.AreaCode);
                 return new AssignParkingSpaceToAreaResult(null, new ErrorCarrier
                 {
                     Title = "INTERNAL_SERVER_ERROR",
@@ -127,6 +137,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.AssignParkingSpaceT
                 });
             }
 
+            _logger.LogInformation("Parking space code {ParkingSpaceCode} assigned successfully to area code {AreaCode}", request.ParkingSpaceCode, request.AreaCode);
             return new AssignParkingSpaceToAreaResult(new AssignParkingSpaceToAreaResponse(true, "Parking space assigned to area successfully."), null);
         }
     }

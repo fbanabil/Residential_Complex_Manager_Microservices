@@ -211,6 +211,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.AddNewUnit
             var httpContext = _httpContextAccessor.HttpContext;
             imagePaths = imagePaths?.Select(path => $"{httpContext?.Request.Scheme}://{httpContext?.Request.Host}/{path}").ToList()!;
 
+            _logger.LogInformation("Unit '{UnitNo}' created successfully with code {UnitCode} in building code {BuildingCode}", unit.UnitNo, unit.Code, building.Code);
             return new AddNewUnitResult(new AddNewUnitResponse(
             unit.Id,
             unit.Code,

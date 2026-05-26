@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.Helpers.GetHostUrl;
+using AuthenticationService.API.Helpers.GetHostUrl;
 using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -15,8 +15,9 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/auth/login-google", async (HttpContext httpContext, IGetHostUrl getHostUrl) =>
+            app.MapGet("/auth/login-google", async (HttpContext httpContext, IGetHostUrl getHostUrl, ILogger<OAuthLoginsEndpoints> logger) =>
             {
+                logger.LogInformation("Initiating Google OAuth login redirect");
                 var redirectUrl = await getHostUrl.GetHostUrlAsync() + "/auth/signin-google";
                 var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
                 return Results.Challenge(properties, new[] { GoogleDefaults.AuthenticationScheme });
@@ -30,12 +31,13 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
 
 
 
-            app.MapGet("/auth/signin-google", async (HttpContext httpContext, ISender sender, IGetHostUrl getHostUrl) =>
+            app.MapGet("/auth/signin-google", async (HttpContext httpContext, ISender sender, IGetHostUrl getHostUrl, ILogger<OAuthLoginsEndpoints> logger) =>
             {
                 // Authenticate the user with Google
                 var result = await httpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
                 if (!result.Succeeded || result?.Principal == null)
                 {
+                    logger.LogWarning("Google OAuth authentication failed");
                     return Results.Problem(title: "GOOGLE_AUTHENTICATION_FAILED", statusCode: StatusCodes.Status400BadRequest, detail: "Unable to authenticate with Google.");
                 }
 
@@ -44,6 +46,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 var emailClaim = result.Principal.FindFirst(c => c.Type == ClaimTypes.Email);
                 if (emailClaim == null)
                 {
+                    logger.LogWarning("Google OAuth: email claim not found in authentication result");
                     return Results.Problem(title: "EMAIL_CLAIM_NOT_FOUND", statusCode: StatusCodes.Status400BadRequest, detail: "Email claim not found in Google authentication result.");
                 }
                 var email = emailClaim.Value;
@@ -53,6 +56,7 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                 var googleIdClaim = result.Principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
                 if (googleIdClaim == null)
                 {
+                    logger.LogWarning("Google OAuth: Google ID claim not found in authentication result for email {Email}", email);
                     return Results.Problem(title: "GOOGLE_ID_CLAIM_NOT_FOUND", statusCode: StatusCodes.Status400BadRequest, detail: "Google ID claim not found in Google authentication result.");
                 }
                 var google = googleIdClaim.Value;
@@ -88,7 +92,6 @@ namespace AuthenticationService.API.Apis.User.OAuthLogins
                     httpContext.Response.Cookies.Append("refreshToken", response.RefreshToken!, cookiesOptions);
                 }
                 httpContext.Response.Headers.Append("Authorization", $"Bearer {response.AccessToken}");
-
 
                 // Return the access token in the response body
                 return Results.Ok(response.AccessToken);

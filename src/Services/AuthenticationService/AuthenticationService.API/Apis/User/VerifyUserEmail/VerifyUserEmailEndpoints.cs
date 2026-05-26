@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 {
@@ -26,11 +26,12 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
 
 
-        private static async Task<IResult> HandleVerifyEmail([FromQuery] Guid userId, [FromQuery] string token, ISender sender)
+        private static async Task<IResult> HandleVerifyEmail([FromQuery] Guid userId, [FromQuery] string token, ISender sender, ILogger<VerifyUserEmailEndpoints> logger)
         {
             var IsGuidValid = Guid.TryParse(userId.ToString(), out Guid validUserId);
             if ( (!IsGuidValid) || string.IsNullOrEmpty(token))
             {
+                logger.LogWarning("Verify email failed: invalid userId or empty token for user ID {UserId}", userId);
                 return Results.Problem(detail: "The user ID must be a valid GUID and the token must not be empty.", statusCode: 400, title: "INVALID_REQUEST");
             }
 
@@ -45,6 +46,6 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
 
             return Results.Ok(result.Result);
         }
-   
+
     }
 }

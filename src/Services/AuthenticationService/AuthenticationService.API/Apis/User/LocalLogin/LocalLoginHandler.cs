@@ -129,6 +129,7 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             }
 
 
+            _logger.LogInformation("User logged in successfully with email {Email}", request.Email);
             return new LocalLoginResult(new LocalLoginResponse(token, refreshToken), null);
         }
     }

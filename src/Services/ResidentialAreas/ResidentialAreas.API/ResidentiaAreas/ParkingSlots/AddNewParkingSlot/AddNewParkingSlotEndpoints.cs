@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using Mapster;
 
@@ -41,11 +41,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AddNewParkingSlot
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-slots/add", async (AddNewParkingSlotRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSlotRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/parking-slots/add", async (AddNewParkingSlotRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSlotRequest> validator, CancellationToken cancellationToken, ILogger<AddNewParkingSlotEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Add new parking slot failed: validation error for parking space code {ParkingSpaceCode}", request.ParkingSpaceCode);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

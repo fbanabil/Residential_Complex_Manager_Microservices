@@ -34,11 +34,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/update-by-code", async (UpdateBuildingByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByCodeRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/buildings/update-by-code", async (UpdateBuildingByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByCodeRequest> validator, CancellationToken cancellationToken, ILogger<UpdateBuildingByCodeEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Update building by code failed: validation error for building code {BuildingCode}", request.Code);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

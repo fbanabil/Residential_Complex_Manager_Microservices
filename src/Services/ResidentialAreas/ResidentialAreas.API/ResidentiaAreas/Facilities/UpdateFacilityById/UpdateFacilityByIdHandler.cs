@@ -98,6 +98,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             {
                 if (userRoles.Contains("Tenant") && (building!.TenantId == null || building.TenantId != Guid.Parse(userIdClaim.Value)))
                 {
+                    _logger.LogWarning("Update facility failed: tenant {UserId} is not authorized for facility ID {FacilityId}", userIdClaim.Value, request.Id);
                     return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                     {
                         Title = "FORBIDDEN",
@@ -108,6 +109,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
 
                 if(userRoles.Contains("ComplexManager") && (area!.ComplexManagerId == null || area.ComplexManagerId != Guid.Parse(userIdClaim.Value)))
                 {
+                    _logger.LogWarning("Update facility failed: complex manager {UserId} is not authorized for facility ID {FacilityId}", userIdClaim.Value, request.Id);
                     return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                     {
                         Title = "FORBIDDEN",
@@ -145,6 +147,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             }
             catch
             {
+                _logger.LogError("Failed to update facility properties for facility ID {FacilityId}", request.Id);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                 {
@@ -198,6 +201,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             }
             catch
             {
+                _logger.LogError("Failed to delete images for facility code {FacilityCode}", facilityCode);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                 {
@@ -218,6 +222,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             }
             catch
             {
+                _logger.LogError("Failed to save new images for facility code {FacilityCode}", facilityCode);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                 {
@@ -249,6 +254,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             }
             catch
             {
+                _logger.LogError("Failed to save image records for facility code {FacilityCode}", facilityCode);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                 {
@@ -266,6 +272,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             }
             catch
             {
+                _logger.LogError("Failed to commit transaction for facility update with ID {FacilityId}", request.Id);
                 await transaction.RollbackAsync(cancellationToken);
                 return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                 {
@@ -293,6 +300,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
 
 
 
+            _logger.LogInformation("Facility updated successfully with ID {FacilityId}", request.Id);
             return new UpdateFacilityByIdResult(new UpdateFacilityByIdResponse(
                 facility.Id ?? Guid.Empty,
                 facilityCode,

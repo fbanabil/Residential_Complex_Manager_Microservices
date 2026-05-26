@@ -1,4 +1,4 @@
-﻿using AuthenticationService.API.AuthenticationDbContest;
+using AuthenticationService.API.AuthenticationDbContest;
 using AuthenticationService.API.Helpers.ErrorCarrier;
 using CQRSPattern.CQRS;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +12,13 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
     public class VerifyUserHandler : ICommandHandler<VerifyUserCommand, VerifyUserResult>
     {
         private readonly AuthDbContext _authDbContext;
+        private readonly ILogger<VerifyUserHandler> _logger;
 
 
-        public VerifyUserHandler(AuthDbContext authDbContext)
+        public VerifyUserHandler(AuthDbContext authDbContext, ILogger<VerifyUserHandler> logger)
         {
             _authDbContext = authDbContext;
+            _logger = logger;
         }
 
 
@@ -26,6 +28,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
 
             if(user == null)
             {
+                _logger.LogWarning("Verify user failed: No user found with email {Email}", request.Email);
                 return new VerifyUserResult(null, new ErrorCarrier()
                 {
                     Title = "USER_NOT_FOUND",
@@ -36,6 +39,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
 
             if(user.IsUserVerified)
             {
+                _logger.LogInformation("Verify user: user with email {Email} is already verified", request.Email);
                 return new VerifyUserResult(new VerifyUserResponse(Success: true, Message: "User is already verified."), null);
             }
 
@@ -45,6 +49,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
             }
             catch
             {
+                _logger.LogError("Verify user failed: Database error while verifying user with email {Email}", request.Email);
                 return new VerifyUserResult(null, new ErrorCarrier()
                 {
                     Title = "USER_VERIFICATION_FAILED",
@@ -53,6 +58,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
                 });
             }
 
+            _logger.LogInformation("User verified successfully with email {Email}", request.Email);
             return new VerifyUserResult(new VerifyUserResponse(Success: true, Message: "User verified successfully."), null);
         }
     }

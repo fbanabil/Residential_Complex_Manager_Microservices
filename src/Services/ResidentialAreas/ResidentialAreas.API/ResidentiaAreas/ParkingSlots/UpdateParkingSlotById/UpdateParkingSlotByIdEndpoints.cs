@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotById
 {
@@ -41,11 +41,12 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.UpdateParkingSlotByI
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-slots/update-by-id", async (UpdateParkingSlotByIdRequest request, ISender sender, [FromServices] IValidator<UpdateParkingSlotByIdRequest> validator, CancellationToken cancellationToken) =>
+            app.MapPost("/parking-slots/update-by-id", async (UpdateParkingSlotByIdRequest request, ISender sender, [FromServices] IValidator<UpdateParkingSlotByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateParkingSlotByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Update parking slot by ID failed: validation error for parking slot ID {ParkingSlotId}", request.Id);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 

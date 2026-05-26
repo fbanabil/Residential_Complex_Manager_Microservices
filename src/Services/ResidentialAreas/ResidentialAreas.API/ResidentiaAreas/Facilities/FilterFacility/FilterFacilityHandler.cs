@@ -80,6 +80,7 @@
                 .ToListAsync(cancellationToken);
 
 
+            _logger.LogInformation("Filter facilities query returned {Count} result(s)", facilities.Count);
             return new FilterFacilityResult(facilities);
         }
     }

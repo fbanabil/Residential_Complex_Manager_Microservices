@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Apis.User.RefreashToken
 {
@@ -18,11 +18,12 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/auth/user/refreash-token", async (HttpContext httpContext, [FromQuery] string email, ISender sender, IValidator<string> emailValidator) =>
+            app.MapPost("/auth/user/refreash-token", async (HttpContext httpContext, [FromQuery] string email, ISender sender, IValidator<string> emailValidator, ILogger<RefreashTokenEndpoints> logger) =>
             {
                 var validationResult = emailValidator.Validate(email);
                 if (!validationResult.IsValid)
                 {
+                    logger.LogWarning("Refresh token request failed: invalid email format for email {Email}", email);
                     return Results.ValidationProblem(validationResult.ToDictionary());
                 }
 
@@ -30,6 +31,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
                 string? refreashToken = httpContext?.Request?.Cookies["refreshToken"]?.ToString() ?? null;
                 if (string.IsNullOrEmpty(refreashToken))
                 {
+                    logger.LogWarning("Refresh token request failed: refresh token cookie missing for email {Email}", email);
                     return Results.Problem(statusCode: StatusCodes.Status400BadRequest, detail: "Refreash token is required");
                 }
 
@@ -37,7 +39,7 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
                 var command = new RefreashTokenCommand(email, refreashToken);
                 var result = await sender.Send(command);
 
-                
+
                 if (result.Error != null)
                 {
                     return Results.Problem(statusCode: StatusCodes.Status400BadRequest, detail: result.Error.Detail);
@@ -51,7 +53,6 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
 
 
                 httpContext?.Response.Headers.Append("Authorization", $"Bearer {result.Result.AccessToken}");
-                
                 return Results.Ok(result.Result!.AccessToken);
             })
                 .WithName("RefreashToken")
