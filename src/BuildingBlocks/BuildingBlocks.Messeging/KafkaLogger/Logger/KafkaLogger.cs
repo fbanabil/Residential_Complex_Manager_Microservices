@@ -66,11 +66,15 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Logger
                 ExceptionMessage = exception?.Message,
                 ExceptionStackTrace = exception?.StackTrace,
 
+                
                 TraceId = activity?.TraceId.ToString(),
                 SpanId = activity?.SpanId.ToString(),
 
                 RequestId = properties.ContainsKey("RequestId") ? properties["RequestId"] : null,
                 CorrelationId = properties.ContainsKey("CorrelationId") ? properties["CorrelationId"] : null,
+                UserId = properties.ContainsKey("UserId") ? properties["UserId"] : null,
+                UserName = properties.ContainsKey("UserName") ? properties["UserName"] : null,
+                UserRoles = properties.ContainsKey("UserRoles") ? properties["UserRoles"] : null,
 
                 Properties = properties
             };

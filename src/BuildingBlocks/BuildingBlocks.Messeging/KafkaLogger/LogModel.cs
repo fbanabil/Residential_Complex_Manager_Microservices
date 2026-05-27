@@ -18,6 +18,11 @@ namespace BuildingBlocks.Messaging.KafkaLogger
 
         public Dictionary<string, string?> Properties { get; set; } = new(); 
 
+        public string? UserId { get; set; }
+        public string? UserName { get; set; }
+        public string? UserRoles { get; set; }
+
+
         public string? ExceptionType { get; set; }
         public string? ExceptionMessage { get; set; }
 

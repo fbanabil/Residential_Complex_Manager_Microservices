@@ -33,11 +33,10 @@
 
             }
             
-            app.UseMiddleware<BuildingBlocks.Messaging.KafkaLogger.Configs.CorrelationMiddleware>();
-
-
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<BuildingBlocks.Messaging.KafkaLogger.Configs.CorrelationMiddleware>();
+
             app.MapCarter();
         }
     }

@@ -14,10 +14,11 @@ namespace AuthenticationService.API.ConfigurationExtension
             //app.UseHsts();
             //app.UseHttpsRedirection();
 
-          app.UseMiddleware<BuildingBlocks.Messaging.KafkaLogger.Configs.CorrelationMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<BuildingBlocks.Messaging.KafkaLogger.Configs.CorrelationMiddleware>();
 
 
             using (var scope = app.Services.CreateScope())
