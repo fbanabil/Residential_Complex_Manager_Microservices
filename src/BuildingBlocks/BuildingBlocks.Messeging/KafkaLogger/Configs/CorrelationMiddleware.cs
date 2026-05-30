@@ -29,10 +29,10 @@ namespace BuildingBlocks.Messaging.KafkaLogger.Configs
 
             context.Response.Headers[HeaderName] = correlationId;
 
-            var userIdClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
+            var userIdClaim = context.User?.FindFirst(ClaimTypes.NameIdentifier);
             var userId = userIdClaim?.Value ?? "Anonymous";
-            var userRoles = context.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-            var userName = context.User.Identity?.Name ?? "Unknown";
+            var userRoles = context.User?.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
+            var userName = context.User?.Identity?.Name ?? "Unknown";
 
             var scopeData = new Dictionary<string, object?>
             {

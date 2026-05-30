@@ -1,6 +1,7 @@
 using BuildingBlocks.Messaging.KafkaLogger;
 using BuildingBlocks.Messaging.KafkaLogger.Configs;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace QueryService.API.Repository
@@ -40,9 +41,13 @@ namespace QueryService.API.Repository
 
         public async Task<List<string>> GetDistinctServiceNamesAsync(CancellationToken cancellationToken)
         {
-            return await _collection
-                .DistinctAsync(x => x.ServiceName, Builders<LogModel>.Filter.Ne(x => x.ServiceName, null), cancellationToken: cancellationToken)
-                .ContinueWith(t => t.Result.ToList(), cancellationToken);
+            var cursor = await _collection.DistinctAsync(
+                x => x.ServiceName,
+                Builders<LogModel>.Filter.Ne(x => x.ServiceName, null),
+                cancellationToken: cancellationToken);
+
+            var values = await cursor.ToListAsync(cancellationToken);
+            return values.Where(v => v is not null).Select(v => v!).ToList();
         }
 
         public async Task<List<LogModel>> GetLogsByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken)
@@ -60,5 +65,84 @@ namespace QueryService.API.Repository
                 .Sort(Builders<LogModel>.Sort.Ascending(x => x.Timestamp))
                 .ToListAsync(cancellationToken);
         }
+
+        public async Task<List<BucketCount>> CountByLogLevelAsync(FilterDefinition<LogModel> filter, CancellationToken cancellationToken)
+        {
+            var groupStage = new BsonDocument("$group", new BsonDocument
+            {
+                { "_id", "$LogLevel" },
+                { "count", new BsonDocument("$sum", 1) }
+            });
+            var sortStage = new BsonDocument("$sort", new BsonDocument("count", -1));
+
+            var results = await _collection.Aggregate()
+                .Match(filter)
+                .AppendStage<BsonDocument>(groupStage)
+                .AppendStage<BsonDocument>(sortStage)
+                .ToListAsync(cancellationToken);
+
+            return results.Select(d => new BucketCount(
+                d["_id"].IsBsonNull ? null : d["_id"].AsString,
+                d["count"].ToInt64())).ToList();
+        }
+
+        public async Task<List<BucketCount>> CountByServiceNameAsync(FilterDefinition<LogModel> filter, CancellationToken cancellationToken)
+        {
+            var groupStage = new BsonDocument("$group", new BsonDocument
+            {
+                { "_id", "$ServiceName" },
+                { "count", new BsonDocument("$sum", 1) }
+            });
+            var sortStage = new BsonDocument("$sort", new BsonDocument("count", -1));
+
+            var results = await _collection.Aggregate()
+                .Match(filter)
+                .AppendStage<BsonDocument>(groupStage)
+                .AppendStage<BsonDocument>(sortStage)
+                .ToListAsync(cancellationToken);
+
+            return results.Select(d => new BucketCount(
+                d["_id"].IsBsonNull ? null : d["_id"].AsString,
+                d["count"].ToInt64())).ToList();
+        }
+
+        public async Task<List<TimeBucketCount>> CountByTimeBucketAsync(FilterDefinition<LogModel> filter, string bucketUnit, CancellationToken cancellationToken)
+        {
+            var groupStage = new BsonDocument("$group", new BsonDocument
+            {
+                { "_id", new BsonDocument
+                    {
+                        { "bucket", new BsonDocument("$dateTrunc", new BsonDocument
+                            {
+                                { "date", "$Timestamp" },
+                                { "unit", bucketUnit }
+                            })
+                        },
+                        { "level", "$LogLevel" }
+                    }
+                },
+                { "count", new BsonDocument("$sum", 1) }
+            });
+            var sortStage = new BsonDocument("$sort", new BsonDocument("_id.bucket", 1));
+
+            var results = await _collection.Aggregate()
+                .Match(filter)
+                .AppendStage<BsonDocument>(groupStage)
+                .AppendStage<BsonDocument>(sortStage)
+                .ToListAsync(cancellationToken);
+
+            return results.Select(d =>
+            {
+                var id = d["_id"].AsBsonDocument;
+                return new TimeBucketCount(
+                    id["bucket"].ToUniversalTime(),
+                    id.Contains("level") && !id["level"].IsBsonNull ? id["level"].AsString : null,
+                    d["count"].ToInt64());
+            }).ToList();
+        }
     }
+
+    public record BucketCount(string? Key, long Count);
+
+    public record TimeBucketCount(DateTime Bucket, string? LogLevel, long Count);
 }
