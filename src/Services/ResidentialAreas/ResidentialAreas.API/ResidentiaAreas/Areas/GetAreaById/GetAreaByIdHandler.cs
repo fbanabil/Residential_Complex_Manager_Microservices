@@ -1,5 +1,4 @@
-﻿
-namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
+﻿namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
 {
 
     public record GetAreaByIdQuery(Guid Id) : IQuery<GetAreaByIdResult>;
@@ -34,10 +33,23 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
                 ImageUrls = a.Images.Select(i => i.Url).ToList()
             }).FirstOrDefaultAsync(cancellationToken);
 
-            if(area == null)
+            if (area == null)
             {
                 _logger.LogWarning("Area with ID {Id} not found.", request.Id);
-                return null;
+                return new GetAreaByIdResult(
+                    Guid.Empty,
+                    0,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    DateTime.MinValue,
+                    DateTime.MinValue,
+                    new List<string?>());
             }
 
             var result = area.Adapt<GetAreaByIdResult>();

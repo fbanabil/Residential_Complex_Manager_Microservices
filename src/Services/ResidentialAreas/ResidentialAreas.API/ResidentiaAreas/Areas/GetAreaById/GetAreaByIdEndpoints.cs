@@ -1,10 +1,9 @@
-
 using Microsoft.AspNetCore.Mvc;
 using ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea;
 
 namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
 {
-    public record GetAreaByIdResponse(Guid Id,long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt, List<string?>? ImageUrls);
+    public record GetAreaByIdResponse(Guid Id, long Code, string Name, string City, string State, string Country, string PostalCode, string Address, string GeoBoundary, string Status, DateTime CreatedAt, DateTime UpdatedAt, List<string?>? ImageUrls);
 
 
     public class GetAreaByIdRequestValidator : AbstractValidator<Guid>
@@ -32,9 +31,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.GetAreaById
 
                 var query = new GetAreaByIdQuery(id);
                 var result = await sender.Send(query);
-                if (result == null)
+                if (result is null || result.Id == Guid.Empty)
                 {
-                    return Results.NotFound($"Area with ID {id} not found.");
+                    return Results.Problem($"Area with ID {id} not found.");
                 }
                 var response = result.Adapt<GetAreaByIdResponse>();
 

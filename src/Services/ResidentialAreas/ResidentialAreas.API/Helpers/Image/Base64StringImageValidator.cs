@@ -55,6 +55,10 @@
             }
 
             string base64Data = base64[(markerIndex + marker.Length)..];
+            if (string.IsNullOrWhiteSpace(base64Data))
+            {
+                return false;
+            }
 
             Span<byte> buffer = new byte[base64Data.Length];
             return Convert.TryFromBase64String(base64Data, buffer, out _);

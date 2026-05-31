@@ -16,7 +16,15 @@
             Status? statusValue = null;
             if (!string.IsNullOrWhiteSpace(request.Status))
             {
-                statusValue = System.Enum.Parse<Status>(request.Status, true);
+                if (System.Enum.TryParse<Status>(request.Status, true, out var parsedStatus))
+                {
+                    statusValue = parsedStatus;
+                }
+                else
+                {
+                    _logger.LogWarning("Invalid status value provided: {Status}. Valid values are: Active, Inactive, Maintenance.", request.Status);
+                    return new FilterAreaResult(null, "Invalid status value. Valid values are: Active, Inactive, Maintenance.");
+                }
             }
 
 

@@ -73,7 +73,7 @@ namespace ResidentialAreas.API.Helpers.ImageSaver
             string filePath = Path.Combine(saveDirectory, fileName);
 
             await File.WriteAllBytesAsync(filePath, imageBytes);
-            filePath = filePath.Replace("wwwroot/", "");
+            filePath = filePath.Replace("wwwroot/", "").Replace("wwwroot\\", "");
             return filePath;
         }
 
