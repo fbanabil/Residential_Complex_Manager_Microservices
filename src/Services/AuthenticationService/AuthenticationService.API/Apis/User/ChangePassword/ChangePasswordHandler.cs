@@ -55,6 +55,19 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
 
 
 
+            // Check if new password and confirmation match
+            if (request.NewPassword != request.ConfirmNewPassword)
+            {
+                _logger.LogWarning("Change password failed: new password and confirmation do not match for {Email}", request.UserEmail);
+                return new ChangePasswordResult(null, new ErrorCarrier
+                {
+                    Title = "PASSWORD_MISMATCH",
+                    StatusCode = 400,
+                    Detail = "New password and confirmation password do not match."
+                });
+            }
+
+
             // Validate current password
             bool isCurrentPasswordValid = await _passwordHasher.VerifyPassword(request.CurrentPassword, user!.PasswordHash!);
             if (!isCurrentPasswordValid)

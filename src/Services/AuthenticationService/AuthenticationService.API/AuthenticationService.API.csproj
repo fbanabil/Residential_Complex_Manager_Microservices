@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Grpc.Helpers\**" />
+    <Content Remove="Grpc.Helpers\**" />
+    <EmbeddedResource Remove="Grpc.Helpers\**" />
+    <None Remove="Grpc.Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Carter" Version="8.2.1" />
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.80.0" />
@@ -42,7 +49,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Grpc.Helpers\" />
     <Folder Include="Keys\" />
     <Folder Include="wwwroot\images\nidImages\" />
     <Folder Include="wwwroot\images\profileImages\" />

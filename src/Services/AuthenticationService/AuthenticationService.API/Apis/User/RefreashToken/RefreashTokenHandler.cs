@@ -41,10 +41,10 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
             }
 
 
-            // Validate the refresh token exists and is valid
-            EntityModels.RefreshToken? refreashToken = await _authDbContext.RefreshTokens.AsNoTracking()
-                .FirstOrDefaultAsync(rt => rt.UserId == userExist.Id && rt.RevokedAt==null && rt.ExpiresAt > DateTime.UtcNow, cancellationToken);
-            if (refreashToken == null)
+            // Ensure the user has at least one active (non-revoked, non-expired) refresh token
+            bool hasActiveRefreshToken = await _authDbContext.RefreshTokens.AsNoTracking()
+                .AnyAsync(rt => rt.UserId == userExist.Id && rt.RevokedAt == null && rt.ExpiresAt > DateTime.UtcNow, cancellationToken);
+            if (!hasActiveRefreshToken)
             {
                 _logger.LogWarning("Refresh token failed: No valid refresh token found for user with email {Email}", request.Email);
                 return new RefreashTokenResult(null, new ErrorCarrier()
@@ -55,9 +55,16 @@ namespace AuthenticationService.API.Apis.User.RefreashToken
                 });
             }
 
-            bool isVaidToken = await RefreashTokenGenerator.VerifyTokenAsync(request.RefreashToken, refreashToken.TokenHash);
+            // Look the token up by its hash so any of the user's active tokens (e.g. multiple devices/sessions) is accepted, not just an arbitrary "first" one.
+            string presentedTokenHash = await RefreashTokenGenerator.HashTokenAsync(request.RefreashToken);
 
-            if (!isVaidToken)
+            EntityModels.RefreshToken? refreashToken = await _authDbContext.RefreshTokens.AsNoTracking()
+                .FirstOrDefaultAsync(rt => rt.UserId == userExist.Id
+                                        && rt.TokenHash == presentedTokenHash
+                                        && rt.RevokedAt == null
+                                        && rt.ExpiresAt > DateTime.UtcNow, cancellationToken);
+
+            if (refreashToken == null)
             {
                 _logger.LogWarning("Refresh token failed: Invalid refresh token provided for user with email {Email}", request.Email);
                 return new RefreashTokenResult(null, new ErrorCarrier()

@@ -65,7 +65,22 @@ namespace AuthenticationService.API.Apis.User.VerifyUserEmail
             // Get latest token
             EntityModels.SecurityTokens actualToken = usersTokens.OrderByDescending(t => t.ExpiresAt).FirstOrDefault()!;
 
-            await _authDbContext.SecurityTokens.Where(t => t.Id != actualToken.Id).ExecuteDeleteAsync(cancellationToken);
+
+            // Delete all other tokens for the user and token type except the actual token
+            try
+            {
+                await _authDbContext.SecurityTokens.Where(t => t.UserId == request.UserId && t.Id != actualToken.Id).ExecuteDeleteAsync(cancellationToken);
+            }
+            catch
+            {
+                _logger.LogError("Verify email failed: Database error while deleting old tokens for user ID {UserId}", request.UserId);
+                return new VerifyUserEmailResult(null, new ErrorCarrier()
+                {
+                    Title = "INTERNAL_SERVER_ERROR",
+                    StatusCode = 500,
+                    Detail = "Something went wront, please try again"
+                });
+            }
 
 
 

@@ -46,14 +46,15 @@ namespace Residential_Complex_Manager_Tests.AuthenticationService.Unit
                 new List<string> { "Admin", "User" });
 
             var jwt = await _sut.CreateToken(payload);
-            var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
+            var json = DecodePayload(jwt);
 
-            var roleValues = token.Claims
-                .Where(c => c.Type == ClaimTypes.Role || c.Type == "role" || c.Type == "roles")
-                .Select(c => c.Value)
-                .ToList();
+            using var doc = System.Text.Json.JsonDocument.Parse(json);
+            var roleProp = doc.RootElement.EnumerateObject()
+                .First(p => p.Name == ClaimTypes.Role || p.Name == "role" || p.Name == "roles");
 
-            roleValues.Should().BeEquivalentTo(new[] { "Admin", "User" });
+            roleProp.Value.ValueKind.Should().Be(System.Text.Json.JsonValueKind.Array);
+            roleProp.Value.EnumerateArray().Select(e => e.GetString()).ToList()
+                .Should().BeEquivalentTo(new[] { "Admin", "User" });
         }
 
         [Fact]
@@ -61,10 +62,13 @@ namespace Residential_Complex_Manager_Tests.AuthenticationService.Unit
         {
             var payload = new UserPayload(Guid.NewGuid().ToString(), "dan", "d@example.com",
                 new List<string>());
-            var before = DateTime.UtcNow;
+            var before = DateTimeOffset.UtcNow;
             var jwt = await _sut.CreateToken(payload);
-            var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
-            token.ValidTo.Should().BeCloseTo(before.AddDays(1), TimeSpan.FromMinutes(2));
+            var json = DecodePayload(jwt);
+
+            using var doc = System.Text.Json.JsonDocument.Parse(json);
+            var exp = DateTimeOffset.FromUnixTimeSeconds(doc.RootElement.GetProperty("exp").GetInt64());
+            exp.Should().BeCloseTo(before.AddDays(1), TimeSpan.FromMinutes(2));
         }
 
         private static string DecodePayload(string jwt)

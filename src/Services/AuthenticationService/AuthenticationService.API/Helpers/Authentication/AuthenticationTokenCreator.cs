@@ -22,13 +22,13 @@ namespace AuthenticationService.API.Helpers.Authenticate
 
             var key = new RsaSecurityKey(rsa.ExportParameters(true));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, payload.UserId),
                 new Claim(JwtRegisteredClaimNames.UniqueName, payload.Username),
                 new Claim(JwtRegisteredClaimNames.Email, payload.Email),
-                new Claim(ClaimTypes.Role, string.Join(",", payload.Roles))
             };
+            claims.AddRange(payload.Roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JwtSettings:Issuer"],

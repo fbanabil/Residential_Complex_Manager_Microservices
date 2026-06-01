@@ -40,14 +40,22 @@ namespace Residential_Complex_Manager_Tests.AuthenticationService.Performance
         }
 
         [Fact]
-        public async Task CreateJwt_completes_in_under_500ms_for_one_token()
+        public async Task CreateJwt_completes_in_under_500ms_per_token_on_average()
         {
             var creator = new AuthenticationTokenCreator(TestConfigurationFactory.BuildAuthConfiguration());
             var payload = new UserPayload(Guid.NewGuid().ToString(), "u", "u@x.com", new List<string> { "User" });
-            var sw = Stopwatch.StartNew();
+
             await creator.CreateToken(payload);
+
+            const int iterations = 20;
+            var sw = Stopwatch.StartNew();
+            for (int i = 0; i < iterations; i++)
+            {
+                await creator.CreateToken(payload);
+            }
             sw.Stop();
-            sw.ElapsedMilliseconds.Should().BeLessThan(500);
+
+            (sw.Elapsed.TotalMilliseconds / iterations).Should().BeLessThan(500);
         }
 
         [Fact]

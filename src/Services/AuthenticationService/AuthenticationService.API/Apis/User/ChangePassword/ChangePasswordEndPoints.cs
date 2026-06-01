@@ -19,7 +19,9 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
 
             RuleFor(x => x.NewPassword)
                 .NotEmpty()
-                .WithMessage("New password can't be empty");
+                .WithMessage("New password can't be empty")
+                .MinimumLength(8)
+                .WithMessage("The password must be at least 8 characters long.");
 
             RuleFor(x => x)
                 .Must(x => x.NewPassword == x.ConfirmNewPassword)
