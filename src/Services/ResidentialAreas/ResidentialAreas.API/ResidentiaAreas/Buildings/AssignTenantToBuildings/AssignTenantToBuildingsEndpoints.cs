@@ -19,7 +19,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignTenantToBuildings
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/building/assign-tenant", HandleAssignTenantToBuilding)
+            app.MapPost("/residential-areas/building/assign-tenant", HandleAssignTenantToBuilding)
                 .WithName("AssignTenantToBuilding")
                 .WithTags("Buildings")
                 .WithSummary("Assigns a tenant to a building.")

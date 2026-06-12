@@ -21,7 +21,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.FilterBuilding
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/buildings/filter", async (HttpContext httpContext, [AsParameters] FilterBuildingRequest request, ISender sender, [FromServices] IValidator<FilterBuildingRequest> validator, ILogger<FilterBuildingEndpoints> logger) =>
+            app.MapGet("/residential-areas/buildings/filter", async (HttpContext httpContext, [AsParameters] FilterBuildingRequest request, ISender sender, [FromServices] IValidator<FilterBuildingRequest> validator, ILogger<FilterBuildingEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

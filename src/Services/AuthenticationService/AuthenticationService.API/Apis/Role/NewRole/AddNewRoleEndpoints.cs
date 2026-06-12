@@ -21,7 +21,7 @@ namespace AuthenticationService.API.Apis.Role.NewRole
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/roles/add-new", async (AddNewRoleRequest request, ISender sender, [FromServices] IValidator<AddNewRoleRequest> validator, ILogger<AddNewRoleEndpoints> logger) =>
+            app.MapPost("/auth/roles/add-new", async (AddNewRoleRequest request, ISender sender, [FromServices] IValidator<AddNewRoleRequest> validator, ILogger<AddNewRoleEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

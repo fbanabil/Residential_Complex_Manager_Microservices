@@ -19,7 +19,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSpaces.GetParkingSpaceById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/parking-spaces/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetParkingSpaceByIdEndpoints> logger) =>
+            app.MapGet("/residential-areas/parking-spaces/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetParkingSpaceByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(id);
                 if (!validationResult.IsValid)

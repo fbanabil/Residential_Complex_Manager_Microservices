@@ -58,7 +58,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.UpdateUnitById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/units/update-by-id", async (UpdateUnitByIdRequest request, ISender sender, [FromServices] IValidator<UpdateUnitByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateUnitByIdEndpoints> logger) =>
+            app.MapPost("/residential-areas/units/update-by-id", async (UpdateUnitByIdRequest request, ISender sender, [FromServices] IValidator<UpdateUnitByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateUnitByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)

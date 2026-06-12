@@ -43,7 +43,7 @@ namespace AuthenticationService.API.Apis.User.ChangePassword
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/user/change-password", async (HttpContext httpContext, ChangePasswordRequest request, ISender sender, IValidator<ChangePasswordRequest> validator, ILogger<ChangePasswordEndPoints> logger) =>
+            app.MapPost("/auth/user/change-password", async (HttpContext httpContext, ChangePasswordRequest request, ISender sender, IValidator<ChangePasswordRequest> validator, ILogger<ChangePasswordEndPoints> logger) =>
             {
                 // Validate the request
                 var validationResult = await validator.ValidateAsync(request);

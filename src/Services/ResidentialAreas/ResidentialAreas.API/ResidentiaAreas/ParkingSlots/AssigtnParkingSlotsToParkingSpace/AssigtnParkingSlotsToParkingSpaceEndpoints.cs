@@ -24,7 +24,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AssigtnParkingSlotsT
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-slots/assign-to-parking-space", HandleAssignParkingSlotsToParkingSpace)
+            app.MapPost("/residential-areas/parking-slots/assign-to-parking-space", HandleAssignParkingSlotsToParkingSpace)
                 .WithName("AssignParkingSlotsToParkingSpace")
                 .WithTags("ParkingSlots")
                 .WithSummary("Assigns parking slots to a parking space.")

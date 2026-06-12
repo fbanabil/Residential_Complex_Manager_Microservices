@@ -18,7 +18,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AssignComplexManager
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas/assign-complex-manager", HandleAssignComplexManager)
+            app.MapPost("/residential-areas/areas/assign-complex-manager", HandleAssignComplexManager)
                 .WithName("AssignComplexManager")
                 .WithTags("Areas")
                 .WithSummary("Assigns a complex manager to an area.")

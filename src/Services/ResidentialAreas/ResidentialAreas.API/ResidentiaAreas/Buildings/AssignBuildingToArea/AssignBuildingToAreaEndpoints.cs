@@ -25,7 +25,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AssignBuildingToArea
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/assign-to-area", HandleAssignBuildingToArea)
+            app.MapPost("/residential-areas/buildings/assign-to-area", HandleAssignBuildingToArea)
                 .WithName("AssignBuildingToArea")
                 .WithTags("Buildings")
                 .WithSummary("Assigns buildings to an area.")

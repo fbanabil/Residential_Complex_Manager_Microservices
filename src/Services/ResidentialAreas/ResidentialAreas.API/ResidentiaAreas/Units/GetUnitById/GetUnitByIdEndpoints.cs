@@ -16,7 +16,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.GetUnitById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/units/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetUnitByIdEndpoints> logger) =>
+            app.MapGet("/residential-areas/units/{id:guid}", async (HttpContext httpContext, Guid id, ISender sender, [FromServices] IValidator<Guid> validator, ILogger<GetUnitByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(id);
                 if (!validationResult.IsValid)

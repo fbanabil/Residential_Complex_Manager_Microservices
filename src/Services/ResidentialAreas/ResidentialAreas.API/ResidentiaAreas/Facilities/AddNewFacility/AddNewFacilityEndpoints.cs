@@ -95,7 +95,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/facilities/add", async (AddNewFacilityRequest request, ISender sender, [FromServices] IValidator<AddNewFacilityRequest> validator, CancellationToken cancellationToken, ILogger<AddNewFacilityEndpoints> logger) =>
+            app.MapPost("/residential-areas/facilities/add", async (AddNewFacilityRequest request, ISender sender, [FromServices] IValidator<AddNewFacilityRequest> validator, CancellationToken cancellationToken, ILogger<AddNewFacilityEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)

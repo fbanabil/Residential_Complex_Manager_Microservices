@@ -32,7 +32,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/update-by-id", async (UpdateBuildingByIdRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateBuildingByIdEndpoints> logger) =>
+            app.MapPost("/residential-areas/buildings/update-by-id", async (UpdateBuildingByIdRequest request, ISender sender, [FromServices] IValidator<UpdateBuildingByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateBuildingByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)

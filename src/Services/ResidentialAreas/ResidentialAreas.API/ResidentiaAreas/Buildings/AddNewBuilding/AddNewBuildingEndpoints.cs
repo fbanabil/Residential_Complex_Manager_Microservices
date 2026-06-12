@@ -31,7 +31,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.AddNewBuilding
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/buildings/add", async (AddNewBuildingRequest request, ISender sender, IValidator<AddNewBuildingRequest> validator, ILogger<AddNewBuildingEndpoints> logger) =>
+            app.MapPost("/residential-areas/buildings/add", async (AddNewBuildingRequest request, ISender sender, IValidator<AddNewBuildingRequest> validator, ILogger<AddNewBuildingEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

@@ -22,7 +22,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.FilterArea
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/areas/filter", async (HttpContext httpContext, [AsParameters] FilterAreaRequest request, ISender sender, [FromServices] IValidator<FilterAreaRequest> validator, ILogger<FilterAreaEndpoints> logger) =>
+            app.MapGet("/residential-areas/areas/filter", async (HttpContext httpContext, [AsParameters] FilterAreaRequest request, ISender sender, [FromServices] IValidator<FilterAreaRequest> validator, ILogger<FilterAreaEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

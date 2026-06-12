@@ -24,7 +24,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilitiesToArea
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/facilities/assign-to-area", HandleAssignFacilitiesToArea)
+            app.MapPost("/residential-areas/facilities/assign-to-area", HandleAssignFacilitiesToArea)
                 .WithName("AssignFacilitiesToArea")
                 .WithTags("Facilities")
                 .WithSummary("Assigns facilities to an area.")

@@ -42,7 +42,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.AddNewArea
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas", async (AddNewAreaRequest request, ISender sender, [FromServices] IValidator<AddNewAreaRequest> validator, ILogger<AddNewAreaEndpoints> logger) =>
+            app.MapPost("/residential-areas/areas", async (AddNewAreaRequest request, ISender sender, [FromServices] IValidator<AddNewAreaRequest> validator, ILogger<AddNewAreaEndpoints> logger) =>
             {
                var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

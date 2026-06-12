@@ -41,7 +41,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.AddNewParkingSlot
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/parking-slots/add", async (AddNewParkingSlotRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSlotRequest> validator, CancellationToken cancellationToken, ILogger<AddNewParkingSlotEndpoints> logger) =>
+            app.MapPost("/residential-areas/parking-slots/add", async (AddNewParkingSlotRequest request, ISender sender, [FromServices] IValidator<AddNewParkingSlotRequest> validator, CancellationToken cancellationToken, ILogger<AddNewParkingSlotEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)

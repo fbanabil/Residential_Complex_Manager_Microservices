@@ -27,7 +27,7 @@ namespace AuthenticationService.API.Apis.Role.AssignRole
 
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/roles/assign", HandleRoleAssign)
+            app.MapPost("/auth/roles/assign", HandleRoleAssign)
                 .WithName("AssignRole")
                 .WithTags("Role Management")
                 .WithSummary("Assign a role to a user")

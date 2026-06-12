@@ -54,7 +54,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.ParkingSlots.FilterParkingSlot
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/parking-slots/filter", async ([AsParameters] FilterParkingSlotRequest request, ISender sender, [FromServices] IValidator<FilterParkingSlotRequest> validator, ILogger<FilterParkingSlotEndpoints> logger) =>
+            app.MapGet("/residential-areas/parking-slots/filter", async ([AsParameters] FilterParkingSlotRequest request, ISender sender, [FromServices] IValidator<FilterParkingSlotRequest> validator, ILogger<FilterParkingSlotEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

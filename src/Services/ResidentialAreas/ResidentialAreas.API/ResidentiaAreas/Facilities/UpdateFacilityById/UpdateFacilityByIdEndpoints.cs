@@ -94,7 +94,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/facilities/update-by-id", async (HttpContext httpContext, UpdateFacilityByIdRequest request, ISender sender, [FromServices] IValidator<UpdateFacilityByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateFacilityByIdEndpoints> logger) =>
+            app.MapPost("/residential-areas/facilities/update-by-id", async (HttpContext httpContext, UpdateFacilityByIdRequest request, ISender sender, [FromServices] IValidator<UpdateFacilityByIdRequest> validator, CancellationToken cancellationToken, ILogger<UpdateFacilityByIdEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)

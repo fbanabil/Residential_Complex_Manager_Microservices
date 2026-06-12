@@ -55,7 +55,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
             string hostUrl = await _getHostUrl.GetHostUrlAsync();
             string token = await _verificationTokenGenerator.GenerateTokenAsync();
             string hashedToken = await _verificationTokenGenerator.HashTokenAsync(token);
-            string verificationLink = $"{hostUrl}/user/reset-password/confirm?userId={user.Id}&token={token}";
+            string verificationLink = $"{hostUrl}/auth/user/reset-password/confirm?userId={user.Id}&token={token}";
             verificationLink = HtmlEncoder.Default.Encode(verificationLink);
 
             try

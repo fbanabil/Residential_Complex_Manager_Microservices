@@ -42,7 +42,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Areas.UpdateAreaByCode
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/areas/update-by-code", async (HttpContext httpContext, UpdateAreaByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByCodeRequest> validator, ILogger<UpdateAreaByCodeEndpoints> logger) =>
+            app.MapPost("/residential-areas/areas/update-by-code", async (HttpContext httpContext, UpdateAreaByCodeRequest request, ISender sender, [FromServices] IValidator<UpdateAreaByCodeRequest> validator, ILogger<UpdateAreaByCodeEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request);
                 if (!validationResult.IsValid)

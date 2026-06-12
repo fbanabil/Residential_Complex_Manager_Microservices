@@ -57,7 +57,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.AddNewUnit
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/units/add", async (AddNewUnitRequest request, ISender sender, [FromServices] IValidator<AddNewUnitRequest> validator, CancellationToken cancellationToken, ILogger<AddNewUnitEndpoints> logger) =>
+            app.MapPost("/residential-areas/units/add", async (AddNewUnitRequest request, ISender sender, [FromServices] IValidator<AddNewUnitRequest> validator, CancellationToken cancellationToken, ILogger<AddNewUnitEndpoints> logger) =>
             {
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)

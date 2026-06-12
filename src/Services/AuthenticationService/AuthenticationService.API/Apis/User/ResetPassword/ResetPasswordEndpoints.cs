@@ -25,7 +25,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPatch("/user/reset-password", HandleResetPassword)
+            app.MapPatch("/auth/user/reset-password", HandleResetPassword)
                 .WithName("Reset Password")
                 .WithTags("User Management")
                 .WithSummary("Resets the password for a user.")
@@ -33,7 +33,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
                 .AllowAnonymous();
 
 
-            app.MapPost("/user/reset-password/confirm", HandleResetPasswordConfirmation)
+            app.MapPost("/auth/user/reset-password/confirm", HandleResetPasswordConfirmation)
                 .WithName("Reset Password Confirmation 01")
                 .WithTags("User Management")
                 .WithSummary("Confirms the password reset for a user.")
@@ -41,7 +41,7 @@ namespace AuthenticationService.API.Apis.User.ResetPassword
                 .AllowAnonymous();
 
 
-            app.MapGet("/user/reset-password/confirm", HandleResetPasswordConfirmation)
+            app.MapGet("/auth/user/reset-password/confirm", HandleResetPasswordConfirmation)
                 .WithName("Reset Password Confirmation 02")
                 .WithTags("User Management")
                 .WithSummary("Confirms the password reset for a user.")
