@@ -5,8 +5,9 @@
         public static async Task AddCustomPipeline(this WebApplication app)
         {
             app.UseStaticFiles();
-            app.UseHsts();
-            app.UseHttpsRedirection();
+
+            if (!app.Environment.IsDevelopment())
+                app.UseHttpsRedirection();
 
             using (var scope = app.Services.CreateScope())
             {

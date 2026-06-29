@@ -43,8 +43,18 @@ services:
       context: .
       dockerfile: Services/QueryService/QueryService.API/Dockerfile
 
+  gateway.api:
+    image: ${DOCKER_REGISTRY-}gatewayapi
+    build:
+      context: .
+      dockerfile: ApiGateway/Gateway.API/Dockerfile
+
 volumes:
   residentialareadbdata:
   authenticationservicedbdata:
   rabbitmq_data:
   mongo_data:  
+
+networks:
+  residential-complex-network:
+    driver: bridge

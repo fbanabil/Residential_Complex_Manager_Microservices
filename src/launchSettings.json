@@ -6,7 +6,8 @@
       "serviceActions": {
         "residentialareas.api": "StartDebugging",
         "authenticationservice.api": "StartDebugging",
-        "queryservice.api": "StartDebugging"
+        "queryservice.api": "StartDebugging",
+        "gateway.api": "StartDebugging"
       }
     }
   }

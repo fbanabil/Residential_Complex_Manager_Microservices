@@ -8,11 +8,11 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticPassword123!
-      - GrpcSettings__UserValidationServiceUrl=http://authenticationservice.api:8080 
+      - GrpcSettings__UserValidationServiceUrl=http://authenticationservice.api:8081 
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/aspnetapp.pfx
     ports:
-      - "6001:8080"
-      - "6061:8081"
+      - "8080"
+      - "8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -26,6 +26,12 @@ services:
         - residentialareadb
         - authenticationservice.api
         - mongodb
+    networks:
+      - residential-complex-network
+
+
+
+
 
   residentialareadb:
     container_name: residentialareadb
@@ -38,6 +44,12 @@ services:
       - "5432:5432"
     volumes:
       - residentialareadbdata:/var/lib/postgresql/data
+    networks:
+      - residential-complex-network
+
+
+
+
 
 
   authenticationservicedb:
@@ -53,6 +65,12 @@ services:
       - "14330:1433"
     volumes:
       - authenticationservicedbdata:/var/opt/mssql
+    networks:
+      - residential-complex-network
+
+
+
+
 
 
   pgAdmin:
@@ -65,13 +83,18 @@ services:
       - "8082:80"
     depends_on:
       - residentialareadb
+    networks:
+      - residential-complex-network
+
+
+
+
+
 
 
   authenticationservice.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticPassword123!
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/aspnetapp.pfx
       - RabbitMQ__Host=amqp://guest:guest@rabbitmq:5672
@@ -82,8 +105,8 @@ services:
       - RabbitMQ__EmailQueue=email_queue
       - ConnectionStrings__DefaultConnection=Server=authenticationdb,1433;Database=AuthenticationDB;User Id=sa;Password=Fahad12345!;Encrypt=False;TrustServerCertificate=True;
     ports:
-      - "6002:8080"
-      - "6062:8081"
+      - "8080"
+      - "8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -94,6 +117,12 @@ services:
       - authenticationservicedb
       - rabbitmq
       - mongodb 
+    networks:
+      - residential-complex-network
+
+
+
+
 
 
   rabbitmq:
@@ -108,6 +137,10 @@ services:
       RABBITMQ_DEFAULT_VHOST: /
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - residential-complex-network
+
+
 
   zookeeper:
     container_name: zookeeper
@@ -115,6 +148,12 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - "2181:2181"
+    networks:
+      - residential-complex-network
+
+
+
+
 
   kafka:
     container_name: kafka
@@ -128,6 +167,12 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+     - residential-complex-network
+
+
+
+
 
   mongodb:
     container_name: mongologger
@@ -138,6 +183,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: secret
     volumes:
       - mongo_data:/data/db
+    networks:
+      - residential-complex-network
+
 
   queryservice.api:
     environment:
@@ -145,8 +193,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "6003:8080"
-      - "6063:8081"
+      - "8080"
+      - "8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -154,3 +202,25 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - mongodb
+    networks:
+      - residential-complex-network 
+
+
+
+
+  gateway.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "6060:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    networks:
+      - residential-complex-network
+    extra_hosts:
+        - "host.docker.internal:host-gateway"
