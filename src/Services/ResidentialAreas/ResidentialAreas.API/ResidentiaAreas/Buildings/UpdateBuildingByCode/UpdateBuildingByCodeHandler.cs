@@ -38,18 +38,18 @@ namespace ResidentialAreas.API.ResidentiaAreas.Buildings.UpdateBuildingByCode
 
 
 
-            // Authorization check: Only Admins, the Complex Manager of the area, or the Tenant of the building can update it
+            // Authorization check: Only Admins, the Complex Manager of the area, or the Landlord of the building can update it
             var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID claim not found.");
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if(!userRoles.Contains("Admin"))
             {
                 bool isComplexManager = userRoles.Contains("ComplexManager");
-                bool isTenant = userRoles.Contains("Tenant");
+                bool isLandlord = userRoles.Contains("Landlord");
 
-                // If the user is a tenant, check if they are the tenant of the building
-                if (isTenant && (building.TenantId != null) && (building.TenantId != Guid.Parse(userIdClaim.Value)))
+                // If the user is a landlord, check if they are the landlord of the building
+                if (isLandlord && (building.LandlordId != null) && (building.LandlordId != Guid.Parse(userIdClaim.Value)))
                 {
-                    _logger.LogWarning("Update building by code failed: tenant {UserId} is not authorized for building code {BuildingCode}", userIdClaim.Value, request.Code);
+                    _logger.LogWarning("Update building by code failed: landlord {UserId} is not authorized for building code {BuildingCode}", userIdClaim.Value, request.Code);
                     return new UpdateBuildingByCodeResult(null, new ErrorCarrier {
                         Title = "FORBIDDEN",
                         StatusCode = 403,

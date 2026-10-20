@@ -122,7 +122,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Adds a new facility under an area or a building.")
-                .RequireAuthorization("AdminOrComplexManagerOrTenant");
+                .RequireAuthorization("AdminOrComplexManagerOrLandlord");
         }
     }
 }

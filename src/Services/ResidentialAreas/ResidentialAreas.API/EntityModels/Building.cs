@@ -38,7 +38,7 @@
 
 
 
-        public Guid? TenantId { get; set; }
+        public Guid? LandlordId { get; set; }
 
 
 

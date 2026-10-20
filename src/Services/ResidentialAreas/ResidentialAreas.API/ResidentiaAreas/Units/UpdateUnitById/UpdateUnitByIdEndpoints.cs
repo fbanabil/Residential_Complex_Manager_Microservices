@@ -84,7 +84,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.UpdateUnitById
                 .Produces<UpdateUnitByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Updates a unit by its ID.")
-                .RequireAuthorization("AdminOrComplexManagerOrTenant");
+                .RequireAuthorization("AdminOrComplexManagerOrLandlord");
         }
     }
 }

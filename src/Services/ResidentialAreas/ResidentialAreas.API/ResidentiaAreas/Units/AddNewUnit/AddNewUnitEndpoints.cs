@@ -84,7 +84,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.AddNewUnit
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Adds a new unit under a building.")
-                .RequireAuthorization("AdminOrComplexManagerOrTenant");
+                .RequireAuthorization("AdminOrComplexManagerOrLandlord");
         }
     }
 }

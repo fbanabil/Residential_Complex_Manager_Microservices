@@ -2,13 +2,13 @@
 
 Residential Area Management System is a microservices-based platform for residential communities, apartment complexes, and gated societies.
 
-The repository is organized around domain-focused services for areas, tenants, residents, bookings, payments, chat, and identity. Each service owns its own data and communicates with other services through APIs or events when needed.
+The repository is organized around domain-focused services for areas, landlords, residents, bookings, payments, chat, and identity. Each service owns its own data and communicates with other services through APIs or events when needed.
 
 ## What the system covers
 
 - Residential area and building management
 - Unit, facility, and parking slot tracking
-- Tenant and lease workflows
+- Landlord and lease workflows
 - Resident profiles, household data, vehicles, and complaints
 - Rental listings, viewing requests, and facility bookings
 - Utility billing and payment processing
@@ -29,7 +29,7 @@ The project follows a service-per-domain approach:
 
 - AuthService for users, roles, permissions, and tokens
 - AreaService for residential areas, buildings, units, facilities, and parking slots
-- TenantService for tenants, leases, occupants, and move requests
+- LandlordService for landlords, leases, occupants, and move requests
 - ResidentService for residents, households, vehicles, visitor passes, and complaints
 - BrowseRequestService for listings, applications, and bookings
 - ProviderService for utility providers, subscriptions, readings, and bills

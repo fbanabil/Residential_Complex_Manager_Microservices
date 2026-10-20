@@ -74,13 +74,13 @@ namespace ResidentialAreas.API.ConfigurationExtension
 
                 options.AddPolicy("ComplexManagerOnly", policy => policy.RequireRole("ComplexManager"));
 
-                options.AddPolicy("TenantOnly", policy => policy.RequireRole("Tenant"));
+                options.AddPolicy("LandlordOnly", policy => policy.RequireRole("Landlord"));
 
                 options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 
                 options.AddPolicy("AdminOrComplexManager", policy => policy.RequireRole("Admin", "ComplexManager"));
 
-                options.AddPolicy("AdminOrComplexManagerOrTenant", policy => policy.RequireRole("Admin", "ComplexManager", "Tenant"));
+                options.AddPolicy("AdminOrComplexManagerOrLandlord", policy => policy.RequireRole("Admin", "ComplexManager", "Landlord"));
 
             });
 

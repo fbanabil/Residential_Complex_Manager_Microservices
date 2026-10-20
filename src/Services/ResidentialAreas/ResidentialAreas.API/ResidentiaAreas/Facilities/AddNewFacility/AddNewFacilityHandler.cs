@@ -96,13 +96,13 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
 
 
 
-            // Determine if the user is an Admin, Complex Manager, or Tenant based on their roles
+            // Determine if the user is an Admin, Complex Manager, or Landlord based on their roles
             bool isAdmin = userRoles.Contains("Admin");
             bool isComplexManager = userRoles.Contains("AreaManager");
-            bool isTenant = userRoles.Contains("Tenant");
+            bool isLandlord = userRoles.Contains("Landlord");
 
 
-            // Authorization: If the user is not an Admin, check if they are a Complex Manager or Tenant and verify their permissions
+            // Authorization: If the user is not an Admin, check if they are a Complex Manager or Landlord and verify their permissions
             if (!isAdmin)
             {
                 // Complex Managers can only create facilities in areas they manage
@@ -120,10 +120,10 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AddNewFacility
                     }
                 }
 
-                // Tenants can only create facilities in buildings they are associated with
-                if (isTenant)
+                // Landlords can only create facilities in buildings they are associated with
+                if (isLandlord)
                 {
-                    if (building != null && building.TenantId != Guid.Parse(userIdClaim.Value))
+                    if (building != null && building.LandlordId != Guid.Parse(userIdClaim.Value))
                     {
                         _logger.LogWarning("Unauthorized access attempt by user {UserId} to create facility in building {BuildingCode}.", userIdClaim.Value, request.BuildingCode);
                         return new AddNewFacilityResult(null, new ErrorCarrier

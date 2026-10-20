@@ -96,9 +96,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if (!userRoles.Contains("Admin"))
             {
-                if (userRoles.Contains("Tenant") && (building!.TenantId == null || building.TenantId != Guid.Parse(userIdClaim.Value)))
+                if (userRoles.Contains("Landlord") && (building!.LandlordId == null || building.LandlordId != Guid.Parse(userIdClaim.Value)))
                 {
-                    _logger.LogWarning("Update facility failed: tenant {UserId} is not authorized for facility ID {FacilityId}", userIdClaim.Value, request.Id);
+                    _logger.LogWarning("Update facility failed: landlord {UserId} is not authorized for facility ID {FacilityId}", userIdClaim.Value, request.Id);
                     return new UpdateFacilityByIdResult(null, new ErrorCarrier()
                     {
                         Title = "FORBIDDEN",

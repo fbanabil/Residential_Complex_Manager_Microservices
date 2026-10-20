@@ -121,7 +121,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.UpdateFacilityById
                 .Produces<UpdateFacilityByIdResponse>(StatusCodes.Status200OK)
                 .ProducesProblem(StatusCodes.Status400BadRequest)
                 .WithSummary("Updates a facility by its ID.")
-                .RequireAuthorization("AdminOrComplexManagerOrTenant");
+                .RequireAuthorization("AdminOrComplexManagerOrLandlord");
         }
     }
 }

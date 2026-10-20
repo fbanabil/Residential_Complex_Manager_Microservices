@@ -73,9 +73,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Facilities.AssignFacilityToBuildi
             var userRoles = _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList() ?? new List<string>();
             if(!userRoles.Contains("Admin"))
             {
-                if (userRoles.Contains("Tenant") && (building.TenantId == null || building.TenantId != Guid.Parse(userIdClaim.Value)))
+                if (userRoles.Contains("Landlord") && (building.LandlordId == null || building.LandlordId != Guid.Parse(userIdClaim.Value)))
                 {
-                    _logger.LogWarning("Assign facility to building failed: tenant {UserId} is not authorized for building code {BuildingCode}", userIdClaim.Value, request.BuildingCode);
+                    _logger.LogWarning("Assign facility to building failed: landlord {UserId} is not authorized for building code {BuildingCode}", userIdClaim.Value, request.BuildingCode);
                     return new AssignFacilityToBuildingResult(null, new ErrorCarrier()
                     {
                         Title = "FORBIDDEN",

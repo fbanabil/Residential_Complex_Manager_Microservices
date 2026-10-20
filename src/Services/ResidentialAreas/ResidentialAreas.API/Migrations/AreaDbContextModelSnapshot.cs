@@ -433,7 +433,7 @@ namespace ResidentialAreas.API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<Guid?>("TenantId")
+                    b.Property<Guid?>("LandlordId")
                         .HasColumnType("uuid");
 
                     b.Property<int?>("TotalFloors")

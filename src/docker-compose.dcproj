@@ -15,11 +15,5 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
-    <None Include="gitignore .gitignore" />
-    <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\Area.rest" />
-    <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\Facility.rest" />
-    <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\ParkingSpace.rest" />
-    <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\ParkingSlot.rest" />
-    <None Include="http Services\ResidentialAreas\ResidentialAreas.API\ApiTest\Unit.rest" />
   </ItemGroup>
 </Project>

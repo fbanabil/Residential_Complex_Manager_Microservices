@@ -15,7 +15,7 @@ namespace AuthenticationService.API.Apis.User.VerifyUser
                 .WithTags("Authentication")
                 .WithSummary("Sends a verification email to the user.")
                 .ProducesProblem(StatusCodes.Status500InternalServerError)
-                .RequireAuthorization("AdminOrComplexManagerOrTenant");
+                .RequireAuthorization("AdminOrComplexManagerOrLandlord");
         }
 
         public class VerifyUserRequestValidator : AbstractValidator<VerifyUserRequest>

@@ -80,7 +80,7 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.UpdateUnitById
             if (!userRoles.Contains("Admin"))
             {
                 bool isComplexManager = userRoles.Contains("ComplexManager");
-                bool isTenant = userRoles.Contains("Tenant");
+                bool isLandlord = userRoles.Contains("Landlord");
 
 
                 if (isComplexManager && (building.Area == null || building.Area?.ComplexManagerId == null || building.Area.ComplexManagerId != Guid.Parse(userIdClaim.Value)))
@@ -94,9 +94,9 @@ namespace ResidentialAreas.API.ResidentiaAreas.Units.UpdateUnitById
                     });
                 }
 
-                if (isTenant && (building.TenantId == null || building.TenantId != Guid.Parse(userIdClaim.Value)))
+                if (isLandlord && (building.LandlordId == null || building.LandlordId != Guid.Parse(userIdClaim.Value)))
                 {
-                    _logger.LogWarning("Tenant with user ID {UserId} attempted to create a unit in building {BuildingCode} that they do not reside in.", userIdClaim.Value, request.BuildingCode);
+                    _logger.LogWarning("Landlord with user ID {UserId} attempted to create a unit in building {BuildingCode} that they do not reside in.", userIdClaim.Value, request.BuildingCode);
                     return new UpdateUnitByIdResult(null, new ErrorCarrier
                     {
                         Title = "FORBIDDEN",
