@@ -66,7 +66,7 @@ namespace AuthenticationService.API.Apis.User.LocalLogin
             };
 
             
-            if (response!.RefreshToken is null)
+            if (response!.RefreshToken is not null)
             {
                 httpContext.Response.Cookies.Append("refreshToken", response!.RefreshToken, CookieOptions);
             }
